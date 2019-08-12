@@ -141,7 +141,7 @@ async function run() {
       ytdlSource.key = `${metadata.id}-start-${clip.start}-end-${clip.end || metadata.duration}`
       ytdlSource.clipping = clip
       await writer.append({
-        words: clip.words,
+        words: clip.words.join(' ').split(' '),
         tags: clip.tags,
         videoPaths: [ytdlSource],
         def: {
