@@ -80,17 +80,17 @@ class CachingYoutubeDownloaderSource {
   }
 
   // download video from youtube - writer should only do this if it's not already in the cache
-  getVideoPath() {
-    if (!this.fetched) {
-      return (new Promise((resolve, reject) => {
-        console.log(`local filename: ${this.localFilename}`)
+  async getVideoPath() {
+    if (!await fs.pathExists(this.localFilename)) {
+      return await (new Promise((resolve, reject) => {
+        console.log(`!!! Downloading Youtube video at: ${this.localFilename}`)
         let video = ytdl(this.url)
         video.pipe(require('fs').createWriteStream(this.localFilename))
         video.on('end', ()=> { this.fetched = true; resolve(this.localFilename) })
         video.on('error', (e)=> reject(e))
       }))
     } else {
-      return Promise.resolve(this.localFilename)
+      return this.localFilename
     }
   }
 
@@ -100,7 +100,7 @@ class CachingYoutubeDownloaderSource {
   }
 
   async actuallyRelease() {
-    if (this.fetched) {
+    if (await fs.pathExists(this.localFilename)) {
       await fs.unlink(this.localFilename)
     }
   }
@@ -122,9 +122,17 @@ async function run() {
   console.log(`Beginning import...`)
 
   // fetch metadata about videos we can import - TODO: remove the slice 0-1 to do the whole set
-  for (let filename of (await fs.readdir('timing')).filter(x => x.match(/\.txt$/)).sort()) {
+  let files = (await fs.readdir('timing')).filter(x => x.match(/\.txt$/)).sort()
+  console.log("files: ", files)
+  for (let filename of files) {
     let timing = await parseTimingFile((await fs.readFile(`timing/${filename}`)).toString())
-    let metadata = await fetchMetadata(timing.url)
+    if (!await fs.pathExists(`metadata-cache/${filename}.json`)) {
+      await fs.writeJSON(`metadata-cache/${filename}.json`, await fetchMetadata(timing.url))
+    }
+    let metadata = await fs.readJSON(`metadata-cache/${filename}.json`)
+    console.log(`For file: ${filename}`)
+    console.log('timing', timing)
+    console.log('metadata', metadata)
 
     // setup a youtube downloader, in case the video data is required to build a cache video
     let ytdlSource = new CachingYoutubeDownloaderSource(timing, metadata)
@@ -145,7 +153,7 @@ async function run() {
     }
 
     // done with this video, if it downloaded, it can be deleted now
-    await ytdlSource.actuallyRelease()
+    //await ytdlSource.actuallyRelease()
   }
 
   await writer.finish()
