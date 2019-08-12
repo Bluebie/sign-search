@@ -1,0 +1,29 @@
+/*
+opt-in light-mode theme for accessibility sake
+changes some page-wide colors, and applies some filters to fix some
+of the symbols to look right
+*/
+:root {
+  --base-bg: hsl(var(--hue), 43%, 90%);
+  --base-fg: hsl(var(--hue), 20%, 22%);
+  --filter-fg: saturate(150%) brightness(25%);
+  --module-bg: hsl(var(--hue), 35%, 83%);
+  --submodule-bg: hsl(var(--hue), 33%, 75%);
+}
+
+img#header {
+  filter: brightness(110%);
+}
+
+form#search_form::before {
+  filter: var(--filter-fg);
+}
+
+div#pagination button {
+  filter: var(--filter-fg);
+}
+
+div#pagination button.current-page {
+  background-color: transparent;
+  border: 2px solid hsl(220deg, 31%, 70%);
+}

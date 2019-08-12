@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Technology</title>
+    <link rel=stylesheet href="style/sheet.css">
+    <link rel=stylesheet href="style/light-mode.css" media="(prefers-color-scheme: light)">
+    <link rel=stylesheet href="style/mobile.css" media="(max-width: 799px)">
+    <meta name="viewport" content="width=device-width">
+    <link rel="icon" type="image/png" sizes="32x32" href="style/favicon-32x32.png">
+    <meta charset="utf-8">
+  </head>
+  <body>
+    <a href="./"><img id=header alt="Find Sign logo" src="style/assets/find-sign-logo.svg"></a>
+    
+    <main id=article>
+      <h1>Spider</h1>
+      <p>A “Spider” is a computer program. The Spider goes to different websites, explores, finds new things, and makes notes. When finished, it’s notes are organised in to files describing everything it has seen.</p>
+      <h1>Word Embedding</h1>
+      <p>The next step is “Word Embedding”. A complicated topic! Word embedding creates a map, with coordinates, and puts each word on the map in it’s own location. Artificial Intelligence research from written language translation websites is used. English words that have a similar meaning, are grouped in to close areas on the map. This is important! Similar ideas are in similar areas in the map.</p>
+      <h1>Search</h1>
+      <p>When you search for a word, your computer does this:</p>
+      <ol><li>Download a map of all the signs the spider found, and what kind of meaning they have</li>
+      <li>Look at the Word Embedding map, and find the word you searched for, remembering the location</li>
+      <li>Check every sign, and see how close it’s meaning is, to the word you entered, by how far away they are on the map</li>
+      <li>Make a list, organised so the closest signs are at the top</li>
+      <li>Download small videos and descriptions, and create the webpage, with results listed down the page</li>
+      </ol><h1>Privacy and Tracking</h1>
+      <p>We use a program called Fathom to see how many people use this website, and to find out what website they came from if they clicked a link to come here. When you do a search, we don’t find out what words you typed in to the search box. We might be able to guess what kind of thing you were looking at, by seeing which search results your computer downloaded, but we don’t know exactly what you wrote. We don’t send your information to Google or Facebook at all, but if you come here using one of their apps like Google Chrome or Facebook App, they might be able to track you while you use their app.</p>
+    </main>
+    
+    <!-- Fathom - simple website analytics - https://github.com/usefathom/fathom -->
+    <script>
+    (function(f, a, t, h, o, m){
+    	a[h]=a[h]||function(){
+    		(a[h].q=a[h].q||[]).push(arguments)
+    	};
+    	o=f.createElement('script'),
+    	m=f.getElementsByTagName('script')[0];
+    	o.async=1; o.src=t; o.id='fathom-script';
+    	m.parentNode.insertBefore(o,m)
+    })(document, window, '//analytics.auslan.fyi/tracker.js', 'fathom');
+    fathom('set', 'siteId', 'DKXXG');
+    fathom('trackPageview');
+    </script>
+    <!-- / Fathom -->
+  </body>
+</html>

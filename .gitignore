@@ -1,0 +1,7 @@
+node_modules
+datasets/*
+tools/scrapers/auslan-signbank/*-cache
+tools/scrapers/auslan-signbank/definition-links.json
+.stignore
+.vscode
+.stfolder

@@ -1,0 +1,58 @@
+/* general layout patches on mobile */
+body {
+  padding-left: 1ex;
+  padding-right: 1ex;
+}
+
+body, img#header, form#search_form, input#search_box {
+  display: block;
+  width: 100%;
+}
+
+nav { width: 100% }
+
+img#header, input#search_box, main#results, div#pagination { margin-top: 1ex; }
+
+/* patches to search result display */
+main#results .result {
+  padding: 1ex;
+  margin-top: 1ex;
+  height: auto;
+}
+
+main#results .result .video_player {
+  width: calc(100vw - 4ex);
+  height: calc((100vw - 4ex) * (9/16));
+  margin: 0 0 0 0;
+  position: relative;
+}
+
+main#results .result .video_player button.prev_vid,
+main#results .result .video_player button.next_vid {
+  width: calc((100vw - 4ex) * 0.127);
+}
+
+main#results .result div {
+  margin: 0 0 0 0;
+}
+
+main#results .result .gloss_list {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+main#results .result .link {
+  font-size: 0.7rem;
+}
+
+
+/* patches for pagination buttons */
+div#pagination { justify-content: space-evenly; }
+div#pagination button { width: 11vw; height: 11vw; font-size: 9vw; }
+div#pagination button.current-page { border-radius: 5.5vw; }
+
+/* on extremely tiny widths, change the nav list to vertical */
+@media (max-width: 300px) {
+  nav { display: block; }
+  nav a { display: block; margin: 1.5rem 0 1.5rem 0; text-align: center; }
+}

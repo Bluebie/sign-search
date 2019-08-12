@@ -1,0 +1,16 @@
+H0BIJzFliHY - Clothes.txt
+
+0:05 clothes
+0:13 dress
+0:19 shirt
+0:28 skirt
+0:36 pants
+0:42 jeans
+0:51 socks
+0:59 shoes
+1:04 boots
+1:08 coat
+1:13 bag
+1:17 hat
+1:22 wardrobe
+1:29 #end

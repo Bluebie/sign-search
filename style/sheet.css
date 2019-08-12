@@ -1,0 +1,235 @@
+/* color definitions */
+:root {
+  --hue: 220deg;
+  --base-bg: hsl(var(--hue), 20%, 12%);
+  --base-fg: hsl(var(--hue), 50%, 80%);
+  --filter-fg: saturate(100%) brightness(100%);
+  --module-bg: hsl(var(--hue), 18%, 27%);
+  --submodule-bg: hsl(var(--hue), 21%, 24%);
+  --fade-duration: 0.5s;
+  --fade-time-offset: 0.05s;
+}
+
+@font-face {
+  /* thanks icomoon for generating this! */
+  font-family: 'auslan-symbol';
+  src:  url('assets/fonts/icomoon.eot?38ntgm');
+  src:  url('assets/fonts/icomoon.eot?38ntgm#iefix') format('embedded-opentype'),
+    url('assets/fonts/icomoon.ttf?38ntgm') format('truetype'),
+    url('assets/fonts/icomoon.woff?38ntgm') format('woff'),
+    url('assets/fonts/icomoon.svg?38ntgm#icomoon') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+* {
+  box-sizing: border-box; /* i just like it better ok? microsoft was right */
+}
+
+body {
+  width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  background-color: var(--base-bg);
+  color: var(--base-fg);
+}
+
+img#header {
+  margin-top: 4em;
+  width: 500px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  cursor: pointer;
+}
+
+form#search_form {
+  font-size: 1.6em;
+  width: 500px;
+  margin: 0 auto 0 auto;
+}
+
+form#search_form::before {
+  /* content: url(assets/search-icon.svg); */
+  font-family: 'auslan-symbol' !important;
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  content: "?";
+  position: absolute;
+  width: 1em;
+  height: 1em;
+  margin-left: 0.5em;
+  margin-top: 0.5em;
+}
+
+input#search_box {
+  display: block;
+  font-family: inherit;
+  font-size: inherit;
+  width: 100%;
+  padding: 0.4em 0.4em 0.4em 1.8em;
+  border-radius: 6px;
+  background-color: var(--module-bg);
+  color: inherit;
+  border: 0 none;
+  margin: 1.5rem auto 1.5rem auto;
+  outline: 0 none;
+}
+
+nav {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  width: 500px;
+  margin: 1.5rem auto 1.5rem auto;
+  font-size: 1.2em;
+}
+
+/* hide links in results view */
+body.results nav { display: none }
+
+nav a {
+  color: inherit;
+}
+
+body.notice main { text-align: center; }
+body.notice main div {
+  background-color: var(--module-bg);
+  border-radius: calc(1em + 4ex);
+  padding: 2ex 3ex;
+  display: inline-block;
+}
+
+
+main#results {
+  margin-top: 2em;
+}
+
+main#results .result {
+  background-color: var(--module-bg);
+  border-radius: 10px;
+  margin-top: 1.1em;
+  display: block;
+  color: inherit;
+  text-decoration: none;
+  padding-left: 207px;
+  min-height: 126px;
+  overflow: hidden;
+  animation: result-in var(--fade-duration);
+}
+
+@keyframes result-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+main#results .result .video_player {
+  display: block;
+  background-color: var(--submodule-bg);
+  border-radius: 6px;
+  width: 200px;
+  height: 112px;
+  position: absolute;
+  overflow: hidden;
+  margin-left: -200px;
+  margin-top: 7px;
+}
+
+main#results .result .video_player video {
+  width: 100%; height: 100%; border-radius: 6px;
+}
+
+main#results .result .video_player button.prev_vid,
+main#results .result .video_player button.next_vid {
+  position: absolute;
+  top: 0; bottom: 0; margin: 0; 
+  width: 25px;
+  border: 0 none;
+  padding: 0;
+  font-size: inherit;
+  font-weight: inherit;
+  font-family: inherit;
+  color: inherit;
+  background-color: hsla(var(--hue), 50%, 80%, 35%);
+  /* backdrop-filter: blur(2px); */
+}
+main#results .result .video_player button.prev_vid { left: 0; border-top-left-radius: 6px; border-bottom-left-radius: 6px; }
+main#results .result .video_player button.next_vid { right: 0; border-top-right-radius: 6px; border-bottom-right-radius: 6px; }
+
+main#results .result div:not(.video_player) {
+  padding-left: 0.7rem;
+  margin-bottom: 0.1rem;
+  padding-right: 0.5rem;
+}
+
+main#results .result .gloss_list {
+  margin-top: 0.3rem;
+  margin-bottom: 0rem;
+  font-size: 1.3rem;
+  text-transform: capitalize;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  
+}
+
+main#results .result .link, main#results .result .tags {
+  text-overflow: ellipsis;
+  font-size: 80%;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+main#results .result .link {
+  text-decoration: underline;
+}
+
+main#results .result .mini_def {
+  --line-height: 1.14em;
+  text-overflow: ellipsis;
+  white-space: pre-line;
+  overflow: hidden;
+  line-height: var(--line-height);
+  font-size: 0.95em;
+  max-height: calc(var(--line-height) * 3 - 1px);
+}
+
+div#pagination {
+  margin: 2em 0 2em 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+div#pagination button {
+  font-family: 'auslan-symbol' !important;
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 2.6rem;
+  border: 2px solid transparent;
+  padding: 0;
+  outline: 0 none;
+  color: inherit;
+  background-color: transparent;
+  width: 60px;
+  height: 60px;
+  cursor: pointer;
+}
+
+div#pagination button.current-page {
+  background-color: var(--module-bg);
+  border-radius: 30px;
+  cursor: default;
+}
+
+main#article {
+  margin-bottom: 5em;
+}
+
+main#article a {
+  color: inherit;
+}

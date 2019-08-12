@@ -1,0 +1,24 @@
+{
+  "name": "sign-search",
+  "version": "1.0.0",
+  "description": "Search Sign Language Dictionaries intelligently with word2vec and traditional more brute force approaches",
+  "main": "index.js",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.3",
+    "handbrake-js": "^4.0.0",
+    "jquery": "^3.4.1",
+    "n-readlines": "^1.0.0",
+    "request": "^2.88.0",
+    "rmdir": "^1.2.0",
+    "youtube-dl": "^2.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "auslan"
+  ],
+  "author": "Phoenix Fox",
+  "license": "Unlicense"
+}
