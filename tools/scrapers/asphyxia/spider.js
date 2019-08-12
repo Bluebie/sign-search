@@ -131,8 +131,6 @@ async function run() {
     }
     let metadata = await fs.readJSON(`metadata-cache/${filename}.json`)
     console.log(`For file: ${filename}`)
-    console.log('timing', timing)
-    console.log('metadata', metadata)
 
     // setup a youtube downloader, in case the video data is required to build a cache video
     let ytdlSource = new CachingYoutubeDownloaderSource(timing, metadata)
@@ -140,6 +138,7 @@ async function run() {
     for (let clip of timing.sequence) {
       ytdlSource.key = `${metadata.id}-start-${clip.start}-end-${clip.end || metadata.duration}`
       ytdlSource.clipping = clip
+      console.log(`Adding to search index: ${clip.words.join(', ')}`)
       await writer.append({
         words: clip.words.join(' ').split(' '),
         tags: clip.tags,
