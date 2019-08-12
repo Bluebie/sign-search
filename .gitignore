@@ -7,3 +7,4 @@ tools/scrapers/auslan-signbank/definition-links.json
 .stfolder
 tools/**/*-cache
 tools/**/*.mp4
+*.tmp
