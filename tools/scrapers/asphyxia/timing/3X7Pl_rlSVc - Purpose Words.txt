@@ -2,16 +2,16 @@
 
 0:00 Will
 0:01.75 Wont
-0:03 Can
+0:03.8 Can
 0:05 Can't
 0:06.6 Want
 0:08.25 Don't want
-0:10.25 Have
-0:11.4 Don't have > (here I demonstrate the handshape I’m using)
-0:15.3 Need
-0:17.5 Must
+0:10.5 Have
+0:11.7 Don't have > (here I demonstrate the handshape I’m using)
+0:15.6 Need
+0:17.7 Must
 0:19 Should
-0:21.2 Prefer
+0:21.6 Prefer
 0:23.5 Because 
 0:26 Can't be bothered > (you’ll see that sometimes a whole English phrase is captured with a single sign)
 0:28 #end

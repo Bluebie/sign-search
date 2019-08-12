@@ -3,7 +3,7 @@
 0:00 who
 0:02 what
 0:04 where
-0:05 when
+0:06 when
 0:07 why
 0:09 how
 0:11 how much

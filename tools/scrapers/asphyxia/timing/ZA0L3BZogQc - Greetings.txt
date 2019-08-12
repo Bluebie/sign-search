@@ -3,13 +3,13 @@ ZA0L3BZogQc - Greetings
 0:00 Hello
 0:02 My 
 0:04 Name
-0:06 How are you?
-0:09 Good
-0:10 Bad
-0:12 So's so
+0:06.5 How are you?
+0:08 Good
+0:10.4 Bad
+0:12.3 So's so
 0:15 Alright
 0:17 Hot
-0:18 Cold 
+0:19 Cold 
 0:21 Tired
 0:23 Please, Thank you
 0:25 #end
