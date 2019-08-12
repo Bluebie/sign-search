@@ -145,7 +145,7 @@ async function run() {
         tags: clip.tags,
         videoPaths: [ytdlSource],
         def: {
-          link: `https://youtu.be/${metadata.id}?t=${clip.start}`,
+          link: `https://youtu.be/${metadata.id}?t=${Math.floor(clip.start)}`,
           glossList: clip.words,
           body: clip.body || metadata.description || ''
         }
