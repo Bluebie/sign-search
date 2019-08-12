@@ -54,6 +54,7 @@ async function fetchMetadata(youtubeURL) {
   let info = await util.promisify(ytdl.getInfo)(youtubeURL)
   return {
     url: info.webpage_url,
+    id: info.webpage_url.split('/watch?v=')[1],
     description: info.description.replace(/#[a-zA-Z0-9_-]+/gi, '').trim(),
     tags: info.description.split('#').slice(1).map((x)=> x.split(/[ \t\n]+/, 2)[0]),
     title: info.title,
@@ -121,7 +122,7 @@ async function run() {
   console.log(`Beginning import...`)
 
   // fetch metadata about videos we can import - TODO: remove the slice 0-1 to do the whole set
-  for (let filename of (await fs.readdir('timing')).filter(x => x.match(/\.txt$/))) {
+  for (let filename of (await fs.readdir('timing')).filter(x => x.match(/\.txt$/)).sort()) {
     let timing = await parseTimingFile((await fs.readFile(`timing/${filename}`)).toString())
     let metadata = await fetchMetadata(timing.url)
 
@@ -129,7 +130,7 @@ async function run() {
     let ytdlSource = new CachingYoutubeDownloaderSource(timing, metadata)
 
     for (let clip of timing.sequence) {
-      ytdlSource.key = `${metadata.key}-start-${clip.start}-end-${clip.end || metadata.duration}`
+      ytdlSource.key = `${metadata.id}-start-${clip.start}-end-${clip.end || metadata.duration}`
       ytdlSource.clipping = clip
       await writer.append({
         words: clip.words,
