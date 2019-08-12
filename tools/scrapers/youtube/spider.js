@@ -10,7 +10,9 @@ const fs = require('fs').promises
 
 const importList = 'imports.txt'
 
-// fetch the Auslan Stage Left index on their website
+
+
+// fetch the youtube playlists and index relevant data about videos included in them
 async function scanPlaylists(playlistURLs) {
   let signVideos = []
 
@@ -36,6 +38,9 @@ async function scanPlaylists(playlistURLs) {
   return signVideos
 }
 
+
+
+// Youtube video provider the video cache in the SearchLibraryWriter can use to selectively download and delete videos as needed during the build
 class YoutubeDownloaderSource {
   constructor(videoInfo) {
     this.url = videoInfo.url
@@ -65,6 +70,9 @@ class YoutubeDownloaderSource {
   }
 }
 
+
+
+// main function
 async function run() {
   console.log(`Starting Build of Youtube index`)
   let indexRoot = "../../../datasets/youtube"
