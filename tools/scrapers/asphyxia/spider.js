@@ -84,7 +84,7 @@ class CachingYoutubeDownloaderSource {
     if (!await fs.pathExists(this.localFilename)) {
       return await (new Promise((resolve, reject) => {
         console.log(`!!! Downloading Youtube video at: ${this.localFilename}`)
-        let video = ytdl(this.url)
+        let video = ytdl(this.url, ['--format', 'bestvideo[ext=mp4]'])
         video.pipe(require('fs').createWriteStream(this.localFilename))
         video.on('end', ()=> { this.fetched = true; resolve(this.localFilename) })
         video.on('error', (e)=> reject(e))
