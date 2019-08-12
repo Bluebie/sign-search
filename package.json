@@ -5,12 +5,12 @@
   "main": "index.js",
   "dependencies": {
     "cheerio": "^1.0.0-rc.3",
+    "fs-extra": "^8.1.0",
     "handbrake-js": "^4.0.0",
     "jquery": "^3.4.1",
     "n-readlines": "^1.0.0",
     "request": "^2.88.0",
-    "rmdir": "^1.2.0",
-    "youtube-dl": "^2.0.0"
+    "youtube-dl": "^2.0.1"
   },
   "devDependencies": {},
   "scripts": {
