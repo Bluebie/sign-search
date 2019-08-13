@@ -138,17 +138,19 @@ async function run() {
     for (let clip of timing.sequence) {
       ytdlSource.key = `${metadata.id}-start-${clip.start}-end-${clip.end || metadata.duration}`
       ytdlSource.clipping = clip
-      console.log(`Adding to search index: ${clip.words.join(', ')}`)
-      await writer.append({
-        words: clip.words.join(' ').split(' '),
-        tags: clip.tags,
-        videoPaths: [ytdlSource],
-        def: {
-          link: `https://youtu.be/${metadata.id}?t=${Math.floor(clip.start)}`,
-          glossList: clip.words,
-          body: clip.body || metadata.description || ''
-        }
-      })
+      if (clip.words.join(' ').trim() != '#skip') {
+        console.log(`Adding to search index: ${clip.words.join(', ')}`)
+        await writer.append({
+          words: clip.words.join(' ').split(' '),
+          tags: clip.tags,
+          videoPaths: [ytdlSource],
+          def: {
+            link: `https://youtu.be/${metadata.id}?t=${Math.floor(clip.start)}`,
+            glossList: clip.words,
+            body: clip.body || metadata.description || ''
+          }
+        })
+      }
     }
 
     // done with this video, if it downloaded, it can be deleted now
