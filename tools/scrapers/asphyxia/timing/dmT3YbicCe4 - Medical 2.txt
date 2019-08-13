@@ -1,0 +1,13 @@
+dmT3YbicCe4 - Medical 2
+
+0:07   Asthma
+0:13   Epilepsy
+0:22.5 Diabetes
+0:31   Stroke
+0:36.5 Heart attack
+0:40.5 AIDS > Acronym: Acquired Immune Deficiency Syndrome
+0:45   Schizophrenia
+0:49.8 Doctor
+0:54.5 Nurse
+1:00   Allergy
+1:06   #end

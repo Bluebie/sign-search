@@ -1,0 +1,15 @@
+TMppkwd-dRg - Medical 1
+
+0:07   Pain
+0:10   Pain > Small area of Pain
+0:15   #skip > repeated last two
+0:20   Temperature
+0:28   High Temperature
+0:33   Normal
+0:39   Improve
+0:48.4 Nausea
+0:55.2 Vomit
+1:02   Blood
+1:12.7 Injection
+1:19.8 Faint
+1:27   #end

@@ -141,7 +141,7 @@ async function run() {
       if (clip.words.join(' ').trim() != '#skip') {
         console.log(`Adding to search index: ${clip.words.join(', ')}`)
         await writer.append({
-          words: clip.words.join(' ').split(' '),
+          words: clip.words.join(' ').replace(/[?.,;:!]/, '').split(' '),
           tags: clip.tags,
           videoPaths: [ytdlSource],
           def: {
