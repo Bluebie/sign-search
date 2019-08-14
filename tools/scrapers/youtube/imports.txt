@@ -1,2 +1,2 @@
 https://www.youtube.com/playlist?list=PL7B7aOPg0nscWFz5013_SXane_K3HheCe > {"//": "Auslan Community Contributions"}
-https://www.youtube.com/playlist?list=PL23jooyW_IDy1kCG9xZHRKhpCKo7YXa6d > {"//": "Signpedia A", "tags": ["description", "iconic", "nsw"], "wordsCleanRegexps": [["\\([a-zA-Z ]+\\)/", ""]]}
+https://www.youtube.com/playlist?list=PL23jooyW_IDy1kCG9xZHRKhpCKo7YXa6d > {"//": "Signpedia A", "tags": ["description", "iconic", "nsw"], "wordsCleanRegexps": [["\\([a-zA-Z ]+\\)", ""]]}

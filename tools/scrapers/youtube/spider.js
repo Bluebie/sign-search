@@ -18,13 +18,15 @@ async function scanPlaylists(playlistURLs) {
 
   // iterate through the specified playlists importing videos from each
   for (let playlistURL of Object.keys(playlistURLs)) {
+    let playlistConfig = playlistURLs[playlistURL]
     console.log(`checking ${playlistURL}`)
     let playlist = await util.promisify(ytdl.getInfo)(playlistURL)
     console.log(`found ${playlist.length} videos`)
 
     for (let info of playlist) {
       // extract any extra prefix playlist global tags, and list of regular expressions to use to clean up title
-      let {tags: playlistTags, wordsCleanRegexps} = playlistURLs[playlistURL]
+      let playlistTags = playlistConfig.tags
+      let wordsCleanRegexps = playlistConfig.wordsCleanRegexps
       let wordsList = info.title
       if (wordsCleanRegexps) {
         for (let [regexp, replacement] of wordsCleanRegexps) {
@@ -59,6 +61,7 @@ class YoutubeDownloaderSource {
     this.url = videoInfo.url
     this.key = videoInfo.key
     this.localFilename = videoInfo.filename
+    this.timeout = 60
   }
 
   // get a unique key that should change if the video's content changes
@@ -66,15 +69,29 @@ class YoutubeDownloaderSource {
     return this.key
   }
 
-  // download video from youtube - writer should only do this if it's not already in the cache
-  getVideoPath() {
+  fetchVideo(url, filename, timeoutSec) {
     return (new Promise((resolve, reject) => {
       console.log(`local filename: ${this.localFilename}`)
       let video = ytdl(this.url)
       video.pipe(require('fs').createWriteStream(this.localFilename))
-      video.on('end', ()=> resolve(this.localFilename))
-      video.on('error', (e)=> reject(e))
+      video.on('end', ()=> { clearTimeout(timeout); resolve(this.localFilename) })
+      video.on('error', (e)=> { clearTimeout(timeout); fs.unlink(filename).then(()=> reject(e)); })
+      let timeout = setTimeout(()=> {
+        video.destroy(`Timeout after ${timeoutSec} seconds waiting for youtube-dl to provide video`)
+      }, timeoutSec * 1000)
     }))
+  }
+
+  // download video from youtube - writer should only do this if it's not already in the cache
+  async getVideoPath() {
+    try {
+      await this.fetchVideo(this.url, this.localFilename, this.timeout)
+    } catch (e) {
+      console.log(`Error: ${e}:`)
+      console.log(`Trying again...`)
+      await this.fetchVideo(this.url, this.localFilename, this.timeout)
+    }
+    return Promise.resolve(this.localFilename)
   }
 
   // once it's imported completely, we can remove the file we downloaded temporarily
@@ -98,8 +115,8 @@ async function run() {
       playlistURLs[url] = JSON.parse(json)
     }
   }
-  let videos = await scanPlaylists(playlistURLs)
 
+  let videos = await scanPlaylists(playlistURLs)
   console.log(`metadata scan complete, ${videos.length} videos found, ready for import`)
 
   let vecLib = new VectorLibraryReader()
