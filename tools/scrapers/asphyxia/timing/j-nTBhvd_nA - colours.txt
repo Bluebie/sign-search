@@ -1,0 +1,14 @@
+j-nTBhvd_nA - Colours
+
+0:00   red
+0:02.8 blue
+0:04.8 yellow > #nsw
+0:06.8 green
+0:09   orange > #nsw
+0:10.7 purple
+0:12.2 pink > #nsw
+0:13.8 black > #nsw
+0:16   white > #nsw
+0:18.5 grey > #nsw
+0:20.2 gold > #nsw
+0:22   silver > #nsw 
