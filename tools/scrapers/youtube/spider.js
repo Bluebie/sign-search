@@ -17,17 +17,30 @@ async function scanPlaylists(playlistURLs) {
   let signVideos = []
 
   // iterate through the specified playlists importing videos from each
-  for (let playlistURL of playlistURLs) {
+  for (let playlistURL of Object.keys(playlistURLs)) {
     console.log(`checking ${playlistURL}`)
     let playlist = await util.promisify(ytdl.getInfo)(playlistURL)
     console.log(`found ${playlist.length} videos`)
+
     for (let info of playlist) {
+      // extract any extra prefix playlist global tags, and list of regular expressions to use to clean up title
+      let {tags: playlistTags, wordsCleanRegexps} = playlistURLs[playlistURL]
+      let wordsList = info.title
+      if (wordsCleanRegexps) {
+        for (let [regexp, replacement] of wordsCleanRegexps) {
+          wordsList = wordsList.replace(new RegExp(regexp, 'g'), replacement)
+        }
+      }
+
+      // slice at the first : then use the last : section as a comma seperated list of words to mean average together to find vector
+      wordsList = wordsList.split(/:/).slice(-1)[0].split(',').map((x)=> x.trim())
+      
       signVideos.push({
         url: info.webpage_url,
         description: info.description.replace(/#[a-zA-Z0-9_-]+/gi, '').trim(),
-        tags: info.description.split('#').slice(1).map((x)=> x.split(/[ \t\n]+/, 2)[0]),
+        tags: [...(playlistTags || []), ...info.description.split('#').slice(1).map((x)=> x.split(/[ \t\n]+/, 2)[0])],
         title: info.title,
-        words: info.title.split(/:/).slice(-1)[0].split(',').map((x)=> x.trim()),
+        words: wordsList,
         updated: (new Date(Date.UTC(info.upload_date.substr(0, 4), info.upload_date.substr(4, 2), info.upload_date.substr(6, 2)))).toISOString(),
         key: `${info.id}-${info.tbr}-${info.upload_date}-${info._duration_raw}`,
         filename: info._filename
@@ -78,7 +91,13 @@ async function run() {
   let indexRoot = "../../../datasets/youtube"
 
   // fetch metadata about videos we can import
-  let playlistURLs = (await fs.readFile(importList)).toString().split("\n").filter((x)=> x.trim().length > 0).map((x) => x.split(' ')[0])
+  let playlistURLs = {}
+  for (let line of (await fs.readFile(importList)).toString().split("\n")) {
+    if (line.trim().length > 0) {
+      let [url, json] = line.split(' > ', 2)
+      playlistURLs[url] = JSON.parse(json)
+    }
+  }
   let videos = await scanPlaylists(playlistURLs)
 
   console.log(`metadata scan complete, ${videos.length} videos found, ready for import`)
