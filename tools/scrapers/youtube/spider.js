@@ -45,7 +45,10 @@ async function scanPlaylists(playlistURLs) {
         words: wordsList,
         updated: (new Date(Date.UTC(info.upload_date.substr(0, 4), info.upload_date.substr(4, 2), info.upload_date.substr(6, 2)))).toISOString(),
         key: `${info.id}-${info.tbr}-${info.upload_date}-${info._duration_raw}`,
-        filename: info._filename
+        filename: info._filename,
+        duration: info._duration_raw,
+        clippingStart: (typeof(playlistConfig.trimStart) == 'number') ? playlistConfig.trimStart : false,
+        clippingEnd: (typeof(playlistConfig.trimEnd) == 'number') ? info._duration_raw - playlistConfig.trimEnd : false
       })
     }
   }
@@ -61,6 +64,14 @@ class YoutubeDownloaderSource {
     this.url = videoInfo.url
     this.key = videoInfo.key
     this.localFilename = videoInfo.filename
+    if (typeof(videoInfo.clippingStart) == 'number' || typeof(videoInfo.clippingEnd) == 'number') {
+      if (typeof(videoInfo.clippingStart) == 'number') this.key += `-clipping-start-${videoInfo.clippingStart}`
+      if (typeof(videoInfo.clippingStart) == 'number') this.key += `-clipping-end-${videoInfo.clippingEnd}`
+      this.clipping = {
+        start: videoInfo.clippingStart,
+        end: videoInfo.clippingEnd
+      }
+    }
     this.timeout = 60
   }
 
