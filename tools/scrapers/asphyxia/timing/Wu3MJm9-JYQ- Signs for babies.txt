@@ -6,7 +6,7 @@ Wu3MJm9-JYQ - Signs for babies
 0:05.2 More
 0:06.8 Finish
 0:08.8 Sleep > Variation 1
-0:10.0 Sleep > Variation 2
+0:10.2 Sleep > Variation 2
 0:12.4 Awake, Wake up
-0:14.6 Yes
+0:14.5 Yes
 0:15.5 No
