@@ -1,14 +1,11 @@
-// Spider to crawl Auslan Stage Left's 101 Auslan Theatre Signs video series
-// from their website, and fetch videos with youtube-dl
-const request = require('request')
-const cheerio = require('cheerio')
+// Spider to import and slice and dice the Asphyxia videos, following the timing values in the timing files in the ./timing directory
 const util = require('util')
 const ytdl = require('youtube-dl')
 const VectorLibraryReader = require('../../../lib/vector-library/vector-library-reader')
 const SearchLibraryWriter = require('../../../lib/search-library/writer')
 const fs = require('fs-extra')
 
-const DefaultTags = ['established', 'vic']
+const DefaultTags = ['asphyxia', 'established', 'vic']
 
 // parse the plain text timing files in ./timing/ and generate manually recorded metadata needed to correctly edit the videos
 async function parseTimingFile(textData) {
@@ -126,6 +123,7 @@ async function run() {
 
   let writer = await (new SearchLibraryWriter(
     indexRoot, {format: 'sint8', scaling: 8, vectorDB: vecLib}
+    //indexRoot, {format: 'float32', vectorDB: vecLib}
   )).open()
 
   console.log(`Beginning import...`)
@@ -150,7 +148,8 @@ async function run() {
       if (clip.words.join(' ').trim() != '#skip') {
         console.log(`Adding to search index: ${clip.words.join(', ')}`)
         await writer.append({
-          words: clip.words.join(' ').replace(/[?.,;:!]/, '').split(' '),
+          //words: clip.words.join(' ').replace(/[?.,;:!]/, '').split(' '),
+          words: clip.words.map((x) => x.replace(/[?.,;:!]/, '').split(/[^a-zA-Z0-9]+/)),
           tags: clip.tags,
           videoPaths: [ytdlSource],
           def: {
