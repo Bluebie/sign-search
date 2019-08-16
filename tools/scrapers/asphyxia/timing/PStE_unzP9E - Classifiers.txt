@@ -1,0 +1,23 @@
+PStE_unzP9E - Classifiers
+
+0:01   #skip > Classifier for Person What?
+0:05   Person > -#established #classifier #nsw
+0:07   #skip > classifier for animal what?
+0:10.2 Animal > -#established #classifier #nsw
+0:12   #skip > classifier for V-E-H-I-C-L-E what?
+0:18   Vehicle > -#established #classifier #nsw
+0:20   So
+0:21   I want to show a car crash > Phrase demonstraion
+0:25.3 Car > -#established #classifier #nsw
+0:26   #skip > make the car (with hand)
+0:28   Car crash > -#established #classifier #nsw
+0:31.5 Woman > -#established #classifier Phrase demonstrating specifing a detail about a classifier sign
+0:33   Dog > Dog is shown on Asphyxia's right hand, patting the lap twice
+0:34.5 Dog > -#established #classifier
+0:35   Person walking dog > -#established #classifier Demonstration of classifier sign usage
+0:36.5 Dog runs ahead > -#established #classifier Demonstration of classifier sign usage
+0:39.5 Motorbike, Motorcycle > #nsw Established sign for Motorbike
+0:41   driving a vehicle > -#established #nsw #classifier Classifier signing a vehicle driving forward
+0:42   motorbike stops > -#established #nsw #classifier Demonstration of a vehicle stopping using classifier signing
+0:44.5 two people > #nsw #classifier Two people shown using classifier signing
+0:47   two people meeting > -#established #nsw #classifier Two people shown meeting, using classifier signing
