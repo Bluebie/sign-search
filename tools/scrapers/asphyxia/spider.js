@@ -24,17 +24,26 @@ async function parseTimingFile(textData) {
       time += parseFloat(timestampStr.split(':', 2)[1])
       if (output.length > 0) output.slice(-1)[0].end = time
       if (words.trim().toLowerCase() != "#end") {
-        let tagList = []
-        body = body ? body.replace(/ *#([a-zA-Z0-9_-]+) */gi, (input)=> {
-          tagList.push(input.substr(1).trim())
-          return ''
+        let tagList = new Set(DefaultTags)
+        let negativeTags = new Set()
+
+        body = body ? body.replace(/ *-#([a-zA-Z0-9_-]+) */gi, (input, p1)=> {
+          negativeTags.add(p1.trim())
+          return ' '
         }).trim() : false
+
+        body = body ? body.replace(/ *#([a-zA-Z0-9_-]+) */gi, (input, p1)=> {
+          tagList.add(p1.trim())
+          return ' '
+        }).trim() : false
+
+        negativeTags.forEach((tag) => tagList.delete(tag))
 
         output.push({
           start: time,
           end: false,
           words: words.split(',').map(x => x.trim()),
-          tags: [...DefaultTags, ...tagList],
+          tags: [...tagList],
           body: body
         })
       }
