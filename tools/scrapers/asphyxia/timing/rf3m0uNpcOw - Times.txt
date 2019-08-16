@@ -1,0 +1,16 @@
+rf3m0uNpcOw - Times
+
+0:00   Time > #nsw
+0:02.5 Time > #nsw Variant: on a watch
+0:04.3 Today > #nsw
+0:06   Tomorrow > #nsw
+0:07.9 Yesterday > Southern states varient
+0:10   Day > #nsw
+0:12   Night > #nsw
+0:14.2 Morning
+0:16.7 Tonight
+0:18.5 Noon
+0:19.9 Afternoon
+0:21.8 Later
+0:23.8 Soon > #nsw
+0:25.2 Sometimes > #nsw
