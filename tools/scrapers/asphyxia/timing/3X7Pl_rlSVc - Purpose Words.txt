@@ -12,6 +12,6 @@
 0:17.7 Must
 0:19 Should
 0:21.6 Prefer
-0:23.5 Because 
+0:23.6 Because 
 0:26 Can't be bothered > (you’ll see that sometimes a whole English phrase is captured with a single sign)
 0:28 #end
