@@ -12,7 +12,7 @@ of the symbols to look right
 }
 
 img#header {
-  filter: brightness(110%);
+  filter: saturate(150%);
 }
 
 form#search_form::before {

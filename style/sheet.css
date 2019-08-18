@@ -73,6 +73,7 @@ input#search_box {
   padding: 0.4em 0.4em 0.4em 1.8em;
   border-radius: 6px;
   background-color: var(--module-bg);
+  caret-color: var(--base-fg);
   color: inherit;
   border: 0 none;
   margin: 1.5rem auto 1.5rem auto;
