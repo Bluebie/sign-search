@@ -307,8 +307,8 @@ async function runBuildTask() {
     if (!defFile.match(/\.json$/)) continue // skip hidden files and other junk
     let def = JSON.parse(fs.readFileSync(`definition-cache/${defFile}`))
     await writer.append({
-      words: def.glosses,
-      tags: ['established', ...(def.regions || [])],
+      words: def.glosses.map(x => x.split(/[^a-zA-Z0-9']+/).map(y => y.trim())),
+      tags: ['signbank', 'established', ...(def.regions || [])],
       def: {
         glossList: def.glosses,
         link: `${domain}/dictionary/words/${def.keywordURLs[0]}`,
