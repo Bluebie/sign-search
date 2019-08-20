@@ -212,7 +212,11 @@ class StaticWebVideoSource {
       req.on('response', (response)=> {
         //console.log(`HEAD: ${response.statusCode} - Remote Size: ${response.caseless.get('content-length')}`)
         clearTimeout(timer)
-        this.key = `${encodeURIComponent(this.url)}-etag${response.caseless.get('etag')}-length${parseInt(response.caseless.get('content-length'))}`
+        this.key = [
+          this.url,
+          `etag_${encodeURIComponent(response.caseless.get('etag').replace(/["']/g, ''))}`,
+          `length_${parseInt(response.caseless.get('content-length'))}`
+        ].map(x => encodeURIComponent(x)).join('-')
         return resolve(this.key)
       })
     })
