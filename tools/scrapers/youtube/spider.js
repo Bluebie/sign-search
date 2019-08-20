@@ -102,7 +102,7 @@ class YoutubeDownloaderSource {
       console.log(`Trying again...`)
       await this.fetchVideo(this.url, this.localFilename, this.timeout)
     }
-    return Promise.resolve(this.localFilename)
+    return this.localFilename
   }
 
   // once it's imported completely, we can remove the file we downloaded temporarily
