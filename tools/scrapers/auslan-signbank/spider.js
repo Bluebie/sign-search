@@ -1,18 +1,17 @@
 // Spider to crawl Auslan Signbank's letter indexed categories
 // spider builds an intermediary cache of auslan-signbank's content and updates cache as needed
 // then transforms that cache in to the compressed search-library format in /datasets/auslan-signbank
-const request = require('request')
+const request = require('request').defaults({ headers: {'User-Agent': "find.auslan.fyi"}})
 const cheerio = require('cheerio')
 const VectorLibraryReader = require('../../../lib/vector-library/vector-library-reader')
 const SearchLibraryWriter = require('../../../lib/search-library/writer')
-const fs = require('fs')
+const fs = require('fs-extra')
 const domain = "http://www.auslan.org.au"
 
 let tasks = {
-  index: true, // browse the dictionary keyword index and find links to definitions
-  definitions: true, // load definition pages and store them in the definition cache
-  videos: true, // fetch video files referenced in the definitions
-  build: true // build the compressed web-friendly dataset in to the datasets collection under datasets/auslan-signbank
+  index: false, // browse the dictionary keyword index and find links to definitions
+  definitions: false, // load definition pages and store them in the definition cache
+  build: true // build the compressed web-friendly dataset in to the datasets collection under datasets/auslan-signbank, including grabbing any videos needed
 }
 
 let signbankRegionMap = {
@@ -96,7 +95,7 @@ async function runIndexTask() {
   console.log("Definition Links:")
   console.log(defLinks)
 
-  fs.writeFileSync('definition-links.json', JSON.stringify(defLinks))
+  await fs.writeFile('definition-links.json', JSON.stringify(defLinks))
 }
 
 // load a definition webpage, convert it in to a definition cache file written in to definition-cache folder
@@ -106,9 +105,9 @@ async function fetchDefinition(url, loadOtherMatches = true) {
   let defID = parseInt(page('.view-words #signinfo.navbar > div.btn-group button.navbar-btn')[0].childNodes[0].data.split(' ')[1])
 
   let def = {}
-  if (fs.existsSync(`definition-cache/${defID}.json`)) {
+  if (await fs.pathExists(`definition-cache/${defID}.json`)) {
     // load existing cache file if it already exists
-    def = JSON.parse(fs.readFileSync(`definition-cache/${defID}.json`))
+    def = JSON.parse(await fs.readFile(`definition-cache/${defID}.json`))
   }
 
   def.id = defID
@@ -149,7 +148,7 @@ async function fetchDefinition(url, loadOtherMatches = true) {
   }
 
   // write out definition cache file
-  fs.writeFileSync(`definition-cache/${defID}.json`, JSON.stringify(def))
+  await fs.writeFile(`definition-cache/${defID}.json`, JSON.stringify(def))
 
   // check if there are more listings for this keyword and fetch those too
   // we had about 3,700 definitions before adding this feature
@@ -175,7 +174,7 @@ async function fetchDefinition(url, loadOtherMatches = true) {
 // go to each URL in the definition-links.json file from the indexing task
 // and translate those definition pages in to definition-cache files
 async function runDefinitionsTask() {
-  let definitionLinks = JSON.parse(fs.readFileSync('definition-links.json'))
+  let definitionLinks = JSON.parse(await fs.readFile('definition-links.json'))
   for (let keyword of Object.keys(definitionLinks)) {
     try {
       await fetchDefinition(definitionLinks[keyword])
@@ -185,105 +184,84 @@ async function runDefinitionsTask() {
   }
 }
 
-function fetchVideo(url, timeoutSec = 300) {
-  return new Promise((resolve, reject) => {
-    let filename = `video-cache/${encodeURIComponent(url)}`
 
-    if (fs.existsSync(filename)) { // check if modified time newer and if size correct
-      console.log(`Video Exists, checking size... ${url}`)
-      let req = request.head(url)
 
+// A simple static etag and file size based static http media server video source
+class StaticWebVideoSource {
+  constructor(videoURL) {
+    this.url = videoURL
+    this.localFilename = this.url.split('#')[0].split('?')[0].split('/').slice(-1)[0]
+    this.timeout = 300
+    this.key = null
+  }
+
+  // get a unique key that should change if the video's content changes
+  getKey() {
+    return new Promise((resolve, reject)=> {
+      if (this.key) return resolve(this.key)
+      // do a HTTP head to figure out if remote resource info
+      let req = request.head(this.url)
+  
       // create timeout mechanism
       let timer = setTimeout(()=> {
-        console.error(`HEAD request timed out!`)
         req.abort()
         reject(`HEAD request timed out!`)
-      }, timeoutSec * 1000)
-
+      }, this.timeout * 1000)
+  
       req.on('error', (...a)=> { clearTimeout(timer); reject(...a) })
-      req.on('response', function(response) {
-        console.log(`HEAD: ${response.statusCode} - Remote Size: ${response.caseless.get('content-length')}`)
+      req.on('response', (response)=> {
+        //console.log(`HEAD: ${response.statusCode} - Remote Size: ${response.caseless.get('content-length')}`)
         clearTimeout(timer)
-
-        if (response.statusCode.toString() == '404') {
-          console.log(`Remote file missing, removing local file`)
-          // if file not found, we should just delete our cached file and move on
-          fs.unlinkSync(filename)
-          resolve()
-        } else if (parseInt(response.caseless.get('content-length')) != fs.statSync(filename).size) {
-          // file size changed, remove cached file
-          fs.unlinkSync(filename)
-          // try again
-          fetchVideo(url).then(resolve, reject)
-        } else {
-          console.log(`Local file seems fine, skipping`)
-          resolve()
-        }
+        this.key = `${encodeURIComponent(this.url)}-etag${response.caseless.get('etag')}-length${parseInt(response.caseless.get('content-length'))}`
+        return resolve(this.key)
       })
-    } else { // just download it
-      console.log(`Downloading ${url}`)
-      let req = request.get(url)
+    })
+  }
+
+  fetchVideo() {
+    return (new Promise((resolve, reject) => {
+      //console.log(`Downloading ${this.url}`)
+      let req = request.get(this.url)
 
       // create timeout mechanism
-      let timer = setTimeout(()=> {
+      let timer = setTimeout(async ()=> {
         req.abort()
-        fs.unlinkSync(filename)
-        reject(`Timeout! Partial download, removed video cache file`)
-      }, timeoutSec * 1000)
+        await fs.unlink(this.localFilename)
+        reject(`Timeout during video download from media server`)
+      }, this.timeout * 1000)
 
       // handle state changes and stream file out to filesystem
-      req.on('error', (...a)=> { clearTimeout(timer); fs.unlinkSync(filename); reject(...a) })
+      req.on('error', async (...a)=> { clearTimeout(timer); await fs.unlink(this.localFilename); reject(...a) })
       req.on('end', (...a)=> { clearTimeout(timer); resolve(...a) })
-      req.pipe(fs.createWriteStream(filename))
-    }
-  });
-}
+      req.pipe(fs.createWriteStream(this.localFilename))
+    }))
+  }
 
-// scan through definition-cache files and download the linked video files in to the video-cache
-async function runVideoFetchTask() {
-  // read the definitions and build a list of video links we need to cache
-  let files = fs.readdirSync('definition-cache')
-  let knownVideoURLs = []
-  for (let defFile of files) {
-    if (defFile.match(/\.json/)) {
-      let def = JSON.parse(fs.readFileSync(`definition-cache/${defFile}`))
-      for (let videoURL of def.videos) {
-        knownVideoURLs.push(videoURL)
+  // download video from youtube - writer should only do this if it's not already in the cache
+  async getVideoPath() {
+    try {
+      await this.fetchVideo()
+    } catch (e) {
+      console.error(`Error: ${e}:`)
+      console.log(`Trying again...`)
+      try {
+        await this.fetchVideo()
+      } catch (e) {
+        console.error(`Error: ${e}`)
+        console.log(`Trying one last time...`)
+        await this.fetchVideo()
       }
     }
+    return this.localFilename
   }
 
-  // fetch those videos concurrently to help with high round trip latency to auslan-signbank's server in germany
-  let concurrency = 5
-  // build a de-duplicated list of videos, and randomly sort them for reasons ¯\_(ツ)_/¯
-  let videoQueue = [...new Set(knownVideoURLs)].sort(()=> 0.5 > Math.random())
-  let runQueue = async ()=> {
-    let nextURL = videoQueue.shift()
-    if (nextURL) {
-      await fetchVideo(nextURL)
-      runQueue()
-    }
+  // once it's imported completely, we can remove the file we downloaded temporarily
+  async releaseVideoPath() {
+    await fs.unlink(this.localFilename)
   }
-  
-  let queuePromises = []
-  for (let i = 0; i < concurrency; i++) {
-    queuePromises.push(runQueue())
-    await delay(1) // wait one second before starting the next request to help offset the requests
-  }
-  
-  // delete any videos that weren't included in the definitions
-  let videoFiles = fs.readdirSync('video-cache')
-  for (let videoFilename of videoFiles) {
-    let originalURL = decodeURIComponent(videoFilename)
-    if (!knownVideoURLs.includes(originalURL)) {
-      console.log(`Removing unused video from cache: ${originalURL}`)
-      fs.unlinkSync(`video-cache/${videoFilename}`)
-    }
-  }
-
-  // wait until all the videos are done downloading
-  await Promise.all(queuePromises)
 }
+
+
 
 
 
@@ -302,32 +280,43 @@ async function runBuildTask() {
   
   console.log(`Appending content...`)
 
-  let defFiles = fs.readdirSync('definition-cache')
+  let defFiles = await fs.readdir('definition-cache')
+  let failedAppends = []
   for (let defFile of defFiles) {
     if (!defFile.match(/\.json$/)) continue // skip hidden files and other junk
-    let def = JSON.parse(fs.readFileSync(`definition-cache/${defFile}`))
-    await writer.append({
-      words: def.glosses.map(x => x.split(/[^a-zA-Z0-9']+/).map(y => y.trim())),
-      tags: ['signbank', 'established', ...(def.regions || [])],
-      def: {
-        glossList: def.glosses,
-        link: `${domain}/dictionary/words/${def.keywordURLs[0]}`,
-        regions: def.regions,
-        body: def.definitions.map(x=> `${x.title}: ${x.entries.join('; ')}`).join("\n")
-      },
-      videoPaths: def.videos.map(x=> `video-cache/${encodeURIComponent(x)}`)
-    })
+    let def = JSON.parse(await fs.readFile(`definition-cache/${defFile}`))
+    let sbLink = `${domain}/dictionary/words/${def.keywordURLs[0]}`
+    console.log(`Appending definition: ${def.glosses.join(', ')} - ${sbLink}`)
+    try {
+      await writer.append({
+        words: def.glosses.map(x => x.split(/[^a-zA-Z0-9']+/).map(y => y.trim())),
+        tags: ['signbank', 'established', ...(def.regions || [])],
+        def: {
+          glossList: def.glosses,
+          link: sbLink,
+          regions: def.regions,
+          body: def.definitions.map(x=> `${x.title}: ${x.entries.join('; ')}`).join("\n")
+        },
+        videoPaths: def.videos.map(url => new StaticWebVideoSource(url))
+      })
+    } catch (err) {
+      console.log(`APPEND ERROR: Skipping entry ${def.glosses.join(', ')} due to: ${err}`)
+      failedAppends.push(sbLink)
+    }
   }
   
   await writer.finish()
   
   console.log(`Auslan Signbank index build complete`)
+  if (failedAppends.length > 0) {
+    console.log(`Some content failed to be included. There are ${failedAppends.length} failures:`)
+    failedAppends.forEach(sbLink => console.log(sbLink))
+  }
 }
 
 async function run(tasks) {
   if (tasks.index) await runIndexTask()
   if (tasks.definitions) await runDefinitionsTask()
-  if (tasks.videos) await runVideoFetchTask()
   if (tasks.build) await runBuildTask()
 }
 
