@@ -1,11 +1,12 @@
 // Spider to crawl Auslan Stage Left's 101 Auslan Theatre Signs video series
 // from their website, and fetch videos with youtube-dl
-const request = require('request')
+const request = require('request').defaults({ headers: {'User-Agent': "find.auslan.fyi"}})
 const cheerio = require('cheerio')
-const youtubedl = require('youtube-dl')
+const util = require('util')
+const ytdl = require('youtube-dl')
 const VectorLibraryReader = require('../../../lib/vector-library/vector-library-reader')
 const SearchLibraryWriter = require('../../../lib/search-library/writer')
-const fs = require('fs')
+const fs = require('fs-extra')
 
 // fetch the Auslan Stage Left index on their website
 function fetchIndex() {
@@ -40,6 +41,61 @@ function fetchIndex() {
   })
 }
 
+
+// Youtube video provider the video cache in the SearchLibraryWriter can use to selectively download and delete videos as needed during the build
+class VimeoDownloaderSource {
+  constructor(videoURL) {
+    this.url = videoURL
+    this.timeout = 60
+    this.info = null
+  }
+  
+  // internal: fetch the remote info about the video
+  async getInfo() {
+    if (this.info) return this.info
+    this.info = await util.promisify(ytdl.getInfo)(this.url)
+    return this.info
+  }
+
+  // get a unique key that should change if the video's content changes
+  async getKey() {
+    let info = await this.getInfo()
+    return `vimeo-${info.id}-timestamp-${info.timestamp}`
+  }
+
+  fetchVideo(url, filename, timeoutSec) {
+    return (new Promise((resolve, reject) => {
+      console.log(`local filename: ${filename}`)
+      let video = ytdl(this.url)
+      video.pipe(require('fs').createWriteStream(filename))
+      video.on('end', ()=> { clearTimeout(timeout); resolve(filename) })
+      video.on('error', (e)=> { clearTimeout(timeout); fs.unlink(filename).then(()=> reject(e)); })
+      let timeout = setTimeout(()=> {
+        video.destroy(`Timeout after ${timeoutSec} seconds waiting for youtube-dl to provide video`)
+      }, timeoutSec * 1000)
+    }))
+  }
+
+  // download video from youtube - writer should only do this if it's not already in the cache
+  async getVideoPath() {
+    try {
+      await this.fetchVideo(this.url, (await this.getInfo())._filename, this.timeout)
+    } catch (e) {
+      console.log(`Error: ${e}:`)
+      console.log(`Trying again...`)
+      await this.fetchVideo(this.url, (await this.getInfo())._filename, this.timeout)
+    }
+    return (await this.getInfo())._filename
+  }
+
+  // once it's imported completely, we can remove the file we downloaded temporarily
+  async releaseVideoPath() {
+    await fs.unlink((await this.getInfo())._filename)
+  }
+}
+
+
+
 async function run() {
   console.log(`Starting Build of Auslan Stage Left index`)
   let indexRoot = "../../../datasets/auslan-stage-left"
@@ -61,25 +117,25 @@ async function run() {
     console.log(`Link: ${def.link}`)
 
     //await writer.append(def, [youtubedl(def.link)])
-    let videoFile = `video-cache/${encodeURIComponent(def.link)}.mp4`
+    //let videoFile = `video-cache/${encodeURIComponent(def.link)}.mp4`
     // download the vimeo video
-    await (new Promise((resolve, reject) => {
+    /* await (new Promise((resolve, reject) => {
       let video = youtubedl(def.link)
       video.pipe(fs.createWriteStream(videoFile))
       video.on('end', ()=> resolve())
       video.on('error', (e)=> reject(e))
-    }))
+    })) */
     await writer.append({
       words: def.glossList,
-      tags: ['established'],
+      tags: ['auslan-stage-left', 'description'],
       def: {
         glossList: def.glossList,
         link: def.link,
       },
-      videoPaths: [videoFile]
+      videoPaths: [new VimeoDownloaderSource(def.link)]
     })
 
-    fs.unlinkSync(videoFile) // we don't need to keep these around forever
+    //fs.unlinkSync(videoFile) // we don't need to keep these around forever
   }
 
   await writer.finish()
