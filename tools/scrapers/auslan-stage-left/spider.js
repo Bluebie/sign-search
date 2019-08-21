@@ -65,7 +65,7 @@ class VimeoDownloaderSource {
 
   fetchVideo(url, filename, timeoutSec) {
     return (new Promise((resolve, reject) => {
-      console.log(`local filename: ${filename}`)
+      console.log(`Downloading video to local filename: ${filename}`)
       let video = ytdl(this.url)
       video.pipe(require('fs').createWriteStream(filename))
       video.on('end', ()=> { clearTimeout(timeout); resolve(filename) })
@@ -113,7 +113,7 @@ async function run() {
   console.log(`Setup fresh library, streaming videos in to local index...`)
 
   for (let def of defs) {
-    console.log(`Downloading: ${def.glossList.join(', ')}`)
+    console.log(`Checking: ${def.glossList.join(', ')}`)
     console.log(`Link: ${def.link}`)
 
     //await writer.append(def, [youtubedl(def.link)])
