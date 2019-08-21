@@ -128,15 +128,15 @@ async function run() {
 
   console.log(`Beginning import...`)
 
+  let metadataCache = (await fs.pathExists(`metadata-cache.json`)) ? (await fs.readJSON(`metadata-cache.json`)) : {}
+
   // fetch metadata about videos we can import - TODO: remove the slice 0-1 to do the whole set
   let files = (await fs.readdir('timing')).filter(x => x.match(/\.txt$/)).sort()
   console.log("files: ", files)
   for (let filename of files) {
     let timing = await parseTimingFile((await fs.readFile(`timing/${filename}`)).toString())
-    if (!await fs.pathExists(`metadata-cache/${filename}.json`)) {
-      await fs.writeJSON(`metadata-cache/${filename}.json`, await fetchMetadata(timing.url))
-    }
-    let metadata = await fs.readJSON(`metadata-cache/${filename}.json`)
+    if (!metadataCache[filename]) metadataCache[filename] = await fetchMetadata(timing.url)
+    let metadata = metadataCache[filename]
     console.log(`For file: ${filename}`)
 
     // setup a youtube downloader, in case the video data is required to build a cache video
@@ -162,10 +162,11 @@ async function run() {
     }
 
     // done with this video, if it downloaded, it can be deleted now
-    //await ytdlSource.actuallyRelease()
+    await ytdlSource.actuallyRelease()
   }
 
   await writer.finish()
+  await fs.writeJSON(`metadata-cache.json`, metadataCache)
 
   console.log(`Asphyxia index build complete`)
 }

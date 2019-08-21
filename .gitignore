@@ -5,6 +5,6 @@ tools/scrapers/auslan-signbank/definition-links.json
 .stignore
 .vscode
 .stfolder
-tools/**/*-cache
+tools/**/*-cache*
 tools/**/*.mp4
 *.tmp
