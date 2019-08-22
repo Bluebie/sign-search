@@ -148,8 +148,7 @@ async function run() {
       if (clip.words.join(' ').trim() != '#skip') {
         console.log(`Adding to search index: ${clip.words.join(', ')}`)
         await writer.append({
-          //words: clip.words.join(' ').replace(/[?.,;:!]/, '').split(' '),
-          words: clip.words.map((x) => x.replace(/[?.,;:!]/, '').split(/[^a-zA-Z0-9]+/)),
+          words: clip.words.map((x) => x.replace(/[()?.,;:!]/g, '').split(/[^a-zA-Z0-9-'‘]+/).filter(x => x.trim() != '')),
           tags: clip.tags,
           videoPaths: [ytdlSource],
           def: {
