@@ -7,9 +7,9 @@ QbeGk-NxS3Y - Nature
 0:28.8 Grow > #nsw
 0:35.4 Seed
 0:39.5 Water, Watering
-0:45 Grass
-0:50 Environment
-0:56 Sustainable
-1:02 Stars > #nsw
-1:11 Moon > #nsw
-1:16 #end
+0:45   Grass
+0:50   Environment
+0:56   Sustainable
+1:02   Stars > #nsw
+1:11   Moon > #nsw
+1:16   #end

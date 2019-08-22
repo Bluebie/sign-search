@@ -134,10 +134,10 @@ async function run() {
   let files = (await fs.readdir('timing')).filter(x => x.match(/\.txt$/)).sort()
   console.log("files: ", files)
   for (let filename of files) {
+    console.log(`For file: ${filename}`)
     let timing = await parseTimingFile((await fs.readFile(`timing/${filename}`)).toString())
     if (!metadataCache[filename]) metadataCache[filename] = await fetchMetadata(timing.url)
     let metadata = metadataCache[filename]
-    console.log(`For file: ${filename}`)
 
     // setup a youtube downloader, in case the video data is required to build a cache video
     let ytdlSource = new CachingYoutubeDownloaderSource(timing, metadata)

@@ -1,13 +1,14 @@
 PStE_unzP9E - Classifiers
 
-0:01   #skip > Classifier for Person What?
+0:00.7 Classifier
+0:02   #skip > ... for Person What?
 0:05   Person > -#established #classifier #nsw
 0:07   #skip > classifier for animal what?
 0:10.2 Animal > -#established #classifier #nsw
 0:12   #skip > classifier for V-E-H-I-C-L-E what?
 0:18   Vehicle > -#established #classifier #nsw
 0:20   So
-0:21   I want to show a car crash > Phrase demonstraion
+0:21   I want to show a car crash > #phrase -#established Phrase demonstraion
 0:25.3 Car > -#established #classifier #nsw
 0:26   #skip > make the car (with hand)
 0:28   Car crash > -#established #classifier #nsw

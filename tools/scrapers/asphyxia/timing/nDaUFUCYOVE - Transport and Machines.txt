@@ -1,12 +1,12 @@
 nDaUFUCYOVE - Transport and Machines
 
-0:07 skateboard
-0:13 scooter
+0:07   skateboard
+0:13   scooter
 0:17.8 truck
-0:25 rocket
+0:25   rocket
 0:32.5 helicopter
 0:39.5 engine
 0:44.6 robot
-0:47 sword
-0:53 gun
-0:59 #end
+0:47   sword
+0:53   gun
+0:59   #end

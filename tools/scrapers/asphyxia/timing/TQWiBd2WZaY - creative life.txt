@@ -1,16 +1,16 @@
 TQWiBd2WZaY - creative life
 
-0:00 art
-0:02 design 
-0:06 idea
-0:08 make
-0:10 paper
-0:12 pen
-0:14 pencil
-0:16 draw
-0:19 papier mache
-0:22 sew by hand
-0:25 sew by machine
-0:26 knit
-0:29 story
-0:31 book
+0:00   art
+0:02   design 
+0:06   idea
+0:08   make
+0:10   paper
+0:12   pen
+0:14   pencil
+0:16   draw
+0:19   papier mache
+0:22   sew by hand
+0:25   sew by machine
+0:26   knit
+0:29   story
+0:31   book

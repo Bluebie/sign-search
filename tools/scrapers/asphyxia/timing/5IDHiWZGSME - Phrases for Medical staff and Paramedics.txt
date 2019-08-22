@@ -1,0 +1,40 @@
+5IDHiWZGSME - Phrases for Medical staff and Paramedics
+
+0:07   I'm a nurse > #phrase -#established
+0:17.3 I'm a medical student > #phrase -#established
+0:42   I'm an Ambulance officer > #phrase -#established
+0:53   I want to help you > #phrase -#established
+1:04   Why did you call an ambulance? > #phrase -#established
+1:19   Tell me your medical history > #phrase -#established
+1:25   Asthma
+1:27.5 Epilepsy
+1:29.4 Diabetes
+1:31   Stroke
+1:32.8 Heart attack history > #phrase -#established
+1:35   #skip > //"Tell me your medical history" is repeated here
+1:51   Do you take any regular medication? > #phrase -#established
+2:04   Do you have pain? > #phrase -#established
+2:12   Where is the pain? > #phrase -#established
+2:19   Can you describe the pain? > #phrase -#established
+2:25   Crushing
+2:27   Tight
+2:29   Sharp
+2:30.9 Stabbing
+2:32   Burning
+2:34   What does it feel like? > #phrase -#established
+2:37   #skip > //previous sequence about pain description repeated
+2:58   When did the pain start? > #phrase -#established
+3:10   What makes the pain better? > #phrase -#established
+3:22   What makes the pain worse? > #phrase -#established
+3:35   Have you taken anything for the pain? > #phrase -#established
+3:48   I want to know how bad your pain is > #phrase -#established
+3:54   If 1 is good and 10 is bad > #phrase -#established
+4:00   Where are you on the scale? > #phrase -#established
+4:03.5 #skip > // previous sequence about pain levels repeated
+4:22   Can you walk? > #phrase -#established
+4:32   When did you last have something to eat or drink? > #phrase -#established
+4:44   Have you had any water? > #phrase -#established
+4:53   I'm going to put a needle in your arm so i can give you medication. Is that alright? > #phrase -#established
+4:58.5 Do you have health insurance? > #phrase -#established
+5:21   Would you like to go to a public hospital or private hospital? > #phrase -#established
+5:36   #end

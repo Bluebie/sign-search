@@ -1,13 +1,13 @@
 x4mSDP6RwrE - Activities
 
-0:07 Game
-0:12 Play > #nsw
+0:07   Game
+0:12   Play > #nsw
 0:16.9 Music
 0:21.2 Science > #nsw
 0:26.8 Maths, Mathematics
 0:32.5 English > #nsw
 0:38.5 Sport
 0:42.5 Guitar
-0:47 Drums
+0:47   Drums
 0:50.8 Violin
 0:57.5 #end
