@@ -117,7 +117,7 @@ async function run() {
     console.log(`Link: ${def.link}`)
 
     await writer.append({
-      words: def.glossList.join(' ').replace(/‘/g, "'").replace(/[^a-zA-Z0-9-']+/g, '').replace(/ +/, ' ').split(/ /),
+      words: def.glossList.join(' ').replace(/‘/g, "'").replace(/[^a-zA-Z0-9-' ]+/g, '').replace(/ +/, ' ').split(/ /),
       tags: ['auslan-stage-left', 'description'],
       def: {
         glossList: def.glossList,
