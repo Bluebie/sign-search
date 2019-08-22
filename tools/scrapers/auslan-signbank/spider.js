@@ -9,8 +9,8 @@ const fs = require('fs-extra')
 const domain = "http://www.auslan.org.au"
 
 let tasks = {
-  index: false, // browse the dictionary keyword index and find links to definitions
-  definitions: false, // load definition pages and store them in the definition cache
+  index: true, // browse the dictionary keyword index and find links to definitions
+  definitions: true, // load definition pages and store them in the definition cache
   build: true // build the compressed web-friendly dataset in to the datasets collection under datasets/auslan-signbank, including grabbing any videos needed
 }
 
