@@ -116,17 +116,8 @@ async function run() {
     console.log(`Checking: ${def.glossList.join(', ')}`)
     console.log(`Link: ${def.link}`)
 
-    //await writer.append(def, [youtubedl(def.link)])
-    //let videoFile = `video-cache/${encodeURIComponent(def.link)}.mp4`
-    // download the vimeo video
-    /* await (new Promise((resolve, reject) => {
-      let video = youtubedl(def.link)
-      video.pipe(fs.createWriteStream(videoFile))
-      video.on('end', ()=> resolve())
-      video.on('error', (e)=> reject(e))
-    })) */
     await writer.append({
-      words: def.glossList,
+      words: def.glossList.join(' ').replace(/‘/g, "'").replace(/[^a-zA-Z0-9-']+/g, '').replace(/ +/, ' ').split(/ /),
       tags: ['auslan-stage-left', 'description'],
       def: {
         glossList: def.glossList,
@@ -134,8 +125,6 @@ async function run() {
       },
       videoPaths: [new VimeoDownloaderSource(def.link)]
     })
-
-    //fs.unlinkSync(videoFile) // we don't need to keep these around forever
   }
 
   await writer.finish()

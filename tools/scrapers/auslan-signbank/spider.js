@@ -11,6 +11,7 @@ const domain = "http://www.auslan.org.au"
 let tasks = {
   index: true, // browse the dictionary keyword index and find links to definitions
   definitions: true, // load definition pages and store them in the definition cache
+  videos: true, // should we check if video files are up to date?
   build: true // build the compressed web-friendly dataset in to the datasets collection under datasets/auslan-signbank, including grabbing any videos needed
 }
 
@@ -188,7 +189,8 @@ async function runDefinitionsTask() {
 
 // A simple static etag and file size based static http media server video source
 class StaticWebVideoSource {
-  constructor(videoURL) {
+  constructor(videoURL, keyCache) {
+    this.keyCache = keyCache
     this.url = videoURL
     this.localFilename = this.url.split('#')[0].split('?')[0].split('/').slice(-1)[0]
     this.timeout = 300
@@ -197,6 +199,7 @@ class StaticWebVideoSource {
 
   // get a unique key that should change if the video's content changes
   getKey() {
+    if (this.keyCache && this.keyCache[this.url]) return Promise.resolve(this.keyCache[this.url]) // DEBUG thing to avoid hitting the server so much
     return new Promise((resolve, reject)=> {
       if (this.key) return resolve(this.key)
       // do a HTTP head to figure out if remote resource info
@@ -210,13 +213,13 @@ class StaticWebVideoSource {
   
       req.on('error', (...a)=> { clearTimeout(timer); reject(...a) })
       req.on('response', (response)=> {
-        //console.log(`HEAD: ${response.statusCode} - Remote Size: ${response.caseless.get('content-length')}`)
         clearTimeout(timer)
         this.key = [
           this.url,
           `etag_${encodeURIComponent(response.caseless.get('etag').replace(/["']/g, ''))}`,
           `length_${parseInt(response.caseless.get('content-length'))}`
         ].map(x => encodeURIComponent(x)).join('-')
+        if (this.keyCache) this.keyCache[this.url] = this.key
         return resolve(this.key)
       })
     })
@@ -284,6 +287,11 @@ async function runBuildTask() {
   
   console.log(`Appending content...`)
 
+  let videoStatsCache = {}
+  if (tasks.videos == false && await fs.pathExists(`video-stats-cache.json`)) {
+    videoStatsCache = await fs.readJSON('video-stats-cache.json')
+  }
+
   let defFiles = await fs.readdir('definition-cache')
   let failedAppends = []
   for (let defFile of defFiles) {
@@ -293,7 +301,7 @@ async function runBuildTask() {
     console.log(`Appending definition: ${def.glosses.join(', ')} - ${sbLink}`)
     try {
       await writer.append({
-        words: def.glosses.map(x => x.split(/[^a-zA-Z0-9']+/).map(y => y.trim())),
+        words: def.glosses.map(x => x.replace(/[()]/g, '').split(/[^a-zA-Z0-9']+/).map(y => y.trim()).filter(x => x.length > 0)),
         tags: ['signbank', 'established', ...(def.regions || [])],
         def: {
           glossList: def.glosses,
@@ -301,8 +309,9 @@ async function runBuildTask() {
           regions: def.regions,
           body: def.definitions.map(x=> `${x.title}: ${x.entries.join('; ')}`).join("\n")
         },
-        videoPaths: def.videos.map(url => new StaticWebVideoSource(url))
+        videoPaths: def.videos.map(url => new StaticWebVideoSource(url, videoStatsCache))
       })
+      await fs.writeJSON(`video-stats-cache.json`, videoStatsCache)
     } catch (err) {
       console.log(`APPEND ERROR: Skipping entry ${def.glosses.join(', ')} due to: ${err}`)
       failedAppends.push(sbLink)
@@ -310,6 +319,7 @@ async function runBuildTask() {
   }
   
   await writer.finish()
+  await fs.writeJSON(`video-stats-cache.json`, videoStatsCache)
   
   console.log(`Auslan Signbank index build complete`)
   if (failedAppends.length > 0) {
