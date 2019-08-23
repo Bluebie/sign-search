@@ -14,7 +14,7 @@
   </head>
   <body class=home>
     <img id=header alt="Find Sign logo" src="style/assets/find-sign-logo.svg">
-    <form id=search_form data-signtip=search role=search autocomplete="off" >
+    <form id=search_form data-signtip=search role=search autocomplete="off" action="no-javascript.html">
       <input id=search_box autocomplete="off" autocapitalize="none" required>
     </form>
     <nav id=meta_links>
@@ -25,16 +25,29 @@
 
     <main id=results role=main aria-live=polite></main>
     <div id=pagination></div>
-    
-    <script src="node_modules/jquery/dist/jquery.min.js"></script>
-    <script src="lib/vector-library/vector-library-reader.js"></script>
-    <script src="lib/search-library/reader.js"></script>
-    <script src="lib/vector-utilities.js"></script>
-    <script src="lib/ui.js"></script>
+
+    <!-- software that runs find-sign client side is in these libraries -->
+    <script defer src="node_modules/jquery/dist/jquery.min.js"></script>
+    <script defer src="lib/vector-library/vector-library-reader.js"></script>
+    <script defer src="lib/search-library/reader.js"></script>
+    <script defer src="lib/vector-utilities.js"></script>
+    <script defer src="lib/ui.js"></script>
 
     <script>
     // fight the evil fbclid and gclid thingies
     if (window.location.search != "") window.location.href = window.location.href.split('?')[0]
+    // detect browsers that do not support modern javascript, and redirect them to a browser upgrade page
+    window.addEventListener('load', ()=> { // effectively defer this check too
+      if (!window.UIParsedSuccessfully) alert("Your browser is too out of date to support this webpage. If you would like to use this website, please update your browser, or install a browser like Firefox, which supports modern web standards.")
+    })
+    // check browser for API support, mostly to detect hecking Microsoft Edge and it's still broken chromium-based beta that doesn't support crypto.subtle yet
+    if (!window.TextDecoder || !window.crypto || !window.crypto.subtle || !window.crypto.subtle.digest) {
+      if (/Edge/.test(navigator.userAgent)) {
+        alert('Microsoft Edge does not support modern Web standards required to make this website work. Please try with a different browser, like Firefox, Opera, or Chrome')
+      } else {
+        alert('Your web browser does not seem to support modern web standards. Please update it and try again, or install and use Safari, Firefox, Opera, or Chrome to access this website')
+      }
+    }
     </script>
 
     <!-- Fathom - simple website analytics - https://github.com/usefathom/fathom -->

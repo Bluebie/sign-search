@@ -35,6 +35,6 @@
 4:32   When did you last have something to eat or drink? > #phrase -#established
 4:44   Have you had any water? > #phrase -#established
 4:53.1 I'm going to put a needle in your arm so i can give you medication. Is that alright? > #phrase -#established
-4:09.2 Do you have health insurance? > #phrase -#established
+5:09.4 Do you have health insurance? > #phrase -#established
 5:21.2 Would you like to go to a public hospital or private hospital? > #phrase -#established
 5:36   #end
