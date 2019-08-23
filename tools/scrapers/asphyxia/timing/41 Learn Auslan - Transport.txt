@@ -1,0 +1,14 @@
+kkGjWzSTWwQ - Transport
+
+0:00   Walk > #nsw
+0:01.7 Run > #nsw
+0:03.5 Bicycle > #nsw
+0:06   Car
+0:07.9 Drive > #nsw
+0:10.1 Train > #nsw
+0:11.9 Tram > #nsw
+0:14.3 Bus > #nsw
+0:16.1 Taxi
+0:18.2 Plane > #nsw
+0:20.3 Landing > #nsw
+0:22.2 Station
