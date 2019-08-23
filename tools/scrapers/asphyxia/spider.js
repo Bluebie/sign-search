@@ -122,8 +122,14 @@ async function run() {
   await vecLib.open('../../../datasets/vector-library')
 
   let writer = await (new SearchLibraryWriter(
-    indexRoot, {format: 'sint8', scaling: 8, vectorDB: vecLib}
-    //indexRoot, {format: 'float32', vectorDB: vecLib}
+    indexRoot, {
+      format: 'sint8',
+      scaling: 8,
+      vectorDB: vecLib,
+      buildTimestamp: Math.max(... await Promise.all((await fs.readdir('timing')).map(async (fn)=>
+        Math.floor((await fs.stat(`timing/${fn}`)).mtimeMs)
+      )))
+    }
   )).open()
 
   console.log(`Beginning import...`)
