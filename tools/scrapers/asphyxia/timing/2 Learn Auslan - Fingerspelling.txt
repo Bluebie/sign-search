@@ -1,28 +1,28 @@
 6oS7-jBYeQI - Fingerspelling
 
-0:01 a
-0:02 b
-0:03 c
-0:04 d
-0:06 e
-0:07 f
-0:08 g
-0:09 h
-0:10 i
-0:11 j
-0:12 k
-0:13 l
-0:14 m 
-0:15 n 
-0:16 o
-0:18 p
-0:19 q
-0:21 r
-0:22 s
-0:23 t
-0:25 u
-0:26 v
-0:27 w
-0:28 x
-0:30 y
-0:31 z
+0:01   A > #fingerspelling #everywhere #nsw #act #qld #nt #sa #wa #tas -#established
+0:02.4 B > #fingerspelling #everywhere #nsw #act #qld #nt #sa #wa #tas -#established
+0:03.5 C > #fingerspelling #everywhere #nsw #act #qld #nt #sa #wa #tas -#established
+0:04.5 D > #fingerspelling #everywhere #nsw #act #qld #nt #sa #wa #tas -#established
+0:05.8 E > #fingerspelling #everywhere #nsw #act #qld #nt #sa #wa #tas -#established
+0:07   F > #fingerspelling #everywhere #nsw #act #qld #nt #sa #wa #tas -#established
+0:08   G > #fingerspelling #everywhere #nsw #act #qld #nt #sa #wa #tas -#established
+0:09   H > #fingerspelling #everywhere #nsw #act #qld #nt #sa #wa #tas -#established
+0:10   I > #fingerspelling #everywhere #nsw #act #qld #nt #sa #wa #tas -#established
+0:11   J > #fingerspelling #everywhere #nsw #act #qld #nt #sa #wa #tas -#established
+0:12   K > #fingerspelling #everywhere #nsw #act #qld #nt #sa #wa #tas -#established
+0:13.3 L > #fingerspelling #everywhere #nsw #act #qld #nt #sa #wa #tas -#established
+0:14.5 M > #fingerspelling #everywhere #nsw #act #qld #nt #sa #wa #tas -#established 
+0:15.5 N > #fingerspelling #everywhere #nsw #act #qld #nt #sa #wa #tas -#established 
+0:16.5 O > #fingerspelling #everywhere #nsw #act #qld #nt #sa #wa #tas -#established
+0:17.5 P > #fingerspelling #everywhere #nsw #act #qld #nt #sa #wa #tas -#established
+0:18.5 Q > #fingerspelling #everywhere #nsw #act #qld #nt #sa #wa #tas -#established
+0:21   R > #fingerspelling #everywhere #nsw #act #qld #nt #sa #wa #tas -#established
+0:22   S > #fingerspelling #everywhere #nsw #act #qld #nt #sa #wa #tas -#established
+0:23.4 T > #fingerspelling #everywhere #nsw #act #qld #nt #sa #wa #tas -#established
+0:24.5 U > #fingerspelling #everywhere #nsw #act #qld #nt #sa #wa #tas -#established
+0:26   V > #fingerspelling #everywhere #nsw #act #qld #nt #sa #wa #tas -#established
+0:27   W > #fingerspelling #everywhere #nsw #act #qld #nt #sa #wa #tas -#established
+0:28.3 X > #fingerspelling #everywhere #nsw #act #qld #nt #sa #wa #tas -#established
+0:29.4 Y > #fingerspelling #everywhere #nsw #act #qld #nt #sa #wa #tas -#established
+0:31   Z > #fingerspelling #everywhere #nsw #act #qld #nt #sa #wa #tas -#established
