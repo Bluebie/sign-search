@@ -1,0 +1,16 @@
+QRjJa3plW3E - People
+
+0:00   Woman > #nsw
+0:02   Man > #nsw
+0:03.6 Boy > #nsw
+0:04.8 Girl > #nsw
+0:06.7 Mother > #nsw
+0:07.9 Father > #nsw
+0:09.9 Mum, Mummy > #nsw
+0:11.8 Brother > #nsw
+0:13.1 Sister > #nsw
+0:15.1 Friend > #nsw
+0:17.1 Son > #nsw
+0:18.6 Daughter > #nsw
+0:20.1 Children > #nsw
+0:22.3 Adult > #nsw
