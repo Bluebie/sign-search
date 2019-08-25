@@ -130,7 +130,7 @@ async function run() {
   let videos = await scanPlaylists(playlistURLs)
   if (forceRebuild || !(await fs.pathExists(`playlist-keys.json`)) || (await fs.readJSON(`playlist-keys.json`)).sort().join("\n") != videos.map(x => [x.key, x.words, x.tags].flat().join(';')).sort().join("\n")) {
     console.log(`metadata changed, rebuilding...`)
-    await fs.write(`playlist-keys.json`, JSON.generate(videos.map([x.key, x.words, x.tags].flat().join(';'))))
+    await fs.writeJSON(`playlist-keys.json`, videos.map(x => [x.key, x.words, x.tags].flat().join(';')))
   } else {
     console.log(`no changes detected in youtube playlists, skipping rebuild`)
     return

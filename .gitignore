@@ -8,3 +8,4 @@ tools/scrapers/auslan-signbank/definition-links.json
 tools/**/*-cache*
 tools/**/*.mp4
 *.tmp
+tools/scrapers/youtube/playlist-keys.json
