@@ -137,7 +137,7 @@ async function run() {
   let metadataCache = (await fs.pathExists(`metadata-cache.json`)) ? (await fs.readJSON(`metadata-cache.json`)) : {}
 
   // fetch metadata about videos we can import - TODO: remove the slice 0-1 to do the whole set
-  let files = (await fs.readdir('timing')).filter(x => x.match(/\.txt$/)).sort()
+  let files = (await fs.readdir('timing')).filter(x => x.match(/\.txt$/)).sort((a,b)=> parseInt(a) - parseInt(b))
   console.log("files: ", files)
   for (let filename of files) {
     console.log(`For file: ${filename}`)
