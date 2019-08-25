@@ -2,8 +2,8 @@ zwAxKFjBqwg - Animals
 
 0:00   Cat > #nsw
 0:02.3 Dog > #nsw Note: classifier for "dog" usually used instead when chatting with someone who has tunnel vision to keep sign closer to your face
-0:04.1 Rabbit
-0:06.4 Bird > #nsw
+0:04   Rabbit
+0:06.3 Bird > #nsw
 0:08   Horse > #nsw
 0:10.4 Sheep
 0:12.1 Cow
