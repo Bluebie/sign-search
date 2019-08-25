@@ -6,10 +6,10 @@ const util = require('util')
 const ytdl = require('youtube-dl')
 const VectorLibraryReader = require('../../../lib/vector-library/vector-library-reader')
 const SearchLibraryWriter = require('../../../lib/search-library/writer')
-const fs = require('fs').promises
+const fs = require('fs-extra')
 
 const importList = 'imports.txt'
-
+const forceRebuild = false
 
 
 // fetch the youtube playlists and index relevant data about videos included in them
@@ -44,7 +44,7 @@ async function scanPlaylists(playlistURLs) {
         title: info.title,
         words: wordsList,
         updated: (new Date(Date.UTC(info.upload_date.substr(0, 4), info.upload_date.substr(4, 2), info.upload_date.substr(6, 2)))).toISOString(),
-        key: `${info.id}-${info.tbr}-${info.upload_date}-${info._duration_raw}`,
+        key: `${info.id}-${info.upload_date}-${info._duration_raw}`,
         filename: info._filename,
         duration: info._duration_raw,
         clippingStart: (typeof(playlistConfig.trimStart) == 'number') ? playlistConfig.trimStart : false,
@@ -128,6 +128,13 @@ async function run() {
   }
 
   let videos = await scanPlaylists(playlistURLs)
+  if (forceRebuild || !(await fs.pathExists(`playlist-keys.json`)) || (await fs.readJSON(`playlist-keys.json`)).sort().join("\n") != videos.map(x => [x.key, x.words, x.tags].flat().join(';')).sort().join("\n")) {
+    console.log(`metadata changed, rebuilding...`)
+    await fs.write(`playlist-keys.json`, JSON.generate(videos.map([x.key, x.words, x.tags].flat().join(';'))))
+  } else {
+    console.log(`no changes detected in youtube playlists, skipping rebuild`)
+    return
+  }
   console.log(`metadata scan complete, ${videos.length} videos found, ready for import`)
 
   let vecLib = new VectorLibraryReader()
@@ -146,6 +153,7 @@ async function run() {
       words: video.words,
       tags: video.tags,
       videoPaths: [ytdlSource],
+      lastChange: video.updated,
       def: {
         link: video.url,
         glossList: video.words,

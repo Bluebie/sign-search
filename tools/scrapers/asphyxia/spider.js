@@ -157,6 +157,7 @@ async function run() {
           words: clip.words.map((x) => x.replace(/[()?.,;:!]/g, '').split(/[^a-zA-Z0-9-'‘]+/).filter(x => x.trim() != '')),
           tags: clip.tags,
           videoPaths: [ytdlSource],
+          lastUpdated: (await fs.stat(`timing/${filename}`)).mtimeMs,
           def: {
             link: `https://youtu.be/${metadata.id}?t=${Math.floor(clip.start)}`,
             glossList: clip.words,
