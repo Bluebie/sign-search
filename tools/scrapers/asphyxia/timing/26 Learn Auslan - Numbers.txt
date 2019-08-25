@@ -1,0 +1,40 @@
+U32RG9JbZb0 - Numbers
+
+# first ten
+0:00   One, 1     > #nsw
+0:01.5 Two, 2     > #nsw
+0:02.5 Three, 3   > #nsw
+0:03.8 Four, 4    > #nsw
+0:04.9 Five, 5    > #nsw
+0:06.3 Six, 6     > #nsw
+0:07.5 Seven, 7   > #nsw
+0:08.7 Eight, 8   > #nsw
+0:09.9 Nine, 9    > #nsw
+0:11.2 Ten, 10    > #nsw
+# teens
+0:12.3 Eleven, 11
+0:13.8 Twelve, 12
+0:15   Thirteen, 13    > #nsw
+0:16.8 Fourteen, 14    > #nsw
+0:18.1 Fifteen, 15     > #nsw
+0:19.7 Sixteen, 16     > #nsw
+0:21.1 Seventeen, 17   > #nsw
+0:22.7 Eighteen, 18    > #nsw
+0:24.1 Nineteen, 19    > #nsw
+# common
+0:25.7 Twenty, 20      > #nsw
+0:27   Twenty One, 21  > #nsw
+# are these used in northern dialect?
+0:29.6 Twenty Two, 22
+0:31.2 Thirty Three, 33
+0:32.7 Forty Four, 44
+# large numbers
+0:34.7 One Hundred, 100     > #nsw
+0:37.4 One Thousand, 1000   > #nsw
+0:39.3 One Million, 1000000 > #nsw
+# questions and answers
+0:41.5 How Old?             > #nsw
+0:43.4 Six Years Old        > #nsw
+0:45   Seven Years Old      > #nsw
+0:47   Six o'clock          > #nsw
+0:48.4 Seven o'clock        > #nsw

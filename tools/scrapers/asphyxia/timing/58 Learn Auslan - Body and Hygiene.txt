@@ -4,11 +4,11 @@ uruD1wODZ84 - Body and Hygiene
 0:13.8 Brush hair
 0:20   Bath
 0:25.5 Shower
-0:31   Bed
-0:36   Feet
-0:41   Hands
+0:31.3 Bed
+0:36.2 Feet
+0:41.2 Hands
 0:46.7 Head
-0:51   Eyes
-0:55   Nose
+0:51.3 Eyes
+0:55.2 Nose
 0:59   Mouth
 1:02   #end
