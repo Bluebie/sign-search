@@ -172,7 +172,7 @@ async function run() {
   }
 
   await writer.finish()
-  await fs.writeJSON(`metadata-cache.json`, metadataCache)
+  await fs.writeJSON(`metadata-cache.json`, metadataCache, { spaces: 2 })
 
   console.log(`Asphyxia index build complete`)
 }
