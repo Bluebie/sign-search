@@ -8,10 +8,10 @@
 0:08.3 Don't want > #nsw
 0:10.5 Have > #nsw
 0:11.6 Don't have > (here I demonstrate the handshape I’m using)
-0:15.7 Need
-0:17.7 Must
-0:19.2 Should
-0:21.3 Prefer
-0:23.6 Because 
+0:15.7 Need > #nsw
+0:17.7 Must > #nsw
+0:19.2 Should > #nsw
+0:21.3 Prefer > #nsw
+0:23.6 Because > #nsw
 0:26   Can't be bothered > (you’ll see that sometimes a whole English phrase is captured with a single sign)
 0:28 #end

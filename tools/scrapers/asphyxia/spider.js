@@ -135,7 +135,8 @@ async function run() {
   console.log(`Beginning import...`)
 
   let metadataCache = (await fs.pathExists(`metadata-cache.json`)) ? (await fs.readJSON(`metadata-cache.json`)) : {}
-
+  let count = 0
+  
   // fetch metadata about videos we can import - TODO: remove the slice 0-1 to do the whole set
   let files = (await fs.readdir('timing')).filter(x => x.match(/\.txt$/)).sort((a,b)=> parseInt(a) - parseInt(b))
   console.log("files: ", files)
@@ -164,6 +165,7 @@ async function run() {
             body: clip.body || metadata.description || ''
           }
         })
+        count += 1
       }
     }
 
@@ -174,7 +176,7 @@ async function run() {
   await writer.finish()
   await fs.writeJSON(`metadata-cache.json`, metadataCache, { spaces: 2 })
 
-  console.log(`Asphyxia index build complete`)
+  console.log(`Asphyxia index build complete, ${count} sign clips included`)
 }
 
 run()
