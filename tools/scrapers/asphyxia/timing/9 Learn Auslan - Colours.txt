@@ -2,7 +2,7 @@ j-nTBhvd_nA - Colours
 
 0:00   red
 0:02.8 blue
-0:04.8 yellow > #nsw
+0:04.7 yellow > #nsw
 0:06.8 green
 0:09   orange > #nsw
 0:10.7 purple

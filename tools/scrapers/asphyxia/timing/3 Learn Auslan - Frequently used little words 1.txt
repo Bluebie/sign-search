@@ -1,12 +1,12 @@
 rRmkYP57yrk - Frequently used little words 1
 
-0:00   same
-0:02   diffrent 
-0:03   again
-0:05.5 maybe, or
-0:08   lots, too much
-0:11.4 but 
-0:12.4 for
-0:15.7 go
-0:17.7 come
-0:19.8 with
+0:00   Same > #nsw
+0:01.7 Diffrent  > #nsw
+0:03.3 Again > #nsw
+0:05.5 Maybe, Or > #nsw
+0:08.3 Lots, Too much > #nsw
+0:11.4 But 
+0:12.4 For
+0:15.7 Go > #nsw
+0:17.7 Come > #nsw
+0:19.8 With > #nsw

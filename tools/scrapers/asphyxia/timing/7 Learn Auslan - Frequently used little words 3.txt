@@ -4,7 +4,7 @@ aQaaz9-ShiE - Frequently used little words 3
 0:03   Smart > #nsw
 0:06   Stupid > #nsw
 0:08.3 Dangerous
-0:10.8 Little > #nsw
+0:10.7 Little > #nsw
 0:12.5 Big > #nsw
 0:15.4 Give > #nsw
 0:17   Take > #nsw
