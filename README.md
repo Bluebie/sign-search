@@ -15,7 +15,9 @@ It should be easy to adapt the underlying technology. If your source material is
 Due to the size of the vector library, it hasn't been committed to the git repo. If you want a full prebuilt copy, you can download it directly from the live website at the following URLs:
 
 https://find.auslan.fyi/datasets/vector-library/db-index.bin
+
 https://find.auslan.fyi/datasets/vector-library/db-strings.bin
+
 https://find.auslan.fyi/datasets/vector-library/db-vectors.bin
 
 If you need to support a non-english language, you can use the `tools/build-indexed-vector-library.js` script to convert a text format vector database from https://fasttext.cc/ to the compressed sharded format used here. Then you should be able to build search libraries and adapt the interface to a new written language without much trouble.
