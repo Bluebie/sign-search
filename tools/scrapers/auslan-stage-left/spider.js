@@ -8,6 +8,12 @@ const VectorLibraryReader = require('../../../lib/vector-library/vector-library-
 const SearchLibraryWriter = require('../../../lib/search-library/writer')
 const fs = require('fs-extra')
 
+const CoolDownTime = 5 // seconds
+
+function delay(sec) {
+  return new Promise((resolve, reject) => setTimeout(()=> resolve(), sec * 1000))
+}
+
 // fetch the Auslan Stage Left index on their website
 function fetchIndex() {
   return new Promise((resolve, reject)=> {
@@ -125,6 +131,8 @@ async function run() {
       },
       videoPaths: [new VimeoDownloaderSource(def.link)]
     })
+    // give vimeo a gentler experience
+    await delay(CoolDownTime)
   }
 
   await writer.finish()
