@@ -28,12 +28,13 @@
 
     <!-- software that runs find-sign client side is in these libraries -->
     <script defer src="node_modules/jquery/dist/jquery.min.js"></script>
+    <script defer src="node_modules/ua-parser-js/dist/ua-parser.min.js"></script>
     <script defer src="lib/vector-library/vector-library-reader.js"></script>
     <script defer src="lib/search-library/reader.js"></script>
     <script defer src="lib/vector-utilities.js"></script>
     <script defer src="lib/ui.js"></script>
 
-    <script>
+    <script defer>
     // fight the evil fbclid and gclid thingies
     if (window.location.search != "") window.location.href = window.location.href.split('?')[0]
     // detect browsers that do not support modern javascript, and redirect them to a browser upgrade page
