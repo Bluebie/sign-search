@@ -35,7 +35,7 @@ async function scanPlaylists(playlistURLs) {
       }
 
       // slice at the first : then use the last : section as a comma seperated list of words to mean average together to find vector
-      wordsList = wordsList.split(/:/).slice(-1)[0].split(/[^a-zA-Z0-9'‘]+/).map((x)=> x.trim()).filter(x => x.match(/[a-zA-Z0-9]+/))
+      wordsList = wordsList.split(/:/).slice(-1)[0].split(/[^a-zA-Z0-9'‘-]+/).map((x)=> x.trim()).filter(x => x.match(/[a-zA-Z0-9]+/))
       
       signVideos.push({
         url: info.webpage_url,
