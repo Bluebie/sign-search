@@ -34,13 +34,17 @@
     <script defer src="lib/vector-utilities.js"></script>
     <script defer src="lib/ui.js"></script>
 
-    <script defer>
+    <script>
     // fight the evil fbclid and gclid thingies
     if (window.location.search != "") window.location.href = window.location.href.split('?')[0]
     // detect browsers that do not support modern javascript, and redirect them to a browser upgrade page
-    window.addEventListener('load', ()=> { // effectively defer this check too
-      if (!window.UIParsedSuccessfully) alert("Your browser is too out of date to support this webpage. If you would like to use this website, please update your browser, or install a browser like Firefox, which supports modern web standards.")
-    })
+    try {
+      if (eval("(async (x)=> true)()").constructor != Promise) {
+        throw new Error("async function doesn't return Promise")
+      }
+    } catch(e) {
+      alert(`Your browser is too out of date to support this webpage. If you would like to use this website, please update your browser, or install a browser like Firefox, which supports modern web standards. Error: ${e}`)
+    }
     // check browser for API support, mostly to detect hecking Microsoft Edge and it's still broken chromium-based beta that doesn't support crypto.subtle yet
     if (!window.TextDecoder || !window.crypto || !window.crypto.subtle || !window.crypto.subtle.digest) {
       if (/Edge/.test(navigator.userAgent)) {
