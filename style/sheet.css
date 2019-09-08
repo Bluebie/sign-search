@@ -7,7 +7,7 @@
   --module-bg: hsl(var(--hue), 18%, 27%);
   --submodule-bg: hsl(var(--hue), 21%, 24%);
   --fade-duration: 0.5s;
-  --fade-time-offset: 0.05s;
+  --fade-time-offset: 0.075s;
 }
 
 @font-face {
