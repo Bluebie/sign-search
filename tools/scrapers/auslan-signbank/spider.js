@@ -96,7 +96,7 @@ async function runIndexTask() {
   console.log("Definition Links:")
   console.log(defLinks)
 
-  await fs.writeFile('definition-links.json', JSON.stringify(defLinks))
+  await fs.writeJSON('definition-links.json', defLinks)
 }
 
 // load a definition webpage, convert it in to a definition cache file written in to definition-cache folder
@@ -108,7 +108,7 @@ async function fetchDefinition(url, loadOtherMatches = true) {
   let def = {}
   if (await fs.pathExists(`definition-cache/${defID}.json`)) {
     // load existing cache file if it already exists
-    def = JSON.parse(await fs.readFile(`definition-cache/${defID}.json`))
+    def = await fs.readJSON(`definition-cache/${defID}.json`)
   }
 
   def.id = defID
@@ -149,7 +149,8 @@ async function fetchDefinition(url, loadOtherMatches = true) {
   }
 
   // write out definition cache file
-  await fs.writeFile(`definition-cache/${defID}.json`, JSON.stringify(def))
+  await fs.ensureDir(`definition-cache`)
+  await fs.writeJSON(`definition-cache/${defID}.json`, def)
 
   // check if there are more listings for this keyword and fetch those too
   // we had about 3,700 definitions before adding this feature
@@ -175,7 +176,12 @@ async function fetchDefinition(url, loadOtherMatches = true) {
 // go to each URL in the definition-links.json file from the indexing task
 // and translate those definition pages in to definition-cache files
 async function runDefinitionsTask() {
-  let definitionLinks = JSON.parse(await fs.readFile('definition-links.json'))
+  if (fs.pathExists('definition-links.json')) {
+    var definitionLinks = await fs.readJSON('definition-links.json')
+  } else {
+    var definitionLinks = {}
+  }
+
   for (let keyword of Object.keys(definitionLinks)) {
     try {
       await fetchDefinition(definitionLinks[keyword])
