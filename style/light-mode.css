@@ -23,7 +23,7 @@ div#pagination button {
   filter: var(--filter-fg);
 }
 
-div#pagination button.current-page {
+div#pagination button[aria-current] {
   background-color: transparent;
   border: 2px solid hsl(220deg, 31%, 70%);
 }
