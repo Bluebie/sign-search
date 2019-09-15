@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang=en>
+  <head>
+    <title>Find Sign</title>
+    <meta charset="utf-8">
+    <link rel=stylesheet href="style/sheet.css">
+    <link rel=stylesheet href="style/light-mode.css" media="(prefers-color-scheme: light)">
+    <link rel=stylesheet href="style/mobile.css" media="(max-width: 799px)">
+    <meta name=viewport content="width=device-width">
+    <link rel=icon type="image/png" sizes="32x32" href="style/favicon-32x32.png">
+    <meta property="og:image" content="https://find.auslan.fyi/style/assets/open-graph-image@3x.png">
+    <meta property="og:description" content="Find Sign is an Auslan Search Engine. It helps find Auslan resources from around the internet in one place. Deaf community can send websites and videos to include and help make Auslan vocabulary easier to find.">
+    <meta property="og:title" content="Find Sign - Auslan Search Engine">
+  </head>
+  <body class=home>
+    <img id=header role=img alt="Find Sign logo" src="style/assets/find-sign-logo.svg">
+    <form id=search_form data-signtip=search role=search autocomplete="off" action="no-javascript.html">
+      <input id=search_box autocomplete="off" autocapitalize="none" required>
+    </form>
+    <nav id=meta_links>
+      <a href="about.html"      data-signtip=about>About</a>
+      <a href="technology.html" data-signtip=technology>Technology</a>
+      <a href="contribute.html" data-signtip=contribute>Contribute</a>
+      <a href="https://findsign.tumblr.com/" data-signtip=news>News</a>
+    </nav>
+
+    <main id=results role=main></main>
+    <div id=pagination></div>
+
+    <!-- software that runs find-sign client side is in these libraries -->
+    <script defer src="node_modules/jquery/dist/jquery.min.js"></script>
+    <script defer src="node_modules/ua-parser-js/dist/ua-parser.min.js"></script>
+    <script defer src="lib/vector-library/vector-library-reader.js"></script>
+    <script defer src="lib/search-library/reader.js"></script>
+    <script defer src="lib/vector-utilities.js"></script>
+    <script defer src="lib/search-ui.js"></script>
+
+    <script>
+    // fight the evil fbclid and gclid thingies
+    if (window.location.search != "") window.location.href = window.location.href.split('?')[0]
+    // detect browsers that do not support modern javascript, and redirect them to a browser upgrade page
+    try {
+      if (eval("(async (x)=> true)()").constructor != Promise) {
+        throw new Error("async function doesn't return Promise")
+      }
+    } catch(e) {
+      alert(`Your browser is too out of date to support this webpage. If you would like to use this website, please update your browser, or install a browser like Firefox, which supports modern web standards. Error: ${e}`)
+    }
+    // check browser for API support, mostly to detect hecking Microsoft Edge and it's still broken chromium-based beta that doesn't support crypto.subtle yet
+    if (!window.TextDecoder || !window.crypto || !window.crypto.subtle || !window.crypto.subtle.digest) {
+      if (/Edge/.test(navigator.userAgent)) {
+        alert('Microsoft Edge does not support modern Web standards required to make this website work. Please try with a different browser, like Firefox, Opera, or Chrome')
+      } else {
+        alert('Your web browser does not seem to support modern web standards. Please update it and try again, or install and use Safari, Firefox, Opera, or Chrome to access this website')
+      }
+    }
+
+    window.addEventListener('load', ()=> {
+      var uaParser = new UAParser(navigator.userAgent)
+      window.ui = new SearchUI({
+        languageName: "Auslan",
+        datasetsPath: "datasets",
+        vectorLibraries: ["vector-library"],
+        searchLibraries: ["asphyxia", "youtube", "auslan-signbank", "auslan-stage-left"],
+        resultsPerPage: 10,
+        maxPages: 8,
+        videoRenderMode: (uaParser.getBrowser().name.match(/Safari/i)) ? 'picture' : 'video',
+        searchForm: $('#search_form'),
+        searchInput: $('#search_box'),
+        resultsContainer: $('#results'),
+        paginationContainer: $('#pagination'),
+        tileAppendDelay: parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--fade-time-offset').trim())
+      })
+
+      $("img#header").click(()=> {
+        $("#search_box").val('')
+        ui.setView('home')
+      })
+
+      $("#search_form").submit((e)=> {
+        e.preventDefault()
+        ui.search($('#search_box').val())
+      })
+
+      ui.setup()
+    })
+    </script>
+
+    <!-- Fathom - simple website analytics - https://github.com/usefathom/fathom -->
+    <script>
+    (function(f, a, t, h, o, m){
+    	a[h]=a[h]||function(){
+    		(a[h].q=a[h].q||[]).push(arguments)
+    	};
+    	o=f.createElement('script'),
+    	m=f.getElementsByTagName('script')[0];
+    	o.async=1; o.src=t; o.id='fathom-script';
+    	m.parentNode.insertBefore(o,m)
+    })(document, window, '//analytics.auslan.fyi/tracker.js', 'fathom');
+    fathom('set', 'siteId', 'DKXXG');
+    fathom('trackPageview');
+    </script>
+    <!-- / Fathom -->
+  </body>
+</html>
