@@ -10,6 +10,8 @@ const promisify = require('util').promisify
 const lineReader = require('line-reader')
 const VectorLibraryWriter = require('../lib/vector-library/writer')
 const resolutionBits = 8
+const shardBits = 16
+const maxEntries = 500000
 
 async function run(fasttextPath) {
   console.log(fasttextPath)
@@ -17,6 +19,7 @@ async function run(fasttextPath) {
 
   let count = 0
   await promisify(lineReader.eachLine)(fasttextPath, function(line, last, cb) {
+    if (count >= maxEntries) return
     (async function() {
       let elements = line.toString().replace("\n", '').split(' ')
 
@@ -24,12 +27,12 @@ async function run(fasttextPath) {
         let [totalWords, vectorSize] = elements.map(n => parseInt(n))
         console.log(`Starting transfer from vector library containing ${totalWords} words with vector size of ${vectorSize}`)
         writer = await (new VectorLibraryWriter(
-          `../datasets/vectors-${fasttextPath.split('/').slice(-1)[0].replace('.vec', '').replace('.', '-')}-${resolutionBits}bit`,
+          `../datasets/vectors-${fasttextPath.split('/').slice(-1)[0].replace('.vec', '').replace(/\./g, '-')}-${resolutionBits}bit`,
           {
             vectorBits: resolutionBits,
             // calculate shard bits and prefix bits to try to optimise each shard file size to roughly 15kb or so
-            prefixBits: Math.ceil(totalWords * 8 / 2000000),
-            shardBits: Math.ceil(totalWords * 16 / 2000000),
+            prefixBits: Math.round(shardBits / 2),
+            shardBits: Math.round(shardBits),
             vectorSize
           }
         )).open()
