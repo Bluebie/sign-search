@@ -1,16 +1,22 @@
-const VectorLibraryReader = require('../lib/vector-library/vector-library-reader')
+// A test utility, queries the a vector library and retrieves the word
+// embedding vector as a JSON array
+// Usage:
+//  > node query-vector-database.js ../datasets/vectors-name-of-library Search-Word
+const VectorLibraryReader = require('../lib/vector-library/reader')
 
 async function run(dbPath, query) {
-  console.log(`Loading Vector Library from ${dbPath}`)
+  console.warn(`Loading Vector Library from ${dbPath}`)
   let vecLib = new VectorLibraryReader()
   await vecLib.open(dbPath)
-  console.log(`Loaded!`)
-  console.log(`Running query for "${query}"`)
+  console.warn(`Loaded!`)
+  console.warn(`Running query for "${query}"`)
   let result = await vecLib.lookup(query)
   if (result) {
-    console.log(`Found Vector!`, result)
+    console.warn(`Found Vector!`)
+    console.log(JSON.stringify(result))
   } else {
-    console.log(`Word not found in index`)
+    console.warn(`Word not found in index`)
+    process.exitCode = 1
   }
 }
 

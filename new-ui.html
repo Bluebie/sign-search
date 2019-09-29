@@ -30,7 +30,7 @@
     <!-- software that runs find-sign client side is in these libraries -->
     <script defer src="node_modules/jquery/dist/jquery.min.js"></script>
     <script defer src="node_modules/ua-parser-js/dist/ua-parser.min.js"></script>
-    <script defer src="lib/vector-library/vector-library-reader.js"></script>
+    <script defer src="lib/vector-library/reader.js"></script>
     <script defer src="lib/search-library/reader.js"></script>
     <script defer src="lib/vector-utilities.js"></script>
     <script defer src="lib/search-ui.js"></script>
@@ -60,7 +60,7 @@
       window.ui = new SearchUI({
         languageName: "Auslan",
         datasetsPath: "datasets",
-        vectorLibraries: ["vector-library"],
+        vectorLibraries: ["vectors-cc-en-300-8bit"],
         searchLibraries: ["asphyxia", "youtube", "auslan-signbank", "auslan-stage-left"],
         resultsPerPage: 10,
         maxPages: 8,
