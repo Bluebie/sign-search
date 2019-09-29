@@ -7,18 +7,26 @@
 // Usage:
 //  > node build-indexed-vector-library.js path/to/fasttext-database.vec
 const promisify = require('util').promisify
+const fs = require('fs-extra')
+const zlib = require('zlib')
 const lineReader = require('line-reader')
 const VectorLibraryWriter = require('../lib/vector-library/writer')
 const resolutionBits = 8
-const shardBits = 16
+const shardBits = 13
 const maxEntries = 500000
 
 async function run(fasttextPath) {
   console.log(fasttextPath)
   let writer
 
+  let inputFile = fasttextPath
+  if (inputFile.match(/\.gz$/)) {
+    let unzip = zlib.createGunzip()
+    inputFile = fs.createReadStream(inputFile).pipe(unzip)
+  }
+
   let count = 0
-  await promisify(lineReader.eachLine)(fasttextPath, function(line, last, cb) {
+  await promisify(lineReader.eachLine)(inputFile, function(line, last, cb) {
     if (count >= maxEntries) return
     (async function() {
       let elements = line.toString().replace("\n", '').split(' ')
