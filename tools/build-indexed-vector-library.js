@@ -27,7 +27,8 @@ async function run(fasttextPath) {
 
   let count = 0
   await promisify(lineReader.eachLine)(inputFile, function(line, last, cb) {
-    if (count >= maxEntries) return
+    if (count >= maxEntries) return cb();
+
     (async function() {
       let elements = line.toString().replace("\n", '').split(' ')
 
@@ -35,13 +36,14 @@ async function run(fasttextPath) {
         let [totalWords, vectorSize] = elements.map(n => parseInt(n))
         console.log(`Starting transfer from vector library containing ${totalWords} words with vector size of ${vectorSize}`)
         writer = await (new VectorLibraryWriter(
-          `../datasets/vectors-${fasttextPath.split('/').slice(-1)[0].replace('.vec', '').replace(/\./g, '-')}-${resolutionBits}bit`,
+          `../datasets/vectors-${fasttextPath.split('/').slice(-1)[0].replace('.vec', '').replace('.gz', '').replace(/\./g, '-')}-${resolutionBits}bit`,
           {
             vectorBits: resolutionBits,
             // calculate shard bits and prefix bits to try to optimise each shard file size to roughly 15kb or so
             prefixBits: Math.round(shardBits / 2),
             shardBits: Math.round(shardBits),
-            vectorSize
+            vectorSize,
+            gzip: false // with the fasttext data, compression is only worth about 10%, not worth the storage space generally
           }
         )).open()
       } else {
