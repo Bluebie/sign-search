@@ -1,7 +1,7 @@
 // Spider to import and slice and dice the Asphyxia videos, following the timing values in the timing files in the ./timing directory
 const util = require('util')
 const ytdl = require('youtube-dl')
-const VectorLibraryReader = require('../../../lib/vector-library/vector-library-reader')
+const VectorLibraryReader = require('../../../lib/vector-library/reader')
 const SearchLibraryWriter = require('../../../lib/search-library/writer')
 const fs = require('fs-extra')
 
@@ -126,8 +126,8 @@ async function run() {
       format: 'sint8',
       scaling: 8,
       vectorDB: vecLib,
-      buildTimestamp: Math.max(... await Promise.all((await fs.readdir('timing')).map(async (fn)=>
-        Math.floor((await fs.stat(`timing/${fn}`)).mtimeMs)
+      //buildTimestamp: Math.max(... await Promise.all((await fs.readdir('timing')).map(async (fn)=>
+      //  Math.floor((await fs.stat(`timing/${fn}`)).mtimeMs)
       )))
     }
   )).open()

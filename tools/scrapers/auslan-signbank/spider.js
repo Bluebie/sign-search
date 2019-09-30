@@ -3,7 +3,7 @@
 // then transforms that cache in to the compressed search-library format in /datasets/auslan-signbank
 const request = require('request').defaults({ headers: {'User-Agent': "find.auslan.fyi"}})
 const cheerio = require('cheerio')
-const VectorLibraryReader = require('../../../lib/vector-library/vector-library-reader')
+const VectorLibraryReader = require('../../../lib/vector-library/reader')
 const SearchLibraryWriter = require('../../../lib/search-library/writer')
 const fs = require('fs-extra')
 const domain = "http://www.auslan.org.au"

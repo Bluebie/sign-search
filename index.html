@@ -30,10 +30,10 @@
     <!-- software that runs find-sign client side is in these libraries -->
     <script defer src="node_modules/jquery/dist/jquery.min.js"></script>
     <script defer src="node_modules/ua-parser-js/dist/ua-parser.min.js"></script>
-    <script defer src="lib/vector-library/vector-library-reader.js"></script>
+    <script defer src="lib/vector-library/reader.js"></script>
     <script defer src="lib/search-library/reader.js"></script>
     <script defer src="lib/vector-utilities.js"></script>
-    <script defer src="lib/ui.js"></script>
+    <script defer src="lib/search-ui.js"></script>
 
     <script>
     // fight the evil fbclid and gclid thingies
@@ -54,6 +54,36 @@
         alert('Your web browser does not seem to support modern web standards. Please update it and try again, or install and use Safari, Firefox, Opera, or Chrome to access this website')
       }
     }
+
+    window.addEventListener('load', ()=> {
+      var uaParser = new UAParser(navigator.userAgent)
+      window.ui = new SearchUI({
+        languageName: "Auslan",
+        datasetsPath: "datasets",
+        vectorLibraries: ["vectors-cc-en-300-8bit"],
+        searchLibraries: ["asphyxia", "youtube", "auslan-signbank", "auslan-stage-left"],
+        resultsPerPage: 10,
+        maxPages: 8,
+        videoRenderMode: (uaParser.getBrowser().name.match(/Safari/i)) ? 'picture' : 'video',
+        searchForm: $('#search_form'),
+        searchInput: $('#search_box'),
+        resultsContainer: $('#results'),
+        paginationContainer: $('#pagination'),
+        tileAppendDelay: parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--fade-time-offset').trim())
+      })
+
+      $("img#header").click(()=> {
+        $("#search_box").val('')
+        ui.setView('home')
+      })
+
+      $("#search_form").submit((e)=> {
+        e.preventDefault()
+        ui.search($('#search_box').val())
+      })
+
+      ui.setup()
+    })
     </script>
 
     <!-- Fathom - simple website analytics - https://github.com/usefathom/fathom -->

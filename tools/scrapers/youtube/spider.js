@@ -4,7 +4,7 @@ const request = require('request')
 const cheerio = require('cheerio')
 const util = require('util')
 const ytdl = require('youtube-dl')
-const VectorLibraryReader = require('../../../lib/vector-library/vector-library-reader')
+const VectorLibraryReader = require('../../../lib/vector-library/reader')
 const SearchLibraryWriter = require('../../../lib/search-library/writer')
 const fs = require('fs-extra')
 
