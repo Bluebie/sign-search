@@ -119,7 +119,7 @@ async function run() {
   let indexRoot = "../../../datasets/asphyxia"
 
   let vecLib = new VectorLibraryReader()
-  await vecLib.open('../../../datasets/vector-library')
+  await vecLib.open('../../../datasets/vectors-cc-en-300-8bit')
 
   let writer = await (new SearchLibraryWriter(
     indexRoot, {
@@ -128,7 +128,6 @@ async function run() {
       vectorDB: vecLib,
       //buildTimestamp: Math.max(... await Promise.all((await fs.readdir('timing')).map(async (fn)=>
       //  Math.floor((await fs.stat(`timing/${fn}`)).mtimeMs)
-      )))
     }
   )).open()
 

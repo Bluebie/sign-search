@@ -1,4 +1,4 @@
-const VectorLibraryReader = require('../lib/vector-library/vector-library-reader')
+const VectorLibraryReader = require('../lib/vector-library/reader')
 const VU = require('../lib/vector-utilities')
 
 async function run(dbPath, query1, query2) {

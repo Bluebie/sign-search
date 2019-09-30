@@ -284,7 +284,7 @@ async function runBuildTask() {
   let indexRoot = "../../../datasets/auslan-signbank"
 
   let vecLib = new VectorLibraryReader()
-  await vecLib.open('../../../datasets/vector-library')
+  await vecLib.open('../../../datasets/vectors-cc-en-300-8bit')
 
   let writer = await (new SearchLibraryWriter(
     indexRoot, {format: 'sint8', scaling: 8, vectorDB: vecLib}
