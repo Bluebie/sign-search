@@ -55,7 +55,7 @@
       }
     }
 
-    window.addEventListener('load', ()=> {
+    window.addEventListener('DOMContentLoaded', ()=> {
       var uaParser = new UAParser(navigator.userAgent)
       window.ui = new SearchUI({
         languageName: "Auslan",
