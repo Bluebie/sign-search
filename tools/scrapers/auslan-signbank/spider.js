@@ -313,7 +313,7 @@ async function runBuildTask() {
           glossList: def.glosses,
           link: sbLink,
           regions: def.regions,
-          body: def.definitions.map(x=> `${x.title}: ${x.entries.join('; ')}`).join("\n")
+          body: def.definitions.map(x=> `${x.title}: ${x.entries.join('; ')}`).join("\n").split("\n").slice(0, 5).join("\n")
         },
         videoPaths: def.videos.map(url => new StaticWebVideoSource(url, videoStatsCache))
       })

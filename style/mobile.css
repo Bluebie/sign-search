@@ -48,8 +48,15 @@ main#results .result .link {
 
 /* patches for pagination buttons */
 div#pagination { justify-content: space-evenly; }
-div#pagination button { width: 11vw; height: 11vw; font-size: 9vw; }
-div#pagination button[aria-current] { border-radius: 5.5vw; }
+div#pagination * {
+  width: 11vw;
+  height: 11vw;
+  font-size: 9vw;
+  line-height: 9vw;
+}
+div#pagination *[aria-current] {
+  border-radius: 5.5vw;
+}
 
 /* on extremely tiny widths, change the nav list to vertical */
 @media (max-width: 300px) {

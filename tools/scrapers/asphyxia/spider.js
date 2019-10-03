@@ -128,6 +128,7 @@ async function run() {
       vectorDB: vecLib,
       //buildTimestamp: Math.max(... await Promise.all((await fs.readdir('timing')).map(async (fn)=>
       //  Math.floor((await fs.stat(`timing/${fn}`)).mtimeMs)
+      shardBits: 4
     }
   )).open()
 

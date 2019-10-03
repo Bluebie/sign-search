@@ -10,6 +10,7 @@ const fs = require('fs-extra')
 
 const importList = 'imports.txt'
 const forceRebuild = true
+const videosPerShard = 32 // how many videos to stuff in to each shard?
 
 
 // fetch the youtube playlists and index relevant data about videos included in them
@@ -141,7 +142,7 @@ async function run() {
   await vecLib.open('../../../datasets/vectors-cc-en-300-8bit')
 
   let writer = await (new SearchLibraryWriter(
-    indexRoot, {format: 'sint8', scaling: 8, vectorDB: vecLib}
+    indexRoot, {format: 'sint8', scaling: 8, vectorDB: vecLib, shardBits: Math.ceil(Math.log(videos.length / videosPerShard) / Math.log(2)) }
   )).open()
 
   console.log(`search library open, beginning import...`)
