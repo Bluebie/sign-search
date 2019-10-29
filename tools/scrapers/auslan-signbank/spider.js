@@ -182,6 +182,10 @@ async function runDefinitionsTask() {
     var definitionLinks = {}
   }
 
+  // make sure we're starting clean, if this is omitted the scraper behaves badly when signbank removes any signs, or adds signs anywhere but the end of the dataset
+  await fs.remove(`./definition-cache`)
+  await fs.ensureDir(`./definition-cache`)
+
   for (let keyword of Object.keys(definitionLinks)) {
     try {
       await fetchDefinition(definitionLinks[keyword])
