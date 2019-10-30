@@ -113,7 +113,7 @@ async function run() {
   await vecLib.open('../../../datasets/vectors-cc-en-300-8bit')
 
   let writer = await (new SearchLibraryWriter(
-    indexRoot, {format: 'sint8', scaling: 8, vectorDB: vecLib, shardBits: 3 }
+    indexRoot, {format: 'sint8', scaling: 8, vectorDB: vecLib, shardBits: 2 }
   )).open()
 
   console.log(`Setup fresh library, streaming videos in to local index...`)
