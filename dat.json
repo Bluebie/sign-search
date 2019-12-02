@@ -1,0 +1,12 @@
+{
+  "title": "find.auslan.fyi",
+  "description": "Australian Sign Language - dictionary meta search engine",
+  "links": {
+    "payment": [
+      {
+        "href": "https://paypal.me/tinyfox",
+        "type": "text/html"
+      }
+    ]
+  }
+}

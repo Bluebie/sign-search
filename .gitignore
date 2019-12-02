@@ -9,3 +9,4 @@ tools/**/*-cache*
 tools/**/*.mp4
 *.tmp
 tools/scrapers/youtube/playlist-keys.json
+.dat
