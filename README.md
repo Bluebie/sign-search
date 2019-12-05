@@ -12,13 +12,7 @@ Another goal of the project is decentralisation, low operating cost, and easy sc
 
 It should be easy to adapt the underlying technology. If your source material is documented in English, it's just a matter of using `/lib/search-library/writer.js` to build some new search indexes, and customizing the user interface to best present whatever data you're indexing. Check out the examples in `/tools/scrapers` to see how search indexs are built.
 
-Due to the size of the vector library, it hasn't been committed to the git repo. If you want a full prebuilt copy, you can download it directly from the live website at the following URLs:
-
-https://find.auslan.fyi/datasets/vector-library/db-index.bin
-
-https://find.auslan.fyi/datasets/vector-library/db-strings.bin
-
-https://find.auslan.fyi/datasets/vector-library/db-vectors.bin
+If you just need to grab the english vector library used on the live site, you can use Dat or Beaker browser to grab a copy of the deployed live site using Dat address <a href="dat://find.auslan.fyi/">dat://find.auslan.fyi/</a> - this also includes the live search indexes, which might be useful for research or building games like flash cards. Just be aware none of the search index has clear license terms, so be aware of potential copyright issues.
 
 If you need to support a non-english language, you can use the `tools/build-indexed-vector-library.js` script to convert a text format vector database from https://fasttext.cc/ to the compressed sharded format used here. Then you should be able to build search libraries and adapt the interface to a new written language without much trouble.
 
@@ -32,7 +26,7 @@ I didn't. fasttext read web users talking about all sorts of topics, via the Com
 
 ### Copyright ###
 
-As of 2019, the main code of the project is released as Unlicense, meaning, you can pretty well do whatever you want with it. The favicon is from an emoji pack and isn't included in that license, and the web design and name belong to me (Phoenix Fox). Content that the search engine indexes from other websites obviously belongs to those source websites, and is not included in this repository and is not part of the Unlicense.
+As of 2019, the main code of the project is released as Unlicense, meaning, you can pretty well do whatever you want with it. The favicon is from an emoji pack and isn't included in that license, and the web design and name belong to me (Phoenix Fox). Content that the search engine indexes from other websites obviously belongs to those source websites, and is not included in this repository and is not part of the Unlicense. Search Engines do not generally have appropriate legal licenses to reproduce the content they index, and that's true here too, in general. Be careful, be a good citizen, and support the projects you pull data from, so nobody ever wants to do you harm. That's how Google does it!
 
 The word embedding provided by fasttext is derived from Common Crawl and Wikipedia. It has yet to be clearly determined how or if copyright applies to machine learning weights and derived outputs, where those networks were trained on presumably copyrighted online data. For now, it seems like we don't need to worry about it, but it something to keep an eye on.
 
