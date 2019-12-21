@@ -5,6 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "cheerio": "^1.0.0-rc.3",
+    "create-torrent": "^4.4.1",
     "fs-extra": "^8.1.0",
     "handbrake-js": "^4.0.0",
     "jquery": "^3.4.1",
