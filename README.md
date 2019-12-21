@@ -18,7 +18,20 @@ If you need to support a non-english language, you can use the `tools/build-inde
 
 ### Mirroring the website ###
 
-I haven't established any mirroring yet, but I am using syncthing to backup the website to my own local computers. If you're interested in mirroring sign-search, send me a message, and I can probably link you in to the syncthing folder. All you'll need to get it working is a web server that supports HTTP range requests, pointed at the folder.
+We're experimenting with supporting Dat as a way to locally mirror find-sign including the full dataset to your computer.
+To see the current Dat address, visit https://find.auslan.fyi/.well-known/dat and it should be on the first line. Dat is
+nice because it can keep your copy up to date with the current dataset easily, but appears to have some scaling problems.
+Until this is resolved, another option is to make use of our datasets torrent file located at
+https://find.auslan.fyi/datasets.torrent to grab the datasets folder (the only thing which regularly updates).
+
+The dat feed is a full working copy of the site, minus some tools included in this repository. To produce a working site
+without using dat, download the datasets torrent, and clone this repository. Then place the torrent `datasets` folder in this directory, and run `npm install` to grab some packages you'll need. After that, you should have an up to date working copy.
+
+If you have any trouble downloading the torrent, make sure your torrent app supports WebSeed. Transmission and WebTorrent
+are some good options if you're unsure. If you get a partial download, you might have been downloading while the site was
+building a new dataset revision. Wait a couple hours, then grab the updated datasets.torrent file from our server again and try again.
+
+If you serve the resulting folder with any static http server, you should have a functioning and up to date copy of find-sign.
 
 ### Where did you hard code "trump" to return "russian"? ###
 

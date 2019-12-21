@@ -10,7 +10,7 @@ var opts = {
   name: "datasets",
   comment: "Find Sign (Australian Sign Language Search Engine) live datasets directory.",
   createdBy: "WebTorrent / tools/create-datasets-torrent.js",
-  urlList: ["https://find.auslan.fyi/datasets"]
+  urlList: ["https://find.auslan.fyi/"]
 }
 
 console.log("Creating torrent...")

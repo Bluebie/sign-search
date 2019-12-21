@@ -1,0 +1,13 @@
+cd scrapers/asphyxia
+node spider.js
+cd ../..
+cd scrapers/auslan-signbank
+node spider.js
+cd ../..
+cd scrapers/auslan-stage-left
+node spider.js
+cd ../..
+cd scrapers/youtube
+node spider.js
+cd ../..
+node create-datasets-torrent.js
