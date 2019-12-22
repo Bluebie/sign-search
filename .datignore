@@ -12,6 +12,7 @@ lib/jquery*
 Thumbs.db
 tools
 old-ui.html
+logs/*
 node_modules/@types
 node_modules/ajv
 node_modules/ansi-escape-sequences
