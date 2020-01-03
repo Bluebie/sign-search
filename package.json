@@ -4,6 +4,7 @@
   "description": "Search Sign Language Dictionaries intelligently with word2vec and traditional more brute force approaches",
   "main": "index.js",
   "dependencies": {
+    "borc": "^2.1.1",
     "cheerio": "^1.0.0-rc.3",
     "create-torrent": "^4.4.1",
     "fs-extra": "^8.1.0",
@@ -12,7 +13,8 @@
     "line-reader": "^0.4.0",
     "request": "^2.88.0",
     "ua-parser-js": "^0.7.20",
-    "youtube-dl": "^2.0.1"
+    "user-instagram": "^1.0.4",
+    "youtube-dl": "^2.3.0"
   },
   "devDependencies": {},
   "scripts": {

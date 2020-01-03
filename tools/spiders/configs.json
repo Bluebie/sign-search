@@ -1,0 +1,24 @@
+{
+  "toddslan": {
+    "spider": "instagram",
+    "user": "toddslan",
+    "wordsRegexp": ["(“|\")([a-z0-9/\\,'‘’() _!?-]+)(”|\")", "i", 2],
+    "rules": {
+      "has": ["#thisisnot", "#auslan", "#toddslan"],
+      "hasnt": []
+    }
+  },
+  "v-alford": {
+    "spider": "instagram",
+    "user": "v.alford",
+    "wordsRegexp": ["^([^\t\n|]+) ?||", "", 1],
+    "tag": ["v.alford"],
+    "rules": {
+      "has": ["#wantlearnauslan"],
+      "hasnt": []
+    },
+    "modifiers": {
+      "downcase": true
+    }
+  }
+}
