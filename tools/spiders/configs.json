@@ -1,4 +1,27 @@
 {
+  "signbank": {
+    "spider": "signbank",
+    "domain": "http://www.auslan.org.au",
+    "tag": ["signbank", "established"],
+    "regions": {
+      "/static/img/maps/Auslan/AustraliaWide-traditional.png": ["everywhere", "southern", "northern", "wa", "nt", "sa", "qld", "nsw", "act", "vic", "tas"],
+      "/static/img/maps/Auslan/SouthernDialect-traditional.png": ["southern", "wa", "nt", "sa", "vic", "tas"],
+      "/static/img/maps/Auslan/NorthernDialect-traditional.png": ["northern", "qld", "nsw", "act"],
+      "/static/img/maps/Auslan/WesternAustralia-traditional.png": ["wa"],
+      "/static/img/maps/Auslan/NorthernTerritory-traditional.png": ["nt"],
+      "/static/img/maps/Auslan/SouthAustralia-traditional.png": ["sa"],
+      "/static/img/maps/Auslan/Queensland-traditional.png": ["qld"],
+      "/static/img/maps/Auslan/NewSouthWales-traditional.png": ["nsw", "act"],
+      "/static/img/maps/Auslan/Victoria-traditional.png": ["vic"],
+      "/static/img/maps/Auslan/Tasmania-traditional.png": ["tas"]
+    },
+    "timeout": 60,
+    "concurrency": 5
+  },
+  "stage-left": {
+    "spider": "auslan-stage-left",
+    "tag": ["auslan-stage-left", "description"]
+  },
   "toddslan": {
     "spider": "instagram",
     "user": "toddslan",

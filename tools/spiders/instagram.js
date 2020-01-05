@@ -37,11 +37,11 @@ class InstagramSpider extends Spider {
         if (!content.videos) {
           let ytdlInfo = [await util.promisify(ytdl.getInfo)(post.link)].flat()
           content.videos = ytdlInfo.map((info) => (
-            { playlist_index: info.playlist_index, filename: `IG-${this.config.user} ${post.shortcode} ${info.title}.${info.ext}`}
+            { instagramLink: content.link, playlistIndex: info.playlist_index, ext: info.ext }
           ))
         }
       } else {
-        console.log(`Skipped ${post.captionText.split("\n")[0]}`)
+        this.log(`Skipped ${post.captionText.split("\n")[0]}`)
       }
     }
 
@@ -49,14 +49,14 @@ class InstagramSpider extends Spider {
   }
 
   // fetch a video for a specific piece of content
-  fetch(content, { playlist_index, filename }) {
+  fetch({ instagramLink, playlistIndex, ext }) {
     return new Promise((resolve, reject) => {
-      let path = `${os.tmpdir()}/${filename}`
+      let path = this.tempFile(`${this.hash(instagramLink)}.${ext}`)
       let args = ['--socket-timeout', '60']
-      if (playlist_index !== null) args = [...args, '--playlist-items', `${playlist_index}`]
+      if (playlistIndex !== null) args = [...args, '--playlist-items', `${playlistIndex}`]
 
       // ask youtube-dl to grab the video file from Instagram
-      let download = ytdl(content.link, args)
+      let download = ytdl(instagramLink, args)
       // pipe the video file in to the temporary file
       download.pipe(fs.createWriteStream( path ))
       // hook up events to resolve the promise when it's done downloading or has an error
