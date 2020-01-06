@@ -1,6 +1,8 @@
 {
   "signbank": {
     "spider": "signbank",
+    "expires": "48hr",
+    "concurrency": 5,
     "domain": "http://www.auslan.org.au",
     "tag": ["signbank", "established"],
     "regions": {
@@ -14,16 +16,18 @@
       "/static/img/maps/Auslan/NewSouthWales-traditional.png": ["nsw", "act"],
       "/static/img/maps/Auslan/Victoria-traditional.png": ["vic"],
       "/static/img/maps/Auslan/Tasmania-traditional.png": ["tas"]
-    },
-    "timeout": 60,
-    "concurrency": 5
+    }
   },
+
   "stage-left": {
     "spider": "auslan-stage-left",
+    "expires": "1wk",
     "tag": ["auslan-stage-left", "description"]
   },
+
   "toddslan": {
     "spider": "instagram",
+    "expires": "2hr",
     "user": "toddslan",
     "wordsRegexp": ["(“|\")([a-z0-9/\\,'‘’() _!?-]+)(”|\")", "i", 2],
     "rules": {
@@ -31,8 +35,10 @@
       "hasnt": []
     }
   },
+
   "v-alford": {
     "spider": "instagram",
+    "expires": "2hr",
     "user": "v.alford",
     "wordsRegexp": ["^([^\t\n|]+) ?||", "", 1],
     "tag": ["v.alford"],
