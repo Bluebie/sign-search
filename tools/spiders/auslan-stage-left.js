@@ -16,10 +16,10 @@ class StageLeftSpider extends Spider {
     // reset content
     this.content = {}
     page(".ult-modal-img.overlay-show").each((i, img)=> {
-      let container = web(img.parent.parent)
+      let container = page(img.parent.parent)
       let glossList = container.find('h3').first().text().split(/[\\\/]+/).map((x)=> x.trim())
       let buttonID = img.attribs['data-class-id']
-      let embedURL = web(`.ult-overlay.${buttonID} iframe`)[0].attribs.src
+      let embedURL = page(`.ult-overlay.${buttonID} iframe`)[0].attribs.src
       let vimeoID = embedURL.split('/').slice(-1)[0].split("?")[0]
       let videoLink = `https://vimeo.com/${vimeoID}`
       this.content[vimeoID] = {
@@ -31,8 +31,6 @@ class StageLeftSpider extends Spider {
         link: videoLink
       }
     })
-
-    return { tasks: [] }
   }
 
   // fetch a video for a specific piece of content
