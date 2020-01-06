@@ -44,8 +44,6 @@ class InstagramSpider extends Spider {
         this.log(`Skipped ${post.captionText.split("\n")[0]}`)
       }
     }
-
-    return { tasks: [] }
   }
 
   // fetch a video for a specific piece of content
