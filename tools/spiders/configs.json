@@ -3,7 +3,7 @@
     "spider": "signbank",
     "expires": "48hr",
     "concurrency": 5,
-    "domain": "http://www.auslan.org.au",
+    "url": "http://www.auslan.org.au/dictionary/",
     "tag": ["signbank", "established"],
     "regions": {
       "/static/img/maps/Auslan/AustraliaWide-traditional.png": ["everywhere", "southern", "northern", "wa", "nt", "sa", "qld", "nsw", "act", "vic", "tas"],
@@ -22,7 +22,7 @@
   "stage-left": {
     "spider": "auslan-stage-left",
     "expires": "1wk",
-    "tag": ["auslan-stage-left", "description"]
+    "tag": ["auslan-stage-left", "description", "arts"]
   },
 
   "toddslan": {
