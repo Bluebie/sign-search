@@ -131,9 +131,11 @@ class SpiderConductor {
     this.queue = new PQueue({ concurrency: config.concurrency !== undefined ? config.concurrency : 1 })    
   }
 
-  async log(...text) {
-    await fs.appendFile(this.logPath, util.inspect(new Date()) + ": " + text.map(x => util.inspect(x)).join('; ') + "\n")
-    console.log(`${this.name}: ${util.inspect(text.shift())}`, ...text)
+  log(...text) {
+    this.logQueue.add(async ()=> {
+      console.log(`${this.name}: ${util.inspect(text.shift())}`, ...text)
+      await fs.appendFile(this.logPath, util.inspect(new Date()) + ": " + text.map(x => util.inspect(x)).join('; ') + "\n")
+    })
   }
 
   async runTask(...args) {
@@ -255,6 +257,8 @@ class SpiderConductor {
     this.log(`Index tasks have completed! Building search library...`)
     await this.build()
     await this.finish()
+    // wait for logs to finish writing
+    await this.logQueue.onIdle()
   }
 }
 
