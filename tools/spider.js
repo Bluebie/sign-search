@@ -35,7 +35,7 @@ class OnDemandMediaLoader {
 
   // once it's imported completely, we can remove the file we downloaded temporarily
   async releaseVideoPath() {
-    await fs.unlink(this.localFilename)
+    if (this.localFilename) await fs.unlink(this.localFilename)
   }
 }
 
@@ -213,23 +213,27 @@ class SpiderConductor {
       format: 'sint8', scaling: 8, vectorDB: this.nest.vectorDB, shardBits, buildID
     })).open()
 
-    // loop through accumulated content, writing it in to the searchLibrary and fetching any media necessary
-    for (let content of Object.values(this.spider.content)) {
-      this.log(`Importing ${content.link}: ${content.words.join(' ')}`)
-      await searchLibrary.append({
-        words: content.words,
-        tags: [...(this.config.tag || []), ...(content.tags || [])],
-        videoPaths: content.videos.map(videoInfo => new OnDemandMediaLoader(this.spider, videoInfo)),
-        lastChange: content.timestamp,
-        def: {
-          link: content.link,
-          glossList: (content.title ? [content.title].flat() : content.words),
-          body: content.body
-        }
-      })
+    if (searchLibrary.skipBuild) {
+      this.log(`Skipping import stage as library is not being built`)
+    } else {
+      // loop through accumulated content, writing it in to the searchLibrary and fetching any media necessary
+      for (let content of Object.values(this.spider.content)) {
+        this.log(`Importing ${content.link}: ${content.words.join(' ')}`)
+        await searchLibrary.append({
+          words: content.words,
+          tags: [...(this.config.tag || []), ...(content.tags || [])],
+          videoPaths: content.videos.map(videoInfo => new OnDemandMediaLoader(this.spider, videoInfo)),
+          lastChange: content.timestamp,
+          def: {
+            link: content.link,
+            glossList: (content.title ? [content.title].flat() : content.words),
+            body: content.body
+          }
+        })
+      }
+    
+      await searchLibrary.finish()
     }
-  
-    await searchLibrary.finish()
   
     this.log(`Finished building ${this.name} library`)
   }
