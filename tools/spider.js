@@ -187,13 +187,16 @@ class SpiderConductor {
   // scrapes the full website, resolves promise when everything is done
   async scrape() {
     // if the spider defines a beforeStart function, run it
-    if (this.spider.beforeStart) await this.spider.beforeStart()
+    if (this.spider.beforeScrape) await this.spider.beforeScrape()
         
     // start the initial task, which will then spawn more tasks up to the maximum when it resolves or crashes
     this.queue.add(()=> this.runTask())
 
     // wait for queue to completely drain
     await this.queue.onIdle()
+
+    // run any final clean up / organisational tasks to merge scrape data in to a consistent content library
+    if (this.spider.afterScrape) await this.spider.afterScrape()
   }
 
   // builds a search library in the datasets path, downloading any missing videos and transcoding them

@@ -19,7 +19,7 @@ class SignBankSpider extends Spider {
     super(config, ...args)
   }
 
-  beforeStart() {
+  beforeScrape() {
     this.erase() // always erase the content and do a fresh build with signbank
   }
   
