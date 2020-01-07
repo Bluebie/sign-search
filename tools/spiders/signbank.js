@@ -3,9 +3,10 @@ const util = require('util')
 const stream = require('stream')
 const fs = require('fs-extra')
 const Spider = require('../../lib/spider.js')
-const parseDuration = require('parse-duration')
+const parseMs = require('parse-duration')
 const got = require('got')
 const pipeline = util.promisify(stream.pipeline)
+const cbor = require('borc')
 
 // A spider which indexes an instagram feed and creates a produces a search index from that content
 // default config should be:
@@ -19,18 +20,43 @@ class SignBankSpider extends Spider {
     super(config, ...args)
   }
 
+  // restore state from a buffer created by the store() function
+  async load(frozenData) {
+    let data = cbor.decode(frozenData)
+    this.content = data.content
+    this.glossTags = data.glossTags
+  }
+
+  // store current state and content cache to a buffer that can be restored later to resume the indexing
+  async store() {
+    return cbor.encode({
+      content: this.content || {},
+      glossTags: this.glossTags || {}
+    })
+  }
+
   beforeScrape() {
     this.erase() // always erase the content and do a fresh build with signbank
+    this.glossTags = {}
   }
   
   // scrape task routing function, detects type of scrape task requested and routes to appropriate internal function
   async index(task = false, ...args) {
     if (!task) {
       // root scrape
-      return this.indexAlphabet(...args)
-    } else if (task == 'search') {
-      // scrape a search result page
-      return this.indexSearchResults(...args)
+      // Note: Disabled to focus on glosses
+      //return this.indexAlphabet(...args)
+      //return this.indexTags(...args)
+      // load root tag page
+      return { tasks: [
+        ['tag', this.relativeLink(this.config.url, 'tag/')]
+      ]}
+    } else if (task == 'tag') {
+      // index stuff linked from a tag results page
+      return this.indexTag(...args)
+    // } else if (task == 'search') {
+    //   // scrape a search result page
+    //   return this.indexSearchResults(...args)
     } else if (task == 'definition') {
       // scrape a definition page
       return this.indexDefinitionPage(...args)
@@ -39,39 +65,76 @@ class SignBankSpider extends Spider {
     }
   }
 
-  // handles root scrape - it loads the dictionary root page, and indexes the alphabet links, generating tasks to read those search result pages
-  async indexAlphabet() {
-    let tasks = []
+  // ask SignBank server for tag list
+  // async indexTags() {
+  //   let tags = await this.openJSON(this.relativeLink(this.config.url, 'ajax/tags/'))
+  //   return {
+  //     tasks: tags.map(tag => ['tag', this.relativeLink(this.config.url, `ajax/tag/${encodeURIComponent(tag)}/`)])
+  //   }
+  // }
 
-    let url = this.relativeLink(this.config.domain, '/dictionary/')
+  // reads a tag search results page and indexes links
+  async indexTag(url) {
+    let tasks = []
     let page = await this.openWeb(url)
-    page(".alphablock ul li a").each((i, link) => {
-      tasks.push([ 'search', this.relativeLink(url, link.attribs.href) ])
+
+    // add tasks for other tag listings, and secondary paginations of this tag listing
+    page('#tags .tag a, #searchresults > p a').each((i, aLink)=> {
+      tasks.push(['tag', this.relativeLink(url, aLink.attribs.href)])
+    })
+
+    // add tasks for definitions found
+    let tagName = page('#activetag a').text().trim().replace(/[^a-zA-Z0-9-]+/g, '-')
+    page('#searchresults table a').each((i, aLink)=> {
+      let link = this.relativeLink(url, aLink.attribs.href)
+      this.glossTags[link] = [tagName, ...(this.glossTags[link] || [])]
+      tasks.push(['definition', link])
     })
 
     return { tasks }
   }
 
-  // scrapes search result pages, discovering links to other content like definitions and other search result pages
-  async indexSearchResults(url) {
-    let tasks = []
+  // adds extra signbank tags after scraping is complete
+  async afterScrape() {
+    for (let link of Object.keys(this.glossTags)) {
+      if (!this.content[link]) continue
+      this.content[link].tags = [...this.content[link].tags, ...this.glossTags[link]]
+    }
+  }
 
-    // load search results page
-    let page = await this.openWeb(url)
+  // // handles root scrape - it loads the dictionary root page, and indexes the alphabet links, generating tasks to read those search result pages
+  // async indexAlphabet() {
+  //   let tasks = []
+
+  //   let url = this.config.url
+  //   let page = await this.openWeb(url)
+  //   page(".alphablock ul li a").each((i, link) => {
+  //     tasks.push([ 'search', this.relativeLink(url, link.attribs.href) ])
+  //   })
+
+  //   return { tasks }
+  // }
+
+  // // scrapes search result pages, discovering links to other content like definitions and other search result pages
+  // async indexSearchResults(url) {
+  //   let tasks = []
+
+  //   // load search results page
+  //   let page = await this.openWeb(url)
     
-    // extract links to definitions in search results
-    page("table.table a").each((i, link) => {
-      tasks.push([ 'definition', this.relativeLink(url, link.attribs.href) ])
-    })
+  //   // extract links to definitions in search results
+  //   page("table.table a").each((i, link) => {
+  //     tasks.push([ 'definition', this.relativeLink(url, link.attribs.href) ])
+  //   })
 
-    // extract pagination links to the rest of the search results and append them as possible tasks
-    // NOTE: spider host app should skip any redundant tasks as long as they JSON serialise the same way so this wont create loops
-    page("nav[aria-label='Page navigation'] ul.pagination li a").each((i, link) => {
-      tasks.push([ 'search', this.relativeLink(url, link.attribs.href) ])
-    })
+  //   // extract pagination links to the rest of the search results and append them as possible tasks
+  //   // NOTE: spider host app should skip any redundant tasks as long as they JSON serialise the same way so this wont create loops
+  //   page("nav[aria-label='Page navigation'] ul.pagination li a").each((i, link) => {
+  //     tasks.push([ 'search', this.relativeLink(url, link.attribs.href) ])
+  //   })
 
-    return { tasks }
-  }
+  //   return { tasks }
+  // }
 
   // scrapes a definition page, and discovers links to other definition pages that should be scraped too
   // NOTE: this intentionally discovers the previous and next sign pages, to navigate around any missing content
@@ -110,11 +173,12 @@ class SignBankSpider extends Spider {
     
     // discover links to other sign definition pages, like previous sign, next sign, and the numbered alternate definitions for this keyword
     page("a.btn").toArray().forEach(aLink => {
-      tasks.push([ 'definition', this.relativeLink(url, aLink.attribs.href).split('?')[0] ])
+      let link = this.relativeLink(url, aLink.attribs.href).split('?')[0]
+      tasks.push([ 'definition', link ])
     })
 
     // calculate hash by sorting the def object and hashing it's keys and values in a sorted way
-    def.id = this.hash(def.videos.join("\n")).slice(0,20)
+    def.id = def.link
     def.hash = this.hash(Object.keys(def).sort().map(key => `${key}: ${JSON.stringify(def[key])}`).join(','))
     this.content[def.id] = def
 
