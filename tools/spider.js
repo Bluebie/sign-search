@@ -47,6 +47,7 @@ class SpiderNest {
   constructor(settings) {
     this.settings = settings
     this.loaded = false
+    this.timestamps = {}
   }
 
   async load() {
@@ -55,6 +56,9 @@ class SpiderNest {
     this.vectorDB = new VectorLibraryReader()
     await this.vectorDB.open(this.settings.vectorDBPath)
     await fs.ensureDir(this.settings.logsPath)
+    if (await fs.pathExists(`${this.settings.spiderPath}/frozen-data/build-timestamps.cbor`)) {
+      this.timestamps = cbor.decode(await fs.readFile(`${this.settings.spiderPath}/frozen-data/build-timestamps.cbor`))
+    }
     this.loaded = true
   }
 
@@ -88,7 +92,11 @@ class SpiderNest {
 
     // create a spider conductor, and ask it to do the scrape
     let runner = new SpiderConductor(this, datasetName, this.configs[datasetName])
-    return await runner.run()
+    await runner.run()
+
+    // log out build timestamps to file for future expiry checking
+    this.timestamps[datasetName] = Date.now()
+    await fs.writeFile(`${this.settings.spiderPath}/frozen-data/build-timestamps.cbor`, cbor.encode(this.timestamps))
   }
 
   // returns a boolean (eventually): should the dataset name passed in, be rebuilt now? does it pass expiration rules?
@@ -97,18 +105,15 @@ class SpiderNest {
 
     // if the dataset has never been built, build it
     if (!await fs.pathExists(datasetPath)) return true
+    if (!this.timestamps[datasetName]) return true
     
     // if the config doesn't have an expires rule, just rebuild it always
     if (!this.configs[datasetName].expires) return true
 
-    // attempt to open dataset and load settings
-    let build = await (new SearchLibraryReader()).open(datasetPath)
-
-    // check if the current build has expired according to the expires rule
-    if (build.settings.buildTimestamp < Date.now() - parseDuration(this.configs[datasetName].expires)) {
+    if (this.timestamps[datasetName] < Date.now() - parseDuration(this.configs[datasetName].expires)) {
       return true
     } else {
-      console.log(`Skipping ${datasetName}: not due to run for another ${prettyMs(parseDuration(this.configs[datasetName].expires) - (Date.now() - build.settings.buildTimestamp))}`)
+      console.log(`Skipping ${datasetName}: not due to run for another ${prettyMs(parseDuration(this.configs[datasetName].expires) - (Date.now() - this.timestamps[datasetName]))}`)
     }
 
     // default to not building if none of the above is true
@@ -128,7 +133,8 @@ class SpiderConductor {
     this.logPath = `${nest.settings.logsPath}/${name}.txt`
 
     this.completed = new Set()
-    this.queue = new PQueue({ concurrency: config.concurrency !== undefined ? config.concurrency : 1 })    
+    this.queue = new PQueue({ concurrency: config.concurrency !== undefined ? config.concurrency : 1 })
+    this.logQueue = new PQueue({ concurrency: 1 })
   }
 
   log(...text) {
