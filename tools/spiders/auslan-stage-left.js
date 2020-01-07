@@ -23,10 +23,10 @@ class StageLeftSpider extends Spider {
       let vimeoID = embedURL.split('/').slice(-1)[0].split("?")[0]
       let videoLink = `https://vimeo.com/${vimeoID}`
       this.content[vimeoID] = {
-        id: i.toString(),
+        id: `${vimeoID}`,
         hash: this.hash(videoLink + glossList.join(', ')),
         words: glossList,
-        tags: this.config.tag,
+        tags: [],
         videos: [videoLink],
         link: videoLink
       }
