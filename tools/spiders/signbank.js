@@ -178,7 +178,7 @@ class SignBankSpider extends Spider {
     })
 
     // calculate hash by sorting the def object and hashing it's keys and values in a sorted way
-    def.id = def.link
+    def.id = /\/gloss\/(.*).html/.exec(def.link)[1]
     def.hash = this.hash(Object.keys(def).sort().map(key => `${key}: ${JSON.stringify(def[key])}`).join(','))
     this.content[def.id] = def
 
