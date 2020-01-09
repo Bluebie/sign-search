@@ -2,7 +2,6 @@ const fs = require('fs-extra')
 const util = require('util')
 const cbor = require('borc')
 const VectorLibraryReader = require('../lib/vector-library/reader')
-const SearchLibraryReader = require('../lib/search-library/reader')
 const SearchLibraryWriter = require('../lib/search-library/writer')
 const PQueue = require('p-queue').default
 const parseDuration = require('parse-duration')
@@ -57,7 +56,11 @@ class SpiderNest {
     await this.vectorDB.open(this.settings.vectorDBPath)
     await fs.ensureDir(this.settings.logsPath)
     if (await fs.pathExists(`${this.settings.spiderPath}/frozen-data/build-timestamps.cbor`)) {
-      this.timestamps = cbor.decode(await fs.readFile(`${this.settings.spiderPath}/frozen-data/build-timestamps.cbor`))
+      try {
+        this.timestamps = cbor.decode(await fs.readFile(`${this.settings.spiderPath}/frozen-data/build-timestamps.cbor`))
+      } catch (err) {
+        console.log(`build-timestamps.cbor is corrupt? ignoring and rebuilding. Error: ${err}`)
+      }
     }
     this.loaded = true
   }
@@ -90,13 +93,13 @@ class SpiderNest {
     // check if this dataset is still up to date, and maybe skip spidering it
     if (!force && !await this.checkExpired(datasetName)) return
 
-    // create a spider conductor, and ask it to do the scrape
-    let runner = new SpiderConductor(this, datasetName, this.configs[datasetName])
-    await runner.run()
-
     // log out build timestamps to file for future expiry checking
     this.timestamps[datasetName] = Date.now()
     await fs.writeFile(`${this.settings.spiderPath}/frozen-data/build-timestamps.cbor`, cbor.encode(this.timestamps))
+
+    // create a spider conductor, and ask it to do the scrape
+    let runner = new SpiderConductor(this, datasetName, this.configs[datasetName])
+    await runner.run()
   }
 
   // returns a boolean (eventually): should the dataset name passed in, be rebuilt now? does it pass expiration rules?
@@ -134,13 +137,13 @@ class SpiderConductor {
 
     this.completed = new Set()
     this.queue = new PQueue({ concurrency: config.concurrency !== undefined ? config.concurrency : 1 })
-    this.logQueue = new PQueue({ concurrency: 1 })
+    this.writeQueue = new PQueue({ concurrency: 1 })
   }
 
   log(...text) {
     let message = `${new Date()}: ${JSON.stringify(text)}\n`
-    this.logQueue.add(async ()=> {
-      console.log(`${this.name}: ${message}`)
+    console.log(`${this.name}: ${message}`)
+    this.writeQueue.add(async ()=> {
       await fs.appendFile(this.logPath, `${message}\n`)
     })
   }
@@ -271,8 +274,8 @@ class SpiderConductor {
     this.log(`Index tasks have completed! Building search library...`)
     await this.build()
     await this.finish()
-    // wait for logs to finish writing
-    await this.logQueue.onIdle()
+    // wait for logs and writes to finish writing out to disk
+    await this.writeQueue.onIdle()
   }
 }
 
