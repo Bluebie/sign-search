@@ -43,10 +43,6 @@ class SignBankSpider extends Spider {
   // scrape task routing function, detects type of scrape task requested and routes to appropriate internal function
   async index(task = false, ...args) {
     if (!task) {
-      // root scrape
-      // Note: Disabled to focus on glosses
-      //return this.indexAlphabet(...args)
-      //return this.indexTags(...args)
       // load root tag page
       return { tasks: [
         ['tag', this.relativeLink(this.config.url, 'tag/')]
@@ -64,14 +60,6 @@ class SignBankSpider extends Spider {
       throw new Error(`Unknown task ${util.inspect([task, ...args])}`)
     }
   }
-
-  // ask SignBank server for tag list
-  // async indexTags() {
-  //   let tags = await this.openJSON(this.relativeLink(this.config.url, 'ajax/tags/'))
-  //   return {
-  //     tasks: tags.map(tag => ['tag', this.relativeLink(this.config.url, `ajax/tag/${encodeURIComponent(tag)}/`)])
-  //   }
-  // }
 
   // reads a tag search results page and indexes links
   async indexTag(url) {
@@ -101,40 +89,6 @@ class SignBankSpider extends Spider {
       this.content[link].tags = [...this.content[link].tags, ...this.glossTags[link]]
     }
   }
-
-  // // handles root scrape - it loads the dictionary root page, and indexes the alphabet links, generating tasks to read those search result pages
-  // async indexAlphabet() {
-  //   let tasks = []
-
-  //   let url = this.config.url
-  //   let page = await this.openWeb(url)
-  //   page(".alphablock ul li a").each((i, link) => {
-  //     tasks.push([ 'search', this.relativeLink(url, link.attribs.href) ])
-  //   })
-
-  //   return { tasks }
-  // }
-
-  // // scrapes search result pages, discovering links to other content like definitions and other search result pages
-  // async indexSearchResults(url) {
-  //   let tasks = []
-
-  //   // load search results page
-  //   let page = await this.openWeb(url)
-    
-  //   // extract links to definitions in search results
-  //   page("table.table a").each((i, link) => {
-  //     tasks.push([ 'definition', this.relativeLink(url, link.attribs.href) ])
-  //   })
-
-  //   // extract pagination links to the rest of the search results and append them as possible tasks
-  //   // NOTE: spider host app should skip any redundant tasks as long as they JSON serialise the same way so this wont create loops
-  //   page("nav[aria-label='Page navigation'] ul.pagination li a").each((i, link) => {
-  //     tasks.push([ 'search', this.relativeLink(url, link.attribs.href) ])
-  //   })
-
-  //   return { tasks }
-  // }
 
   // scrapes a definition page, and discovers links to other definition pages that should be scraped too
   // NOTE: this intentionally discovers the previous and next sign pages, to navigate around any missing content
