@@ -264,10 +264,11 @@ class SpiderConductor {
       let content = this.spider.content[key]
       this.log(`New: ${content.link} - ${content.words}`)
       await fs.appendFile(`${this.nest.settings.datasetsPath}/update-log.cbor`, cbor.encode({
-        timestamp: content.timestamp || Date.now(),
-        words: content.words,
+        provider: this.name,
+        id: key,
         link: content.link,
-        provider: this.name
+        words: content.words,
+        timestamp: content.timestamp || Date.now(),
       }))
       await fs.appendFile(`${this.nest.settings.datasetsPath}/update-log.txt`, 
         `provider: ${this.name}; timestamp: ${content.timestamp || Date.now()}; words: ${content.words}; link: ${content.link}\n`
