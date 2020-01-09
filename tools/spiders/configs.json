@@ -27,7 +27,7 @@
 
   "toddslan": {
     "spider": "instagram",
-    "expires": "2hr",
+    "expires": "3hr",
     "user": "toddslan",
     "wordsRegexp": ["(“|\")([a-z0-9/\\,'‘’() _!?-]+)(”|\")", "i", 2],
     "rules": {
@@ -38,7 +38,7 @@
 
   "v-alford": {
     "spider": "instagram",
-    "expires": "2hr",
+    "expires": "3hr",
     "user": "v.alford",
     "wordsRegexp": ["^([^\t\n|]+) ?||", "", 1],
     "tag": ["v.alford"],

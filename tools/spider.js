@@ -138,9 +138,10 @@ class SpiderConductor {
   }
 
   log(...text) {
+    let message = `${new Date()}: ${JSON.stringify(text)}\n`
     this.logQueue.add(async ()=> {
-      console.log(`${this.name}: ${util.inspect(text.shift())}`, ...text)
-      await fs.appendFile(this.logPath, util.inspect(new Date()) + ": " + text.map(x => util.inspect(x)).join('; ') + "\n")
+      console.log(`${this.name}: ${message}`)
+      await fs.appendFile(this.logPath, `${message}\n`)
     })
   }
 
@@ -286,14 +287,8 @@ let nest = new SpiderNest({
 })
 
 // run in series does one spider at a time, for easier interpreting of the live terminal output
-//nest.runInSeries()
+nest.runInSeries()
 // run executes all the spider operations at the same time, encouraging concurrency, for a faster overall scrape
-nest.run(true)
-
-// rebuild signbank without scraping
-// let rebuild = async (datasetName) => {
-//   await nest.load()
-//   let runner = new SpiderConductor(this, datasetName, nest.configs[datasetName])
-//   return await runner.build()
-// }
-// rebuild()
+// nest.run()
+// run a single specific spider, and force the scrape
+// nest.runOneSpider('stage-left', true)
