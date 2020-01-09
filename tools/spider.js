@@ -6,7 +6,7 @@ const SearchLibraryWriter = require('../lib/search-library/writer')
 const PQueue = require('p-queue').default
 const parseDuration = require('parse-duration')
 const prettyMs = require('pretty-ms')
-
+const lockfile = require('proper-lockfile')
 
 class OnDemandMediaLoader {
   constructor(spider, videoInfo) {
@@ -47,28 +47,36 @@ class SpiderNest {
     this.settings = settings
     this.loaded = false
     this.timestamps = {}
+    this.buildTimestampsFile = `${this.settings.spiderPath}/frozen-data/build-timestamps.cbor`
   }
 
+  // load data and lock timestamps file to signify the spider is running
   async load() {
     if (this.loaded) return
     this.configs = JSON.parse(await fs.readFile(`${this.settings.spiderPath}/configs.json`))
     this.vectorDB = new VectorLibraryReader()
     await this.vectorDB.open(this.settings.vectorDBPath)
     await fs.ensureDir(this.settings.logsPath)
-    if (await fs.pathExists(`${this.settings.spiderPath}/frozen-data/build-timestamps.cbor`)) {
+    
+    if (await fs.pathExists(this.buildTimestampsFile)) {
+      this.buildTimestampsLock = await lockfile.lock(this.buildTimestampsFile)
       try {
-        this.timestamps = cbor.decode(await fs.readFile(`${this.settings.spiderPath}/frozen-data/build-timestamps.cbor`))
-      } catch (err) {
-        console.log(`build-timestamps.cbor is corrupt? ignoring and rebuilding. Error: ${err}`)
-      }
+        this.timestamps = cbor.decode(await fs.readFile(this.buildTimestampsFile))
+      } catch (err) { console.log(`build-timestamps.cbor is corrupt? ignoring. Error: ${err}`) }
     }
     this.loaded = true
   }
 
+  // unlock timestamps file so another spider instance can run
+  async unload() {
+    if (this.buildTimestampsLock) {
+      await this.buildTimestampsLock()
+      this.buildTimestampsLock = null
+    }
+  }
+
   // run the spiders in series, easier for debugging
   async runInSeries(force = false) {
-    await this.load()
-
     for (let source of Object.keys(this.configs)) {
       await this.runOneSpider(source, force)
     }
@@ -76,26 +84,26 @@ class SpiderNest {
 
   // run all the spiders at the same time concurrently
   async run(force = false) {
-    await this.load()
-
     let runners = Object.keys(this.configs).map(source => {
       return this.runOneSpider(source, force)
     })
 
-    return Promise.all(runners)
+    await Promise.all(runners)
   }
 
   // run a specific spider's named config from the spiders.json file
   // optional force argument, if true, causes scrape and build to happen regardless of expiry settings
   async runOneSpider(datasetName, force = false) {
-    await this.load()
-
     // check if this dataset is still up to date, and maybe skip spidering it
     if (!force && !await this.checkExpired(datasetName)) return
 
     // log out build timestamps to file for future expiry checking
     this.timestamps[datasetName] = Date.now()
-    await fs.writeFile(`${this.settings.spiderPath}/frozen-data/build-timestamps.cbor`, cbor.encode(this.timestamps))
+    try {
+      let release = await lockfile.lock(this.buildTimestampsFile)
+      await fs.writeFile(`${this.settings.spiderPath}/frozen-data/build-timestamps.cbor`, cbor.encode(this.timestamps))
+      release()
+    } catch (err) { console.log(`Couldn't write build-timestamps.cbor? Error: ${err}`) }
 
     // create a spider conductor, and ask it to do the scrape
     let runner = new SpiderConductor(this, datasetName, this.configs[datasetName])
@@ -281,17 +289,26 @@ class SpiderConductor {
 
 
 
+let defaultRun = async () => {
+  let nest = new SpiderNest({
+    spiderPath: './spiders',
+    vectorDBPath: '../datasets/vectors-cc-en-300-8bit',
+    datasetsPath: '../datasets',
+    logsPath: '../logs'
+  })
+  
+  // load data and lock file
+  await nest.load()
+  
+  // run in series does one spider at a time, for easier interpreting of the live terminal output
+  // nest.runInSeries()
+  // run executes all the spider operations at the same time, encouraging concurrency, for a faster overall scrape
+  nest.run()
+  // run a single specific spider, and force the scrape
+  // nest.runOneSpider('stage-left', true)
 
-let nest = new SpiderNest({
-  spiderPath: './spiders',
-  vectorDBPath: '../datasets/vectors-cc-en-300-8bit',
-  datasetsPath: '../datasets',
-  logsPath: '../logs'
-})
+  // unlock spider files
+  await nest.unload()
+}
 
-// run in series does one spider at a time, for easier interpreting of the live terminal output
-nest.runInSeries()
-// run executes all the spider operations at the same time, encouraging concurrency, for a faster overall scrape
-// nest.run()
-// run a single specific spider, and force the scrape
-// nest.runOneSpider('stage-left', true)
+defaultRun()

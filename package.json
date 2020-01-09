@@ -15,6 +15,7 @@
     "p-queue": "^6.2.1",
     "parse-duration": "^0.1.2",
     "pretty-ms": "^5.1.0",
+    "proper-lockfile": "^4.1.1",
     "request": "^2.88.0",
     "user-instagram": "^1.0.4",
     "youtube-dl": "^2.3.0"
