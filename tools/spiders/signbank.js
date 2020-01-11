@@ -78,9 +78,6 @@ class SignBankSpider extends Spider {
   }
 
   // scrapes a definition page, and discovers links to other definition pages that should be scraped too
-  // NOTE: this intentionally discovers the previous and next sign pages, to navigate around any missing content
-  // since Auslan Signbank seems to display only 49 results on each search results page of 50 results
-  // and to discover 'rude' signs, which are filtered in the search results view but do seem to be accessible otherwise
   async indexDefinitionPage(url) {
     let tasks = []
 
@@ -88,11 +85,11 @@ class SignBankSpider extends Spider {
     let page = await this.openWeb(url)
 
     // build definition object
-    let keywords = page('#keywords').first().text().replace(/[\n\t ]+/g, ' ').trim().split(': ')[1].split(', ')
+    let keywordsText = page('#keywords').first().text().replace(/[\n\t ]+/g, ' ').trim().split(': ')[1]
     let def = {
       link: url,
-      title: keywords,
-      words: keywords.map(x => x.replace(/[()]/g, '').split(/[^a-zA-Z0-9']+/).map(y => y.trim()).filter(x => x.length > 0)),
+      title: keywordsText,
+      words: this.extractWords(keywordsText, ','),
       tags: [],
       videos: page('video source').toArray().map( x => x.attribs.src ).filter(obj => !obj.match(/Definition/)),
       body: page('div.definition-panel').toArray().map( panel => {

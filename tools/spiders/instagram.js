@@ -49,7 +49,7 @@ class InstagramSpider extends Spider {
   // fetch a video for a specific piece of content
   fetch({ instagramLink, playlistIndex, ext }) {
     return new Promise((resolve, reject) => {
-      let path = this.tempFile(`${this.hash(instagramLink)}.${ext}`)
+      let path = this.tempFile(`${this.hash(instagramLink)}-${playlistIndex}.${ext}`)
       let args = ['--socket-timeout', '60']
       if (playlistIndex !== null) args = [...args, '--playlist-items', `${playlistIndex}`]
 
