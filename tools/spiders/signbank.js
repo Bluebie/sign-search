@@ -2,6 +2,8 @@
 const util = require('util')
 const stream = require('stream')
 const fs = require('fs-extra')
+const url = require('url')
+const path = require('path')
 const Spider = require('../../lib/spider.js')
 const parseMs = require('parse-duration')
 const got = require('got')
@@ -117,8 +119,8 @@ class SignBankSpider extends Spider {
     })
 
     // calculate hash by sorting the def object and hashing it's keys and values in a sorted way
-    def.id = /\/gloss\/(.*).html/.exec(def.link)[1]
-    def.hash = this.hash(Object.keys(def).sort().map(key => `${key}: ${JSON.stringify(def[key])}`).join(','))
+    def.id = decodeURIComponent(path.basename(url.parse(def.link).pathname, '.html'))
+    def.hash = this.hash(def)
     this.content[def.id] = def
 
     return { tasks }
