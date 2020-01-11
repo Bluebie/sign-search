@@ -236,7 +236,7 @@ class SpiderConductor {
         this.log(`Importing ${content.link}: ${content.words.join(' ')}`)
         await searchLibrary.append({
           words: content.words,
-          tags: [...(this.config.tag || []), ...(content.tags || [])],
+          tags: [...(this.config.tag || []), ...(content.tags || [])].filter((v,i,a) => a.indexOf(v) === i),
           videoPaths: content.videos.map(videoInfo => new OnDemandMediaLoader(this.spider, videoInfo)),
           lastChange: content.timestamp,
           def: {
