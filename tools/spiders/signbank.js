@@ -6,7 +6,6 @@ const Spider = require('../../lib/spider.js')
 const parseMs = require('parse-duration')
 const got = require('got')
 const pipeline = util.promisify(stream.pipeline)
-const cbor = require('borc')
 
 // A spider which indexes an instagram feed and creates a produces a search index from that content
 // default config should be:
@@ -18,21 +17,7 @@ const cbor = require('borc')
 class SignBankSpider extends Spider {
   constructor(config, ...args) {
     super(config, ...args)
-  }
-
-  // restore state from a buffer created by the store() function
-  async load(frozenData) {
-    let data = cbor.decode(frozenData)
-    this.content = data.content
-    this.glossTags = data.glossTags
-  }
-
-  // store current state and content cache to a buffer that can be restored later to resume the indexing
-  async store() {
-    return cbor.encode({
-      content: this.content || {},
-      glossTags: this.glossTags || {}
-    })
+    this.store.push('glossTags')
   }
 
   beforeScrape() {

@@ -189,7 +189,7 @@ class SpiderConductor {
     this.spider = new spiderClass(this.config)
 
     if (await fs.pathExists(`${this.nest.settings.spiderPath}/frozen-data/${this.name}.cbor`)) {
-      await this.spider.load(await fs.readFile(`${this.nest.settings.spiderPath}/frozen-data/${this.name}.cbor`))
+      await this.spider.restoreSerialized(await fs.readFile(`${this.nest.settings.spiderPath}/frozen-data/${this.name}.cbor`))
       this.log(`Previous state restored`)
     }
 
@@ -255,7 +255,7 @@ class SpiderConductor {
 
   // call this before disposing of library, to preserve state and log newly discovered content
   async finish() {
-    await fs.writeFile(`${this.nest.settings.spiderPath}/frozen-data/${this.name}.cbor`, await this.spider.store())
+    await fs.writeFile(`${this.nest.settings.spiderPath}/frozen-data/${this.name}.cbor`, await this.spider.serialize())
 
     // detect newly found content
     let newContentKeys = Object.keys(this.spider.content).filter(key => !this.originalContentKeys.includes(key))
