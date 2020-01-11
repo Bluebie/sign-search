@@ -31,7 +31,7 @@
     "spider": "instagram",
     "expires": "1hr",
     "user": "toddslan",
-    "tag": "invented",
+    "tag": ["toddslan", "invented"],
     "discoveryVerb": "invented",
     "wordsRegexp": ["(“|\")([a-z0-9/\\,'‘’() _!?-]+)(”|\")", "i", 2],
     "rules": {
