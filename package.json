@@ -12,6 +12,7 @@
     "handbrake-js": "^4.0.0",
     "jquery": "^3.4.1",
     "line-reader": "^0.4.0",
+    "object-hash": "^2.0.1",
     "p-queue": "^6.2.1",
     "parse-duration": "^0.1.2",
     "pretty-ms": "^5.1.0",
