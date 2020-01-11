@@ -2,6 +2,7 @@
   "signbank": {
     "spider": "signbank",
     "expires": "48hr",
+    "link": "http://www.auslan.org.au/",
     "concurrency": 5,
     "url": "http://www.auslan.org.au/dictionary/",
     "discoveryVerb": "documented",
@@ -23,6 +24,7 @@
   "stage-left": {
     "spider": "auslan-stage-left",
     "expires": "24hr",
+    "link": "http://www.auslanstageleft.com.au/media/101-auslan-theatre-signs/",
     "discoveryVerb": "demonstrated",
     "tag": ["auslan-stage-left", "description", "arts"]
   },
@@ -32,6 +34,7 @@
     "expires": "1hr",
     "user": "toddslan",
     "tag": ["toddslan", "invented"],
+    "link": "https://www.instagram.com/toddslan",
     "discoveryVerb": "invented",
     "wordsRegexp": ["(“|\")([a-z0-9/\\,'‘’() _!?-]+)(”|\")", "i", 2],
     "rules": {
@@ -44,6 +47,7 @@
     "spider": "instagram",
     "expires": "1hr",
     "user": "v.alford",
+    "link": "https://www.instagram.com/v.alford",
     "discoveryVerb": "demonstrated",
     "wordsRegexp": ["^([^\t\n|]+) ?||", "", 1],
     "tag": ["v.alford"],

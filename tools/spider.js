@@ -7,6 +7,9 @@ const PQueue = require('p-queue').default
 const parseDuration = require('parse-duration')
 const prettyMs = require('pretty-ms')
 const lockfile = require('proper-lockfile')
+const Feed = require('feed').Feed
+const html = require('nanohtml')
+const objectHash = require('object-hash')
 
 class OnDemandMediaLoader {
   constructor(spider, videoInfo) {
@@ -17,7 +20,7 @@ class OnDemandMediaLoader {
 
   // get a unique key that should change if the video's content changes
   async getKey() {
-    return this.spider.hash(JSON.stringify(this.info))
+    return objectHash(this.info, { algorithm: 'sha256' })
   }
 
   // get path to video file - if no path exists, 
@@ -48,6 +51,7 @@ class SpiderNest {
     this.loaded = false
     this.timestamps = {}
     this.buildTimestampsFile = `${this.settings.spiderPath}/frozen-data/build-timestamps.cbor`
+    this.writeQueue = new PQueue({ concurrency: 1 })
   }
 
   // load data and lock timestamps file to signify the spider is running
@@ -99,11 +103,7 @@ class SpiderNest {
 
     // log out build timestamps to file for future expiry checking
     this.timestamps[datasetName] = Date.now()
-    try {
-      let release = await lockfile.lock(this.buildTimestampsFile)
-      await fs.writeFile(`${this.settings.spiderPath}/frozen-data/build-timestamps.cbor`, cbor.encode(this.timestamps))
-      release()
-    } catch (err) { console.log(`Couldn't write build-timestamps.cbor? Error: ${err}`) }
+    await fs.writeFile(`${this.settings.spiderPath}/frozen-data/build-timestamps.cbor`, cbor.encode(this.timestamps))
 
     // create a spider conductor, and ask it to do the scrape
     let runner = new SpiderConductor(this, datasetName, this.configs[datasetName])
@@ -130,6 +130,68 @@ class SpiderNest {
     // default to not building if none of the above is true
     return false
   }
+
+  // build a feed of newly discovered content
+  async buildDiscoveryFeeds() {
+    // wait for writes to finish
+    await this.writeQueue.onIdle()
+    // load discovery log
+    let log = []
+    if (await fs.pathExists(`${this.settings.datasetsPath}/update-log.cbor`)) {
+      log = cbor.decodeAll(await fs.readFile(`${this.settings.datasetsPath}/update-log.cbor`))
+    }
+
+    let feedEntries = []
+    let minTimestamp = Date.now() - parseDuration(this.settings.discoveryFeed.minDuration)
+    while ((feedEntries.length < this.settings.discoveryFeed.minEntries
+      || log.slice(-1)[0].timestamp > minTimestamp)
+      && feedEntries.length < this.settings.discoveryFeed.maxEntries) {
+      // remove the last entry from the log, add it to the end of the feedEntries, reversing the array
+      feedEntries.push(log.pop())
+    }
+
+    // build feeds
+    let feed = new Feed({
+      title: this.settings.discoveryFeed.title || "Discovered Signs",
+      description: this.settings.discoveryFeed.description || "Signs that have recently been discovered by Find Sign's robotic spiders as they explore the Auslan web",
+      id: this.settings.discoveryFeed.id || "https://find.auslan.fyi/",
+      link: this.settings.discoveryFeed.id || "https://find.auslan.fyi/",
+    })
+
+    feedEntries.forEach(entry => {
+      feed.addItem({
+        id: `${entry.provider}:${entry.id}`,
+        title: `${entry.provider} ${entry.verb} ${[...entry.words].flat(2).join(' ')}`,
+        link: entry.link,
+        date: new Date(entry.timestamp),
+        description: `${entry.body}\n...`,
+        author: { name: entry.provider, link: entry.providerLink },
+      })
+    })
+
+    let feedHTML = []
+    let lastTimestamp = new Date(0)
+    feedEntries.forEach(entry => {
+      let timestamp = new Date(entry.timestamp)
+      if (timestamp.toLocaleDateString() != lastTimestamp.toLocaleDateString()) {
+        feedHTML.push(html`<h2>${timestamp.getFullYear()} ${timestamp.getMonth()} ${timestamp.getDate()}</h2>`)
+        lastTimestamp = timestamp
+      }
+      feedHTML.push(html`<div class=discovery_link><a href="${entry.providerLink}">${entry.provider}</a> ${entry.verb || 'documented'} <a href="${entry.link}">${[...entry.words].flat(2).join(' ')}</a></div>`)
+    })
+
+    let updatedHTML = (await fs.readFile(this.settings.searchUIPath)).toString()
+    updatedHTML = updatedHTML.replace(/<!-- START Discovery Feed -->(.+)<!-- END Discovery Feed -->/s, 
+                                      `<!-- START Discovery Feed -->\n${feedHTML.join("\n")}\n<!-- END Discovery Feed -->`)
+
+    // write out feeds
+    await Promise.all([
+      fs.writeFile(`${this.settings.feedsPath}/discovery.rss`, feed.rss2()),
+      fs.writeFile(`${this.settings.feedsPath}/discovery.atom`, feed.atom1()),
+      fs.writeFile(`${this.settings.feedsPath}/discovery.json`, feed.json1()),
+      fs.writeFile(`${this.settings.searchUIPath}`, updatedHTML)
+    ])
+  }
 }
 
 
@@ -144,15 +206,16 @@ class SpiderConductor {
     this.logPath = `${nest.settings.logsPath}/${name}.txt`
 
     this.completed = new Set()
-    this.queue = new PQueue({ concurrency: config.concurrency !== undefined ? config.concurrency : 1 })
-    this.writeQueue = new PQueue({ concurrency: 1 })
+    this.queue = new PQueue({ concurrency: this.config.concurrency !== undefined ? this.config.concurrency : 1 })
+    this.writeQueue = nest.writeQueue
   }
 
   log(...text) {
-    let message = `${new Date()}: ${JSON.stringify(text)}\n`
+    let message = JSON.stringify(text)
+    let timestamp = Date.now()
     console.log(`${this.name}: ${message}`)
     this.writeQueue.add(async ()=> {
-      await fs.appendFile(this.logPath, `${message}\n`)
+      await fs.appendFile(this.logPath, `${timestamp}: ${message}\n`)
     })
   }
 
@@ -265,14 +328,16 @@ class SpiderConductor {
       this.log(`New: ${content.link} - ${content.words}`)
       await fs.appendFile(`${this.nest.settings.datasetsPath}/update-log.cbor`, cbor.encode({
         provider: this.name,
+        providerLink: this.config.link,
         id: key,
         link: content.link,
-        words: content.words,
+        words: [(content.title || content.words)].flat(),
         verb: content.discoveryVerb || this.config.discoveryVerb,
         timestamp: content.timestamp || Date.now(),
+        body: content.body
       }))
       await fs.appendFile(`${this.nest.settings.datasetsPath}/update-log.txt`, 
-        `${this.name} ${this.verb} [${content.words.map(x=> x.join(' ')).join(', ')}](${content.link}) (timestamp: ${content.timestamp || Date.now()})\n`
+        `${this.name} ${this.verb} [${content.title ? content.title : content.words.join(', ')}](${content.link}) (timestamp: ${content.timestamp || Date.now()})\n`
       )
     }
   }
@@ -296,19 +361,27 @@ let defaultRun = async () => {
     spiderPath: './spiders',
     vectorDBPath: '../datasets/vectors-cc-en-300-8bit',
     datasetsPath: '../datasets',
-    logsPath: '../logs'
+    feedsPath: '../feeds',
+    logsPath: '../logs',
+    searchUIPath: '../index.html',
+    discoveryFeed: {
+      minEntries: 12,
+      minDuration: '1wk',
+      maxEntries: 24
+    }
   })
   
   // load data and lock file
   await nest.load()
   
   // run in series does one spider at a time, for easier interpreting of the live terminal output
-  // nest.runInSeries()
+  await nest.runInSeries()
   // run executes all the spider operations at the same time, encouraging concurrency, for a faster overall scrape
-  nest.run()
+  //await nest.run()
   // run a single specific spider, and force the scrape
-  // nest.runOneSpider('stage-left', true)
+  //await nest.runOneSpider('stage-left', true)
 
+  await nest.buildDiscoveryFeeds()
   // unlock spider files
   await nest.unload()
 }

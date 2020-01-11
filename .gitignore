@@ -8,6 +8,7 @@ tools/scrapers/auslan-signbank/definition-links.json
 tools/**/*-cache*
 tools/**/*.mp4
 tools/spiders/frozen-data/*
+feeds/*
 logs/*
 *.tmp
 tools/scrapers/youtube/playlist-keys.json
