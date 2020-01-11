@@ -1,13 +1,27 @@
 /* color definitions */
 :root {
   --hue: 220deg;
-  --base-bg: hsl(var(--hue), 20%, 12%);
-  --base-fg: hsl(var(--hue), 50%, 80%);
+  --base-bg-sat: 20%;
+  --base-bg-lum: 12%;
+  --base-bg: hsl(var(--hue), var(--base-bg-sat), var(--base-bg-lum));
+  --base-fg-sat: 50%;
+  --base-fg-lum: 80%;
+  --base-fg: hsl(var(--hue), var(--base-fg-sat), var(--base-fg-lum));
   --filter-fg: saturate(100%) brightness(100%);
-  --module-bg: hsl(var(--hue), 18%, 27%);
-  --submodule-bg: hsl(var(--hue), 21%, 24%);
+  --module-bg-sat: 18%;
+  --module-bg-lum: 27%;
+  --module-bg: hsl(var(--hue), var(--module-bg-sat), var(--module-bg-lum));
+  --alert-bg-hue: calc(var(--hue) - 40deg);
+  --alert-bg: hsl(var(--alert-bg-hue), var(--module-bg-sat), var(--module-bg-lum));
+  --submodule-bg-sat: 21%;
+  --submodule-bg-lum: 24%;
+  --submodule-bg: hsl(var(--hue), var(--submodule-bg-sat), var(--submodule-bg-lum));
+  --outer-shadow-alpha: 20%;
+  --outer-highlight-alpha: 40%;
+
   --fade-duration: 0.5s;
   --fade-time-offset: 0.075s;
+  --noise-texture: url(data:image/png;base64,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);
 }
 
 @font-face {
@@ -71,8 +85,8 @@ form#search_form::before {
   position: absolute;
   width: 1em;
   height: 1em;
-  margin-left: 0.5em;
-  margin-top: 0.5em;
+  margin-left: 0.65em;
+  margin-top: 0.65em;
 }
 
 input#search_box {
@@ -81,13 +95,39 @@ input#search_box {
   font-size: inherit;
   width: 100%;
   padding: 0.4em 0.4em 0.4em 1.8em;
-  border-radius: 6px;
-  background-color: var(--module-bg);
+  border-radius: 1.8rem;
+  /* background-color: var(--module-bg); */
   caret-color: var(--base-fg);
   color: inherit;
   border: 0 none;
   margin: 1.5rem auto 1.5rem auto;
   outline: 0 none;
+
+  background-image: var(--noise-texture);
+  background-color: var(--module-bg);
+  background-blend-mode: multiply;
+  border: 3px solid var(--module-bg);
+  /* very fancy soon to be out of style custom 'neumorphic' style box */
+  box-shadow:
+  /* inset shadow */
+  inset 0.35rem 0.3rem 0.6rem -0.3rem hsla(var(--hue), calc(var(--module-bg-sat) + 4%), calc(var(--module-bg-lum) - 8%), 100%),
+  inset 0.30rem 0.4rem 0.7rem -0.3rem hsla(var(--hue), calc(var(--module-bg-sat) + 4%), calc(var(--module-bg-lum) - 8%), 100%),
+  inset 0.25rem 0.5rem 0.8rem -0.3rem hsla(var(--hue), calc(var(--module-bg-sat) + 4%), calc(var(--module-bg-lum) - 8%), 100%),
+  inset 0.05rem 10rem  10rem   0rem   hsla(var(--hue), calc(var(--module-bg-sat) + 4%), calc(var(--module-bg-lum) - 8%), var(--outer-shadow-alpha)),
+  /* inset highlight */
+  inset -0.35rem -0.3rem 0.6rem -0.3rem hsla(var(--hue), calc(var(--module-bg-sat) - 2%), calc(var(--module-bg-lum) + 4%), 100%),
+  inset -0.30rem -0.4rem 0.7rem -0.3rem hsla(var(--hue), calc(var(--module-bg-sat) - 2%), calc(var(--module-bg-lum) + 4%), 100%),
+  inset -0.25rem -0.5rem 0.8rem -0.3rem hsla(var(--hue), calc(var(--module-bg-sat) - 2%), calc(var(--module-bg-lum) + 4%), 100%),
+  inset -0.05rem -10rem  10rem   0rem   hsla(var(--hue), calc(var(--module-bg-sat) - 2%), calc(var(--module-bg-lum) + 4%), var(--outer-highlight-alpha)),
+  /* outside drop shadow */
+  0.3rem 0.6rem 0.8rem hsla(var(--hue), calc(var(--base-bg-sat) + 5%), calc(var(--base-bg-lum) - 6%), var(--outer-shadow-alpha)),
+  0.3rem 0.5rem 1.0rem hsla(var(--hue), calc(var(--base-bg-sat) + 5%), calc(var(--base-bg-lum) - 4%), var(--outer-shadow-alpha)),
+  0.3rem 0.4rem 1.2rem hsla(var(--hue), calc(var(--base-bg-sat) + 5%), calc(var(--base-bg-lum) - 2%), var(--outer-shadow-alpha)),
+  /* outside top highlight */
+  -0.3rem -0.6rem 0.8rem hsla(var(--hue), calc(var(--base-bg-sat) - 5%), calc(var(--base-bg-lum) + 6%), var(--outer-highlight-alpha)),
+  -0.3rem -0.5rem 1.0rem hsla(var(--hue), calc(var(--base-bg-sat) - 5%), calc(var(--base-bg-lum) + 4%), var(--outer-highlight-alpha)),
+  -0.3rem -0.4rem 1.2rem hsla(var(--hue), calc(var(--base-bg-sat) - 5%), calc(var(--base-bg-lum) + 2%), var(--outer-highlight-alpha))
+  ;
 }
 
 nav {
@@ -130,6 +170,21 @@ main#results .result {
   min-height: 126px;
   overflow: hidden;
   animation: result-in var(--fade-duration);
+
+  /* very fancy soon to be out of style custom 'neumorphic' style box */
+  box-shadow:
+  /* inset highlight and shadow */
+  inset 0 -7rem 5em -2em hsla(var(--hue), calc(var(--module-bg-sat) - 5%), calc(var(--module-bg-lum) + 5%), var(--outer-highlight-alpha)),
+  inset 0 +7rem 5em -2em hsla(var(--hue), calc(var(--module-bg-sat) + 5%), calc(var(--module-bg-lum) - 3%), var(--outer-shadow-alpha)),
+  /* outside drop shadow */
+  0.3rem 0.3rem 0.4rem hsla(var(--hue), calc(var(--base-bg-sat) + 5%), calc(var(--base-bg-lum) - 10%), var(--outer-shadow-alpha)),
+  0.2rem 0.3rem 0.2rem hsla(var(--hue), calc(var(--base-bg-sat) + 5%), calc(var(--base-bg-lum) - 8%), var(--outer-shadow-alpha)),
+  0.1rem 0.1rem 0.1rem hsla(var(--hue), calc(var(--base-bg-sat) + 5%), calc(var(--base-bg-lum) - 6%), var(--outer-shadow-alpha)),
+  /* outside top highlight */
+  -0.3rem -0.3rem 0.4rem hsla(var(--hue), calc(var(--base-bg-sat) - 5%), calc(var(--base-bg-lum) + 6%), var(--outer-highlight-alpha)),
+  -0.2rem -0.2rem 0.2rem hsla(var(--hue), calc(var(--base-bg-sat) - 5%), calc(var(--base-bg-lum) + 4%), var(--outer-highlight-alpha)),
+  -0.1rem -0.1rem 0.1rem hsla(var(--hue), calc(var(--base-bg-sat) - 5%), calc(var(--base-bg-lum) + 2%), var(--outer-highlight-alpha))
+  ;
 }
 
 @keyframes result-in {
@@ -147,6 +202,21 @@ main#results .result .video_player {
   overflow: hidden;
   margin-left: -200px;
   margin-top: 7px;
+
+  /* very fancy soon to be out of style custom 'neumorphic' style box */
+  box-shadow:
+  /* inset highlight and shadow */
+  inset 0 -7rem 5em -2em hsla(var(--hue), calc(var(--module-bg-sat) - 5%), calc(var(--module-bg-lum) + 5%), var(--outer-highlight-alpha)),
+  inset 0 +7rem 5em -2em hsla(var(--hue), calc(var(--module-bg-sat) + 5%), calc(var(--module-bg-lum) - 3%), var(--outer-shadow-alpha)),
+  /* outside drop shadow */
+  0.3rem 0.3rem 0.4rem hsla(var(--hue), calc(var(--module-bg-sat) + 5%), calc(var(--module-bg-lum) - 10%), var(--outer-shadow-alpha)),
+  0.2rem 0.3rem 0.2rem hsla(var(--hue), calc(var(--module-bg-sat) + 5%), calc(var(--module-bg-lum) - 8%), var(--outer-shadow-alpha)),
+  0.1rem 0.1rem 0.1rem hsla(var(--hue), calc(var(--module-bg-sat) + 5%), calc(var(--module-bg-lum) - 6%), var(--outer-shadow-alpha)),
+  /* outside top highlight */
+  -0.3rem -0.3rem 0.4rem hsla(var(--hue), calc(var(--module-bg-sat) - 5%), calc(var(--module-bg-lum) + 6%), var(--outer-highlight-alpha)),
+  -0.2rem -0.2rem 0.2rem hsla(var(--hue), calc(var(--module-bg-sat) - 5%), calc(var(--module-bg-lum) + 4%), var(--outer-highlight-alpha)),
+  -0.1rem -0.1rem 0.1rem hsla(var(--hue), calc(var(--module-bg-sat) - 5%), calc(var(--module-bg-lum) + 2%), var(--outer-highlight-alpha))
+  ;
 }
 
 main#results .result .video_player video.video_thumb {
@@ -168,7 +238,7 @@ main#results .result .video_player button.next_vid {
   font-weight: inherit;
   font-family: inherit;
   color: inherit;
-  background-color: hsla(var(--hue), 50%, 80%, 35%);
+  background-color: hsla(var(--hue), var(--module-bg-sat), var(--module-bg-lum), 35%);
   /* backdrop-filter: blur(2px); */
 }
 main#results .result .video_player button.prev_vid { left: 0; border-top-left-radius: 6px; border-bottom-left-radius: 6px; }
@@ -188,7 +258,6 @@ main#results .result .gloss_list {
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
-  
 }
 
 main#results .result .link, main#results .result .tags {
@@ -209,7 +278,7 @@ main#results .result .mini_def {
   overflow: hidden;
   line-height: var(--line-height);
   font-size: 0.95em;
-  max-height: calc(var(--line-height) * 3 - 1px);
+  max-height: calc(var(--line-height) * 3 - 1rem);
 }
 
 /* alert notices on search results */
@@ -235,7 +304,6 @@ div#pagination * {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-size: 2.6rem;
-  border: 2px solid transparent;
   padding: 0;
   outline: 0 none;
   color: inherit;
@@ -254,6 +322,61 @@ div#pagination *[aria-current] {
   background-color: var(--module-bg);
   border-radius: 30px;
   cursor: default;
+  box-shadow:
+  inset +0.1rem +0.15rem +0.4rem +0.05rem hsla(var(--hue), calc(var(--module-bg-sat) + 3%), calc(var(--module-bg-lum) - 10%), 100%),
+  inset +0.2rem +0.25rem +0.6rem +0.20rem hsla(var(--hue), calc(var(--module-bg-sat) + 3%), calc(var(--module-bg-lum) - 5%), 100%);
+}
+
+.home div.inset_box { display: block; }
+div.inset_box {
+  display: none;
+  width: 500px;
+  height: 300px;
+  margin: 0 auto 0 auto;
+  padding: 0.5rem 0.9rem;
+  line-height: 1.35em;
+  background-color: var(--module-bg);
+  /* background-image: var(--noise-texture);
+  background-blend-mode: multiply; */
+  border-radius: 1rem;
+  border: 3px solid var(--module-bg);
+  /* very fancy soon to be out of style custom 'neumorphic' style box */
+  box-shadow:
+  /* inset shadow */
+  /* inset 0.35rem 0.3rem 0.6rem -0.3rem hsla(var(--hue), calc(var(--module-bg-sat) + 4%), calc(var(--module-bg-lum) - 8%), 100%),
+  inset 0.30rem 0.4rem 0.7rem -0.3rem hsla(var(--hue), calc(var(--module-bg-sat) + 4%), calc(var(--module-bg-lum) - 8%), 100%),
+  inset 0.25rem 0.5rem 0.8rem -0.3rem hsla(var(--hue), calc(var(--module-bg-sat) + 4%), calc(var(--module-bg-lum) - 8%), 100%),
+  inset 0.05rem 10rem  10rem   0rem   hsla(var(--hue), calc(var(--module-bg-sat) + 4%), calc(var(--module-bg-lum) - 8%), var(--outer-shadow-alpha)), */
+  /* inset highlight */
+  /* inset -0.35rem -0.3rem 0.6rem -0.3rem hsla(var(--hue), calc(var(--module-bg-sat) - 2%), calc(var(--module-bg-lum) + 4%), 100%),
+  inset -0.30rem -0.4rem 0.7rem -0.3rem hsla(var(--hue), calc(var(--module-bg-sat) - 2%), calc(var(--module-bg-lum) + 4%), 100%),
+  inset -0.25rem -0.5rem 0.8rem -0.3rem hsla(var(--hue), calc(var(--module-bg-sat) - 2%), calc(var(--module-bg-lum) + 4%), 100%),
+  inset -0.05rem -10rem  10rem   0rem   hsla(var(--hue), calc(var(--module-bg-sat) - 2%), calc(var(--module-bg-lum) + 4%), var(--outer-highlight-alpha)), */
+  /* outside drop shadow */
+  0.3rem 0.6rem 0.8rem hsla(var(--hue), calc(var(--base-bg-sat) + 5%), calc(var(--base-bg-lum) - 6%), var(--outer-shadow-alpha)),
+  0.3rem 0.5rem 1.0rem hsla(var(--hue), calc(var(--base-bg-sat) + 5%), calc(var(--base-bg-lum) - 4%), var(--outer-shadow-alpha)),
+  0.3rem 0.4rem 1.2rem hsla(var(--hue), calc(var(--base-bg-sat) + 5%), calc(var(--base-bg-lum) - 2%), var(--outer-shadow-alpha)),
+  /* outside top highlight */
+  -0.3rem -0.6rem 0.8rem hsla(var(--hue), calc(var(--base-bg-sat) - 5%), calc(var(--base-bg-lum) + 6%), var(--outer-highlight-alpha)),
+  -0.3rem -0.5rem 1.0rem hsla(var(--hue), calc(var(--base-bg-sat) - 5%), calc(var(--base-bg-lum) + 4%), var(--outer-highlight-alpha)),
+  -0.3rem -0.4rem 1.2rem hsla(var(--hue), calc(var(--base-bg-sat) - 5%), calc(var(--base-bg-lum) + 2%), var(--outer-highlight-alpha))
+  ;
+}
+
+div.inset_box h2, div.inset_box ul {
+  font-size: 1em;
+  margin: 0;
+  padding: 0 0 0.5rem 0;
+  list-style-position: inside;
+}
+
+div.inset_box ul li {
+  padding-left: 0.5em;
+  list-style-type: square;
+}
+
+div.inset_box a {
+  color: inherit;
 }
 
 main#article {

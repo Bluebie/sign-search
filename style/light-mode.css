@@ -4,11 +4,17 @@ changes some page-wide colors, and applies some filters to fix some
 of the symbols to look right
 */
 :root {
-  --base-bg: hsl(var(--hue), 43%, 90%);
-  --base-fg: hsl(var(--hue), 20%, 22%);
+  --base-bg-sat: 43%;
+  --base-bg-lum: 90%;
+  --base-fg-sat: 20%;
+  --base-fg-lum: 22%;
   --filter-fg: saturate(150%) brightness(25%);
-  --module-bg: hsl(var(--hue), 35%, 83%);
-  --submodule-bg: hsl(var(--hue), 33%, 75%);
+  --module-bg-sat: 35%;
+  --module-bg-lum: 83%;
+  --submodule-bg-sat: 33%;
+  --submodule-bg-lum: 75%;
+  --outer-shadow-alpha: 40%;
+  --outer-highlight-alpha: 100%;
 }
 
 img#header {
@@ -23,7 +29,7 @@ div#pagination button {
   filter: var(--filter-fg);
 }
 
-div#pagination button[aria-current] {
+/* div#pagination button[aria-current] {
   background-color: transparent;
   border: 2px solid hsl(220deg, 31%, 70%);
-}
+} */

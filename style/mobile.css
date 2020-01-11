@@ -4,7 +4,7 @@ body {
   padding-right: 1ex;
 }
 
-body, img#header, form#search_form, input#search_box {
+body, img#header, form#search_form, input#search_box, div.inset_box {
   display: block;
   width: 100%;
 }

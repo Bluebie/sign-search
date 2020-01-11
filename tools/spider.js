@@ -268,10 +268,11 @@ class SpiderConductor {
         id: key,
         link: content.link,
         words: content.words,
+        verb: content.discoveryVerb || this.config.discoveryVerb,
         timestamp: content.timestamp || Date.now(),
       }))
       await fs.appendFile(`${this.nest.settings.datasetsPath}/update-log.txt`, 
-        `provider: ${this.name}; timestamp: ${content.timestamp || Date.now()}; words: ${content.words}; link: ${content.link}\n`
+        `${this.name} ${this.verb} [${content.words.map(x=> x.join(' ')).join(', ')}](${content.link}) (timestamp: ${content.timestamp || Date.now()})\n`
       )
     }
   }
