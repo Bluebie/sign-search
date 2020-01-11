@@ -60,8 +60,8 @@ form#search_form {
   margin: 0 auto 0 auto;
 }
 
+/* magnifing glass symbol in search form */
 form#search_form::before {
-  /* content: url(assets/search-icon.svg); */
   font-family: 'auslan-symbol' !important;
   /* Better Font Rendering =========== */
   -webkit-font-smoothing: antialiased;
@@ -210,6 +210,16 @@ main#results .result .mini_def {
   line-height: var(--line-height);
   font-size: 0.95em;
   max-height: calc(var(--line-height) * 3 - 1px);
+}
+
+/* alert notices on search results */
+main#results .result.invented { background-color: var(--alert-bg); }
+main#results .result .alert:before {
+  font-family: 'auslan-symbol';
+  content: "\e900";
+  padding-right: 0.3em;
+  position: relative;
+  top: 0.075rem;
 }
 
 div#pagination {
