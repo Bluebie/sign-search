@@ -2,7 +2,7 @@
 const util = require('util')
 const stream = require('stream')
 const fs = require('fs-extra')
-const url = require('url')
+const nodeurl = require('url')
 const path = require('path')
 const Spider = require('../../lib/spider.js')
 const parseMs = require('parse-duration')
@@ -58,22 +58,25 @@ class SignBankSpider extends Spider {
       tasks.push(['tag', this.relativeLink(url, aLink.attribs.href)])
     })
 
-    // add tasks for definitions found
-    let tagName = page('#activetag a').text().trim().replace(/[^a-zA-Z0-9-]+/g, '-')
-    page('#searchresults table a').each((i, aLink)=> {
-      let link = this.relativeLink(url, aLink.attribs.href)
-      this.glossTags[link] = [tagName, ...(this.glossTags[link] || [])]
-      tasks.push(['definition', link])
-    })
+    // add tasks for definitions found, if we're not on the root tags page
+    if (!url.match(/tag\/$/)) {
+      let tagName = this.basenameFromURL(url).replace(':', '.').replace(/[^a-zA-Z0-9.-]+/g, '-')
+      page('#searchresults table a').each((i, aLink)=> {
+        let link = this.relativeLink(url, aLink.attribs.href)
+        let gloss = this.basenameFromURL(link)
+        this.glossTags[gloss] = [...(this.glossTags[gloss] || []), tagName]
+        tasks.push(['definition', link])
+      })
+    }
 
     return { tasks }
   }
 
   // adds extra signbank tags after scraping is complete
   async afterScrape() {
-    for (let link of Object.keys(this.glossTags)) {
-      if (!this.content[link]) continue
-      this.content[link].tags = [...this.content[link].tags, ...this.glossTags[link]]
+    for (let gloss of Object.keys(this.glossTags)) {
+      if (!this.content[gloss]) continue
+      this.content[gloss].tags = [...this.content[gloss].tags, ...this.glossTags[gloss]]
     }
   }
 
@@ -116,11 +119,16 @@ class SignBankSpider extends Spider {
     })
 
     // calculate hash by sorting the def object and hashing it's keys and values in a sorted way
-    def.id = decodeURIComponent(path.basename(url.parse(def.link).pathname, '.html'))
+    def.id = this.basenameFromURL(def.link)
     def.hash = this.hash(def)
     this.content[def.id] = def
 
     return { tasks }
+  }
+
+  // extracts the gloss from the definition url, or tag from the tag search results pages
+  basenameFromURL(url, ext='.html') {
+    return decodeURIComponent(path.basename(nodeurl.parse(url).pathname, ext))
   }
 
   // fetch a video for a specific piece of content
