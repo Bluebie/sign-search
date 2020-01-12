@@ -10,6 +10,7 @@ const lockfile = require('proper-lockfile')
 const Feed = require('feed').Feed
 const html = require('nanohtml')
 const objectHash = require('object-hash')
+const dateFNS = require('date-fns')
 
 class OnDemandMediaLoader {
   constructor(spider, videoInfo) {
@@ -63,7 +64,7 @@ class SpiderNest {
     await fs.ensureDir(this.settings.logsPath)
     
     if (await fs.pathExists(this.buildTimestampsFile)) {
-      this.buildTimestampsLock = await lockfile.lock(this.buildTimestampsFile)
+      this.buildTimestampsLock = await lockfile.lock(this.buildTimestampsFile, { stale: 1000 * 60 * 8 })
       try {
         this.timestamps = cbor.decode(await fs.readFile(this.buildTimestampsFile))
       } catch (err) { console.log(`build-timestamps.cbor is corrupt? ignoring. Error: ${err}`) }
@@ -143,46 +144,45 @@ class SpiderNest {
 
     let feedEntries = []
     let minTimestamp = Date.now() - parseDuration(this.settings.discoveryFeed.minDuration)
-    while ((feedEntries.length < this.settings.discoveryFeed.minEntries
-      || log.slice(-1)[0].timestamp > minTimestamp)
-      && feedEntries.length < this.settings.discoveryFeed.maxEntries) {
+    while (log.length > 0 && ((feedEntries.length < this.settings.discoveryFeed.minEntries
+      || (log.length > 0 && log.slice(-1)[0].timestamp > minTimestamp))
+      && feedEntries.length < this.settings.discoveryFeed.maxEntries)) {
       // remove the last entry from the log, add it to the end of the feedEntries, reversing the array
       feedEntries.push(log.pop())
     }
 
     // build feeds
     let feed = new Feed({
-      title: this.settings.discoveryFeed.title || "Discovered Signs",
-      description: this.settings.discoveryFeed.description || "Signs that have recently been discovered by Find Sign's robotic spiders as they explore the Auslan web",
-      id: this.settings.discoveryFeed.id || "https://find.auslan.fyi/",
-      link: this.settings.discoveryFeed.id || "https://find.auslan.fyi/",
+      title: this.settings.discoveryFeed.title,
+      description: this.settings.discoveryFeed.description,
+      id: this.settings.discoveryFeed.link,
+      link: this.settings.discoveryFeed.link
     })
-
+    
+    let feedHTML = ['<!-- START Discovery Feed -->']
+    let lastTimestamp = new Date(0)
     feedEntries.forEach(entry => {
+      let displayName = this.configs[entry.provider].displayName || entry.provider
       feed.addItem({
         id: `${entry.provider}:${entry.id}`,
-        title: `${entry.provider} ${entry.verb} ${[...entry.words].flat(2).join(' ')}`,
+        title: `${displayName} ${entry.verb} ${[...entry.words].flat(2).join(', ').trim()}`,
         link: entry.link,
         date: new Date(entry.timestamp),
         description: `${entry.body}\n...`,
-        author: { name: entry.provider, link: entry.providerLink },
+        author: { name: displayName, link: this.configs[entry.provider].providerLink },
       })
-    })
-
-    let feedHTML = []
-    let lastTimestamp = new Date(0)
-    feedEntries.forEach(entry => {
+      
       let timestamp = new Date(entry.timestamp)
       if (timestamp.toLocaleDateString() != lastTimestamp.toLocaleDateString()) {
-        feedHTML.push(html`<h2>${timestamp.getFullYear()} ${timestamp.getMonth()} ${timestamp.getDate()}</h2>`)
+        feedHTML.push(html`<h2><time datetime="${dateFNS.format(timestamp, "yyyy-MM-dd")}">${dateFNS.format(timestamp, "EEEE, do LLLL yyyy")}</time></h2>`)
         lastTimestamp = timestamp
       }
-      feedHTML.push(html`<div class=discovery_link><a href="${entry.providerLink}">${entry.provider}</a> ${entry.verb || 'documented'} <a href="${entry.link}">${[...entry.words].flat(2).join(' ')}</a></div>`)
+      feedHTML.push(html`<div class=discovery_link><a href="${entry.providerLink}">${displayName}</a> ${entry.verb || 'documented'} <a href="${entry.link}">${[...entry.words].flat(2).slice(0,3).join(', ').trim()}</a></div>`)
     })
+    feedHTML.push('<!-- END Discovery Feed -->')
 
     let updatedHTML = (await fs.readFile(this.settings.searchUIPath)).toString()
-    updatedHTML = updatedHTML.replace(/<!-- START Discovery Feed -->(.+)<!-- END Discovery Feed -->/s, 
-                                      `<!-- START Discovery Feed -->\n${feedHTML.join("\n")}\n<!-- END Discovery Feed -->`)
+    updatedHTML = updatedHTML.replace(/<!-- START Discovery Feed -->(.+)<!-- END Discovery Feed -->/s, feedHTML.map(x => `      ${x}\n`).join(""))
 
     // write out feeds
     await Promise.all([
@@ -299,7 +299,7 @@ class SpiderConductor {
         this.log(`Importing ${content.link}: ${content.words.join(' ')}`)
         await searchLibrary.append({
           words: content.words,
-          tags: [...(this.config.tag || []), ...(content.tags || [])].filter((v,i,a) => a.indexOf(v) === i),
+          tags: [...(this.config.tag || []), ...(content.tags || [])].filter((v,i,a) => a.indexOf(v) === i).map(x => `${x}`.toLowerCase()),
           videoPaths: content.videos.map(videoInfo => new OnDemandMediaLoader(this.spider, videoInfo)),
           lastChange: content.timestamp,
           def: {
@@ -333,7 +333,7 @@ class SpiderConductor {
         link: content.link,
         words: [(content.title || content.words)].flat(),
         verb: content.discoveryVerb || this.config.discoveryVerb,
-        timestamp: content.timestamp || Date.now(),
+        timestamp: Date.now(),
         body: content.body
       }))
       await fs.appendFile(`${this.nest.settings.datasetsPath}/update-log.txt`, 
@@ -367,7 +367,11 @@ let defaultRun = async () => {
     discoveryFeed: {
       minEntries: 12,
       minDuration: '1wk',
-      maxEntries: 24
+      maxEntries: 24,
+      title: "Discovered Signs",
+      description: "Signs that have recently been discovered by Find Sign’s robotic spiders as they explore the Auslan web",
+      id: "https://find.auslan.fyi/",
+      link: "https://find.auslan.fyi/"
     }
   })
   
@@ -379,7 +383,7 @@ let defaultRun = async () => {
   // run executes all the spider operations at the same time, encouraging concurrency, for a faster overall scrape
   //await nest.run()
   // run a single specific spider, and force the scrape
-  //await nest.runOneSpider('stage-left', true)
+  //await nest.runOneSpider('signbank', true)
 
   await nest.buildDiscoveryFeeds()
   // unlock spider files

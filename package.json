@@ -7,6 +7,7 @@
     "borc": "^2.1.1",
     "cheerio": "^1.0.0-rc.3",
     "create-torrent": "^4.4.1",
+    "date-fns": "^2.9.0",
     "feed": "^4.1.0",
     "fs-extra": "^8.1.0",
     "got": "^10.2.1",
