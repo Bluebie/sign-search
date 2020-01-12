@@ -39,6 +39,19 @@
         results your computer downloaded, but we don’t know exactly what you wrote. We don’t send your information to
         Google or Facebook at all, but if you come here using one of their apps like Google Chrome or Facebook App, they
         might be able to track you while you use their app.</p>
+      <h1>Open Source and Dataset</h1>
+      <p>
+        Find Sign is open source (mostly with Unlicense software license). You can get the source code at <a href="https://github.com/Bluebie/sign-search">GitHub</a>.
+      </p>
+      <p>
+        Find Sign indexes copyright data, so the dataset is not open source, but it is open access. You can download an up to date copy of Find Sign’s dataset using a BitTorrent app that supports webseed (most do!) by using the automatically generated <a href="datasets.torrent">datasets.torrent</a>. If you download the GitHub repository, and add the datasets folder from the torrent, and run it from a regular static http server, you should have a fully functioning local copy of Find Sign including a full copy of the search index.
+      </p>
+      <p>
+        You should be able to easily reconfigure the spider to index other SignBank based sign language dictionary websites, or index instagram and youtube sources. Take a look at the spider code for examples of how to build custom spiders to index other websites.
+      </p>
+      <p>
+        If you just want to ingest the search index, a reasonable approach is to download the datasets torrent, and read through all the json files in the def folder. These files are regular json files, sharded by some hashing, but easy to index in to another search index. paths to video files are relative to the path to the folder containing the index.bin file.
+      </p>
     </main>
     
     <!-- Fathom - simple website analytics - https://github.com/usefathom/fathom -->
