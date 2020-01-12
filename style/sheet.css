@@ -36,6 +36,13 @@
   font-display: block;
 }
 
+*[class^="icon-"] {
+  font-family: 'auslan-symbol';
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-decoration: none;
+}
 .icon-interpret:before {
   content: "\2687";
 }
@@ -44,6 +51,9 @@
 }
 .icon-spinner:before {
   content: "\293e";
+}
+.icon-feed:before {
+  content: "\25ce";
 }
 
 * {
@@ -285,7 +295,7 @@ main#results .result .mini_def {
 main#results .result.invented { background-color: var(--alert-bg); }
 main#results .result .alert:before {
   font-family: 'auslan-symbol';
-  content: "\e900";
+  content: "!";
   padding-right: 0.3em;
   position: relative;
   top: 0.075rem;
@@ -333,11 +343,12 @@ div.inset_box {
   width: 500px;
   min-height: 300px;
   margin: 0 auto 3em auto;
-  padding: 0.5rem 0.9rem;
+  padding: 0.5rem 0.5rem 0.5rem 0.9rem;
   line-height: 1.35em;
   background-color: var(--module-bg);
   border-radius: 1rem;
   border: 3px solid var(--module-bg);
+  overflow: hidden;
   /* very fancy soon to be out of style custom 'neumorphic' style box */
   box-shadow:
   /* outside drop shadow */
@@ -351,16 +362,23 @@ div.inset_box {
   ;
 }
 
-div.inset_box h2, div.inset_box ul {
-  font-size: 1em;
-  margin: 0;
-  padding: 0 0 0.5rem 0;
-  list-style-position: inside;
+div.inset_box a[rel="alternate"] {
+  display: block;
+  width: 1em; height: 1em;
+  float: right;
 }
 
-div.inset_box ul li {
-  padding-left: 0.5em;
+div.inset_box h2, div.inset_box div.discovery_link {
+  font-size: 1em;
+  margin: 0;
+  padding: 0;
+}
+
+div.inset_box div.discovery_link {
+  display: list-item;
+  list-style-position: inside;
   list-style-type: square;
+  padding-left: 0.5em;
 }
 
 div.inset_box a {

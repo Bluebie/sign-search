@@ -1,5 +1,6 @@
 {
   "signbank": {
+    "displayName": "SignBank",
     "spider": "signbank",
     "expires": "48hr",
     "link": "http://www.auslan.org.au/",
@@ -22,6 +23,7 @@
   },
 
   "stage-left": {
+    "displayName": "Auslan Stage Left",
     "spider": "auslan-stage-left",
     "expires": "24hr",
     "link": "http://www.auslanstageleft.com.au/media/101-auslan-theatre-signs/",
@@ -30,6 +32,7 @@
   },
 
   "toddslan": {
+    "displayName": "Toddslan",
     "spider": "instagram",
     "expires": "1hr",
     "user": "toddslan",
@@ -44,6 +47,7 @@
   },
 
   "v-alford": {
+    "displayName": "Vanessa Alford",
     "spider": "instagram",
     "expires": "1hr",
     "user": "v.alford",

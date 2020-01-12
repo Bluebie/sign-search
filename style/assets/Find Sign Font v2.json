@@ -8,6 +8,55 @@
     {
       "selection": [
         {
+          "order": 1,
+          "id": 0,
+          "prevSize": 28,
+          "code": 9678,
+          "name": "feed",
+          "tempChar": ""
+        }
+      ],
+      "id": 4,
+      "metadata": {
+        "name": "Font Awesome (subset)",
+        "url": "https://github.com/FortAwesome/Font-Awesome",
+        "designer": "Dave Gandy",
+        "designerURL": "https://github.com/davegandy",
+        "license": "Custom",
+        "licenseURL": "https://github.com/FortAwesome/Font-Awesome#license",
+        "iconsHash": 309851062,
+        "importSize": {
+          "width": 22,
+          "height": 28
+        }
+      },
+      "height": 1024,
+      "prevSize": 28,
+      "icons": [
+        {
+          "id": 0,
+          "paths": [
+            "M219.429 768c0 60.571-49.143 109.714-109.714 109.714s-109.714-49.143-109.714-109.714 49.143-109.714 109.714-109.714 109.714 49.143 109.714 109.714zM512 838.286c0.571 10.286-2.857 20-9.714 27.429-6.857 8-16.571 12-26.857 12h-77.143c-18.857 0-34.286-14.286-36-33.143-16.571-174.286-154.857-312.571-329.143-329.143-18.857-1.714-33.143-17.143-33.143-36v-77.143c0-10.286 4-20 12-26.857 6.286-6.286 15.429-9.714 24.571-9.714h2.857c121.714 9.714 236.571 62.857 322.857 149.714 86.857 86.286 140 201.143 149.714 322.857zM804.571 839.429c0.571 9.714-2.857 19.429-10.286 26.857-6.857 7.429-16 11.429-26.286 11.429h-81.714c-19.429 0-35.429-14.857-36.571-34.286-18.857-332-283.429-596.571-615.429-616-19.429-1.143-34.286-17.143-34.286-36v-81.714c0-10.286 4-19.429 11.429-26.286 6.857-6.857 16-10.286 25.143-10.286h1.714c200 10.286 388 94.286 529.714 236.571 142.286 141.714 226.286 329.714 236.571 529.714z"
+          ],
+          "attrs": [
+            {}
+          ],
+          "width": 805,
+          "isMulticolor": false,
+          "isMulticolor2": false,
+          "tags": [
+            "feed",
+            "rss"
+          ],
+          "grid": 14
+        }
+      ],
+      "invisible": false,
+      "colorThemes": []
+    },
+    {
+      "selection": [
+        {
           "id": 1,
           "order": 530
         },
@@ -12623,12 +12672,12 @@
     {
       "selection": [
         {
-          "order": 1145,
+          "order": 1146,
           "id": 12,
           "name": "Alert",
           "prevSize": 32,
-          "code": 59648,
-          "tempChar": ""
+          "code": 33,
+          "tempChar": ""
         },
         {
           "order": 26,
@@ -12636,7 +12685,7 @@
           "name": "1",
           "prevSize": 32,
           "code": 49,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 27,
@@ -12644,7 +12693,7 @@
           "name": "2",
           "prevSize": 32,
           "code": 50,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 28,
@@ -12652,7 +12701,7 @@
           "name": "3",
           "prevSize": 32,
           "code": 51,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 29,
@@ -12660,7 +12709,7 @@
           "name": "4",
           "prevSize": 32,
           "code": 52,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 30,
@@ -12668,7 +12717,7 @@
           "name": "5",
           "prevSize": 32,
           "code": 53,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 31,
@@ -12676,7 +12725,7 @@
           "name": "6",
           "prevSize": 32,
           "code": 54,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 32,
@@ -12684,7 +12733,7 @@
           "name": "7",
           "prevSize": 32,
           "code": 55,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 33,
@@ -12692,7 +12741,7 @@
           "name": "8",
           "prevSize": 32,
           "code": 56,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 34,
@@ -12700,7 +12749,7 @@
           "name": "9",
           "prevSize": 32,
           "code": 57,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 35,
@@ -12708,7 +12757,7 @@
           "name": "interpret",
           "prevSize": 32,
           "code": 9863,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 36,
@@ -12716,7 +12765,7 @@
           "name": "search-icon",
           "prevSize": 32,
           "code": 9740,
-          "tempChar": ""
+          "tempChar": ""
         },
         {
           "order": 37,
@@ -12724,7 +12773,7 @@
           "name": "clear",
           "prevSize": 32,
           "code": 10005,
-          "tempChar": ""
+          "tempChar": ""
         }
       ],
       "id": 2,
