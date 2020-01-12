@@ -1,5 +1,4 @@
 // Scraper to load video content from instagram sources
-const os = require('os')
 const util = require('util')
 const fs = require('fs-extra')
 const ytdl = require('youtube-dl')
@@ -7,7 +6,7 @@ const Spider = require('../../lib/spider.js')
 const instagram = require('user-instagram')
 
 
-// A spider which indexes an instagram feed and creates a produces a search index from that content
+// A spider which indexes an instagram feed and creates a search index from that content
 class InstagramSpider extends Spider {
   constructor(config, ...args) {
     super(config, ...args)
