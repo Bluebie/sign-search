@@ -11,17 +11,20 @@ const Feed = require('feed').Feed
 const html = require('nanohtml')
 const objectHash = require('object-hash')
 const dateFNS = require('date-fns')
+const createTorrent = util.promisify(require('create-torrent'))
+const ProgressBar = require('progress')
 
 class OnDemandMediaLoader {
-  constructor(spider, videoInfo) {
+  constructor(spider, spiderName, videoInfo) {
     this.spider = spider
+    this.spiderName = spiderName
     this.info = videoInfo
     if (this.info.clipping) this.clipping = this.info.clipping
   }
 
   // get a unique key that should change if the video's content changes
   async getKey() {
-    return objectHash(this.info, { algorithm: 'sha256' })
+    return objectHash([this.spiderName, this.info], { algorithm: 'sha256' })
   }
 
   // get path to video file - if no path exists, 
@@ -53,6 +56,8 @@ class SpiderNest {
     this.timestamps = {}
     this.buildTimestampsFile = `${this.settings.spiderPath}/frozen-data/build-timestamps.cbor`
     this.writeQueue = new PQueue({ concurrency: 1 })
+    this.content = {}
+    this.log = (...args)=> console.log(...args)
   }
 
   // load data and lock timestamps file to signify the spider is running
@@ -69,6 +74,14 @@ class SpiderNest {
         this.timestamps = cbor.decode(await fs.readFile(this.buildTimestampsFile))
       } catch (err) { console.log(`build-timestamps.cbor is corrupt? ignoring. Error: ${err}`) }
     }
+
+    // create SpiderConductors
+    this.spiders = {}
+    for (let spiderName in this.configs) {
+      this.spiders[spiderName] = new SpiderConductor(this, spiderName, this.configs[spiderName])
+      await this.spiders[spiderName].start()
+    }
+
     this.loaded = true
   }
 
@@ -89,26 +102,102 @@ class SpiderNest {
 
   // run all the spiders at the same time concurrently
   async run(force = false) {
-    let runners = Object.keys(this.configs).map(source => {
-      return this.runOneSpider(source, force)
-    })
-
-    await Promise.all(runners)
+    await Promise.all(Object.keys(this.configs).map(source => this.runOneSpider(source, force)))
   }
 
   // run a specific spider's named config from the spiders.json file
   // optional force argument, if true, causes scrape and build to happen regardless of expiry settings
+  // returns true if the index was rebuilt, or false if not
   async runOneSpider(datasetName, force = false) {
     // check if this dataset is still up to date, and maybe skip spidering it
-    if (!force && !await this.checkExpired(datasetName)) return
+    if (!force && !await this.checkExpired(datasetName)) return false
+
+    // check config exists
+    if (!this.spiders[datasetName]) throw new Error(`No spider config named ${datasetName} exists`)
 
     // log out build timestamps to file for future expiry checking
     this.timestamps[datasetName] = Date.now()
     await fs.writeFile(`${this.settings.spiderPath}/frozen-data/build-timestamps.cbor`, cbor.encode(this.timestamps))
 
-    // create a spider conductor, and ask it to do the scrape
-    let runner = new SpiderConductor(this, datasetName, this.configs[datasetName])
-    await runner.run()
+    // ask SpiderConductor to run a scrape
+    await this.spiders[datasetName].run()
+  }
+
+  async buildDatasets() {
+    let library
+    let commonLibraryMode = !!this.settings.libraryName
+    let content = await Promise.all(Object.values(this.spiders).map(x => x.getContent()))
+    let contentLength = content.reduce((prev, curr) => prev + Object.keys(curr).length, 0)
+    // if building a common library, set up the library
+    if (commonLibraryMode) {
+      let buildIDs = await Promise.all(Object.values(this.spiders).map(x => x.buildID()))
+      library = await this.getSearchLibraryWriter({
+        name: this.settings.libraryName,
+        buildID: objectHash(buildIDs.sort(), { algorithm: 'sha256' }),
+        contentLength
+      })
+    }
+    var progress = new ProgressBar(' [:bar] :rate/ips :percent :etas :spiderName :entryID', {
+      total: contentLength, width: 80, head: '>', incomplete: ' ', clear: true
+    })
+    let oldLog = this.log
+    this.log = (...args)=> progress.interrupt(args.join(' '))
+    for (let spiderName in this.spiders) {
+      let spider = this.spiders[spiderName]
+      let spiderContent = await spider.getContent()
+      if (!commonLibraryMode) {
+        library = await this.getSearchLibraryWriter({
+          name: spiderName, buildID: await spider.buildID(), contentLength: Object.keys(spiderContent).length
+        })
+      }
+
+      // loop through accumulated content, writing it in to the searchLibrary and fetching any media necessary
+      for (let entryID in spiderContent) {
+        let entry = spiderContent[entryID]
+        this.log(`Importing ${entry.link}: ${entry.words.join(', ')}`)
+        await library.append({
+          words: entry.words,
+          tags: [...(spider.config.tags || []), ...(entry.tags || [])].filter((v,i,a) => a.indexOf(v) === i).map(x => `${x}`.toLowerCase()),
+          videoPaths: entry.videos.map(videoInfo => new OnDemandMediaLoader(spider.spider, spiderName, videoInfo)),
+          lastChange: entry.timestamp,
+          def: {
+            link: entry.link,
+            glossList: (entry.title ? [entry.title].flat() : entry.words),
+            body: entry.body,
+            spider: spiderName
+          }
+        })
+        progress.tick({ spiderName, entryID })
+      }
+
+      // finish the library writer if necessary
+      if (!commonLibraryMode) {
+        await library.finish()
+      }
+    }
+    this.log = oldLog
+
+    if (commonLibraryMode) {
+      await library.finish()
+    }
+  }
+
+  // creates a SearchLibraryWriter for the SpiderConductor to use to do a build
+  async getSearchLibraryWriter({ name, buildID, contentLength }) {
+    // build search library
+    let libraryPath = `${this.settings.datasetsPath}/${name}`
+    await fs.ensureDir(libraryPath)
+
+    // calculate how many shardBits are needed to make each json definition block be about 15kb big
+    let shardBits = 1
+    while (contentLength / 30 > 2 ** shardBits) shardBits += 1
+    // create a SearchLibraryWriter with reasonable values
+    let searchLibrary = await (new SearchLibraryWriter(libraryPath, {
+      format: 'sint8', scaling: 8, vectorDB: this.vectorDB, shardBits, buildID,
+      log: (...args)=> this.log(...args)
+    })).open()
+
+    return searchLibrary
   }
 
   // returns a boolean (eventually): should the dataset name passed in, be rebuilt now? does it pass expiration rules?
@@ -182,7 +271,7 @@ class SpiderNest {
     feedHTML.push('<!-- END Discovery Feed -->')
 
     let updatedHTML = (await fs.readFile(this.settings.searchUIPath)).toString()
-    updatedHTML = updatedHTML.replace(/<!-- START Discovery Feed -->(.+)<!-- END Discovery Feed -->/s, feedHTML.map(x => `      ${x}\n`).join(""))
+    updatedHTML = updatedHTML.replace(/ +<!-- START Discovery Feed -->(.+)<!-- END Discovery Feed -->\n/s, ()=> feedHTML.map(x => `      ${x}\n`).join(""))
 
     // write out feeds
     await Promise.all([
@@ -245,9 +334,6 @@ class SpiderConductor {
 
   // call this before scrape() or build(), run handles it internally so it's not needed there
   async start() {
-    await fs.remove(this.logPath)
-    this.log(`Getting ready to spider ${this.name}...`)
-    
     let spiderClass = require(`${this.nest.settings.spiderPath}/${this.config.spider}.js`)
     this.spider = new spiderClass(this.config)
 
@@ -256,11 +342,14 @@ class SpiderConductor {
       this.log(`Previous state restored`)
     }
 
-    this.originalContentKeys = Object.keys(this.spider.content)
+    this.originalContentKeys = Object.keys(await this.spider.getContent())
   }
 
   // scrapes the full website, resolves promise when everything is done
   async scrape() {
+    await fs.remove(this.logPath)
+    this.log(`Getting ready to spider ${this.name}...`)
+
     // if the spider defines a beforeStart function, run it
     if (this.spider.beforeScrape) await this.spider.beforeScrape()
         
@@ -274,46 +363,26 @@ class SpiderConductor {
     if (this.spider.afterScrape) await this.spider.afterScrape()
   }
 
-  // builds a search library in the datasets path, downloading any missing videos and transcoding them
-  // resolves promise when everything is finished, library is fully written and closed
-  async build() {
-    // build search library
-    let libraryPath = `${this.nest.settings.datasetsPath}/${this.name}`
-    await fs.ensureDir(libraryPath)
+  async buildID() {
+    return await this.spider.buildID()
+  }
 
-    // calculate how many shardBits are needed to make each json definition block be about 15kb big
-    let shardBits = 1
-    let contentLength = Object.keys(this.spider.content).length
-    // calculate a buildID that changes when the content does
-    let buildID = this.spider.buildID()
-    while (contentLength / 30 > 2 ** shardBits) shardBits += 1
-    let searchLibrary = await (new SearchLibraryWriter(libraryPath, {
-      format: 'sint8', scaling: 8, vectorDB: this.nest.vectorDB, shardBits, buildID
-    })).open()
+  // gets content of the spider's scrape
+  async getContent() {
+    return await this.spider.getContent()
+  }
 
-    if (searchLibrary.skipBuild) {
-      this.log(`Skipping import stage as library is not being built`)
-    } else {
-      // loop through accumulated content, writing it in to the searchLibrary and fetching any media necessary
-      for (let content of Object.values(this.spider.content)) {
-        this.log(`Importing ${content.link}: ${content.words.join(' ')}`)
-        await searchLibrary.append({
-          words: content.words,
-          tags: [...(this.config.tag || []), ...(content.tags || [])].filter((v,i,a) => a.indexOf(v) === i).map(x => `${x}`.toLowerCase()),
-          videoPaths: content.videos.map(videoInfo => new OnDemandMediaLoader(this.spider, videoInfo)),
-          lastChange: content.timestamp,
-          def: {
-            link: content.link,
-            glossList: (content.title ? [content.title].flat() : content.words),
-            body: content.body
-          }
-        })
+  // gets only newly discovered content
+  async getNewContent() {
+    let oldKeys = this.originalContentKeys
+    let content = await this.spider.getContent()
+    let newContent = {}
+    Object.keys(content).forEach(id => {
+      if (!oldKeys.includes(id)) {
+        newContent[id] = content[id]
       }
-    
-      await searchLibrary.finish()
-    }
-  
-    this.log(`Finished building ${this.name} library`)
+    })
+    return newContent
   }
 
   // call this before disposing of library, to preserve state and log newly discovered content
@@ -321,12 +390,14 @@ class SpiderConductor {
     await fs.writeFile(`${this.nest.settings.spiderPath}/frozen-data/${this.name}.cbor`, await this.spider.serialize())
 
     // detect newly found content
-    let newContentKeys = Object.keys(this.spider.content).filter(key => !this.originalContentKeys.includes(key))
+    let newContent = await this.getNewContent()
     // build a list of new content
-    for (let key of newContentKeys) {
-      let content = this.spider.content[key]
+    let updateCbor = []
+    let updateTxt = []
+    for (let key of Object.keys(newContent)) {
+      let content = newContent[key]
       this.log(`New: ${content.link} - ${content.words}`)
-      await fs.appendFile(`${this.nest.settings.datasetsPath}/update-log.cbor`, cbor.encode({
+      updateCbor.push(cbor.encode({
         provider: this.name,
         providerLink: this.config.link,
         id: key,
@@ -336,18 +407,21 @@ class SpiderConductor {
         timestamp: Date.now(),
         body: content.body
       }))
-      await fs.appendFile(`${this.nest.settings.datasetsPath}/update-log.txt`, 
-        `${this.name} ${this.verb} [${content.title ? content.title : content.words.join(', ')}](${content.link}) (timestamp: ${content.timestamp || Date.now()})\n`
-      )
+      updateTxt.push(`${this.name} ${this.verb} [${content.title ? content.title : content.words.join(', ')}](${content.link}) (timestamp: ${content.timestamp || Date.now()})\n`)
     }
+    this.writeQueue.add(async () => {
+      await Promise.all([
+        fs.appendFile(`${this.nest.settings.datasetsPath}/update-log.cbor`, Buffer.concat(updateCbor)),
+        fs.appendFile(`${this.nest.settings.datasetsPath}/update-log.txt`, updateTxt.join(''))
+      ])
+    })
   }
 
   // scrape and build
   async run() {
     await this.start()
     await this.scrape()
-    this.log(`Index tasks have completed! Building search library...`)
-    await this.build()
+    this.log(`Index tasks have completed!`)
     await this.finish()
     // wait for logs and writes to finish writing out to disk
     await this.writeQueue.onIdle()
@@ -358,12 +432,13 @@ class SpiderConductor {
 
 let defaultRun = async () => {
   let nest = new SpiderNest({
-    spiderPath: './spiders',
-    vectorDBPath: '../datasets/vectors-cc-en-300-8bit',
-    datasetsPath: '../datasets',
-    feedsPath: '../feeds',
-    logsPath: '../logs',
-    searchUIPath: '../index.html',
+    spiderPath: './spiders', // path to spiders directory, containing implementations of each spider type, and where frozen-data is stored
+    vectorDBPath: '../datasets/vectors-cc-en-300-8bit', // path to word vector library
+    datasetsPath: '../datasets', // path to datasets folder
+    feedsPath: '../feeds', // path to directory where generated discovery feeds are written
+    logsPath: '../logs', // path to logs directory
+    searchUIPath: '../index.html', // relative path to index.html file, to write discovery log to
+    libraryName: 'search-index', // should the datasets be combined in to one build? what should it be called?
     discoveryFeed: {
       minEntries: 12,
       minDuration: '1wk',
@@ -379,13 +454,34 @@ let defaultRun = async () => {
   await nest.load()
   
   // run in series does one spider at a time, for easier interpreting of the live terminal output
-  await nest.runInSeries()
+  let totalRebuilds = await nest.runInSeries()
   // run executes all the spider operations at the same time, encouraging concurrency, for a faster overall scrape
-  //await nest.run()
+  //let totalRebuilds = await nest.run()
   // run a single specific spider, and force the scrape
-  //await nest.runOneSpider('signbank', true)
+  //let totalRebuilds = 1; await nest.runOneSpider('community', true)
+
+  // rebuild the search libraries / common search library
+  await nest.buildDatasets()
 
   await nest.buildDiscoveryFeeds()
+
+  // if anything changed about the search index, rebuild the datasets torrent
+  if (totalRebuilds > 0) {
+    console.log(`Datasets changed, rebuilding datasets.torrent`)
+    
+    var opts = {
+      name: "datasets",
+      comment: "Find Sign (Australian Sign Language Search Engine) live datasets directory",
+      createdBy: "WebTorrent: tools/spider.js",
+      urlList: ["https://find.auslan.fyi/"]
+    }
+
+    console.log("Creating torrent...")
+    let torrent = await createTorrent('../datasets', opts)
+    await fs.writeFile('../datasets.torrent', torrent)
+    console.log("datasets.torrent updated")
+  }
+
   // unlock spider files
   await nest.unload()
 }
