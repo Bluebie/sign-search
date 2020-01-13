@@ -455,7 +455,6 @@ class SpiderConductor {
 
   // scrape and build
   async run() {
-    await this.start()
     if (this.config.erase) {
       this.log(`Content erased, fresh scrape with no history`)
       this.spider.erase()
