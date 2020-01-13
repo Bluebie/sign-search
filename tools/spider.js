@@ -16,11 +16,12 @@ const ProgressBar = require('progress')
 const stripJsonComments = require('strip-json-comments')
 
 class OnDemandMediaLoader {
-  constructor({spider, spiderName, videoInfo, log}) {
+  constructor({spider, spiderName, sourceVideoCache, videoInfo, log}) {
     this.spider = spider
     this.spiderName = spiderName
     this.info = videoInfo
     this.log = log
+    this.cache = sourceVideoCache // an object, whose values are paths to delete after import is finished
     if (this.info.clipping) this.clipping = this.info.clipping
   }
 
@@ -29,21 +30,33 @@ class OnDemandMediaLoader {
     return objectHash([this.spiderName, this.info], { algorithm: 'sha256' })
   }
 
+  // gets a hash without including clipping data, for source video identification
+  getSourceVideoHash() {
+    let info = JSON.parse(JSON.stringify(this.info))
+    info.clipping = false
+    return objectHash([this.spiderName, info], { algorithm: 'sha256' })
+  }
+
   // get path to video file - if no path exists, 
   async getVideoPath() {
-    try {
-      this.localFilename = await this.spider.fetch(this.info)
-    } catch (e) {
-      this.log(`Error: ${e}:`)
-      this.log(`Trying again...`)
-      this.localFilename = await this.spider.fetch(this.info)
+    let hash = this.getSourceVideoHash()
+    if (this.cache[hash]) {
+      return this.cache[hash]
+    } else {
+      try {
+        this.cache[hash] = await this.spider.fetch(this.info)
+      } catch (e) {
+        this.log(`Error: ${e}:`)
+        this.log(`Trying again...`)
+        this.cache[hash] = await this.spider.fetch(this.info)
+      }
+      return this.cache[hash]
     }
-    return this.localFilename
   }
 
   // once it's imported completely, we can remove the file we downloaded temporarily
   async releaseVideoPath() {
-    if (this.localFilename) await fs.unlink(this.localFilename)
+    // we'll handle this later via cleanupJobs object
   }
 }
 
@@ -153,14 +166,18 @@ class SpiderNest {
         })
       }
 
+      // create a place to store a global collectection of reference counted source videos, to avoid downloading
+      // multiple times when clipping multiple videos out of one source video
+      let sourceVideoCache = {}
+
       // loop through accumulated content, writing it in to the searchLibrary and fetching any media necessary
       for (let entryID in spiderContent) {
         let entry = spiderContent[entryID]
-        this.log(`Importing ${entry.link}: ${entry.words.join(', ')}`)
+        this.log(`Importing ${spiderName} ${entry.link}: ${entry.title || entry.words.join(', ')}`)
         await library.append({
           words: entry.words,
           tags: [...(spider.config.tags || []), ...(entry.tags || [])].filter((v,i,a) => a.indexOf(v) === i).map(x => `${x}`.toLowerCase()),
-          videoPaths: entry.videos.map(videoInfo => new OnDemandMediaLoader({ spider: spider.spider, spiderName, videoInfo, log: this.log })),
+          videoPaths: entry.videos.map(videoInfo => new OnDemandMediaLoader({ spider: spider.spider, sourceVideoCache, spiderName, videoInfo, log: this.log })),
           lastChange: entry.timestamp,
           def: {
             link: entry.link,
@@ -171,6 +188,9 @@ class SpiderNest {
         })
         progress.tick({ spiderName, entryID })
       }
+
+      // cleanup source videos
+      await Promise.all(Object.values(sourceVideoCache).map(path => fs.remove(path) ))
 
       // finish the library writer if necessary
       if (!commonLibraryMode) {
