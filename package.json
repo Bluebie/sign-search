@@ -23,6 +23,7 @@
     "proper-lockfile": "^4.1.1",
     "request": "^2.88.0",
     "strip-json-comments": "^3.0.1",
+    "subtitles-parser-vtt": "0.0.5",
     "user-instagram": "^1.0.4",
     "vid_data": "^1.0.0",
     "youtube-dl": "^2.3.0"
