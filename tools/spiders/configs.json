@@ -46,7 +46,9 @@
     "link": "https://www.youtube.com/playlist?list=PL7B7aOPg0nscWFz5013_SXane_K3HheCe",
     "erase": true,
     "discoveryVerb": "added",
-    "expires": "24hr",
+    "expires": "10m",
+    "expireCache": "7d",
+    "expireCacheMax": 1,
     "tags": ["community"],
     "localSubtitles": "spiders/youtube-subtitles",
     "fetchSubtitles": true,
@@ -62,7 +64,9 @@
     "link": "https://www.youtube.com/playlist?list=PL23jooyW_IDy1kCG9xZHRKhpCKo7YXa6d",
     "erase": true,
     "discoveryVerb": "explained",
-    "expires": "24hr",
+    "expires": "10m",
+    "expireCache": "7d",
+    "expireCacheMax": 1,
     "tags": ["signpedia", "description", "iconic", "nsw"],
     "clipping": {
       "start": "2200ms"
