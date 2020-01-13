@@ -48,7 +48,9 @@
     "discoveryVerb": "added",
     "expires": "24hr",
     "tags": ["community"],
-    "sliceSubtitles": false,
+    "localSubtitles": "spiders/youtube-subtitles",
+    "fetchSubtitles": true,
+    "preferSubtitleLanguage": ["en.AU", "en.GB", "en.NZ", "en", "en.US", "en.CA"],
     "rules": {
       "title": { "replace": [["^.+( - |: )", "", ""]] }
     }
@@ -62,7 +64,6 @@
     "discoveryVerb": "explained",
     "expires": "24hr",
     "tags": ["signpedia", "description", "iconic", "nsw"],
-    "sliceSubtitles": false,
     "clipping": {
       "start": "2200ms"
     },
