@@ -13,12 +13,14 @@ const objectHash = require('object-hash')
 const dateFNS = require('date-fns')
 const createTorrent = util.promisify(require('create-torrent'))
 const ProgressBar = require('progress')
+const stripJsonComments = require('strip-json-comments')
 
 class OnDemandMediaLoader {
-  constructor(spider, spiderName, videoInfo) {
+  constructor({spider, spiderName, videoInfo, log}) {
     this.spider = spider
     this.spiderName = spiderName
     this.info = videoInfo
+    this.log = log
     if (this.info.clipping) this.clipping = this.info.clipping
   }
 
@@ -32,8 +34,8 @@ class OnDemandMediaLoader {
     try {
       this.localFilename = await this.spider.fetch(this.info)
     } catch (e) {
-      console.log(`Error: ${e}:`)
-      console.log(`Trying again...`)
+      this.log(`Error: ${e}:`)
+      this.log(`Trying again...`)
       this.localFilename = await this.spider.fetch(this.info)
     }
     return this.localFilename
@@ -63,7 +65,7 @@ class SpiderNest {
   // load data and lock timestamps file to signify the spider is running
   async load() {
     if (this.loaded) return
-    this.configs = JSON.parse(await fs.readFile(`${this.settings.spiderPath}/configs.json`))
+    this.configs = JSON.parse(stripJsonComments((await fs.readFile(`${this.settings.spiderPath}/configs.json`)).toString()))
     this.vectorDB = new VectorLibraryReader()
     await this.vectorDB.open(this.settings.vectorDBPath)
     await fs.ensureDir(this.settings.logsPath)
@@ -158,7 +160,7 @@ class SpiderNest {
         await library.append({
           words: entry.words,
           tags: [...(spider.config.tags || []), ...(entry.tags || [])].filter((v,i,a) => a.indexOf(v) === i).map(x => `${x}`.toLowerCase()),
-          videoPaths: entry.videos.map(videoInfo => new OnDemandMediaLoader(spider.spider, spiderName, videoInfo)),
+          videoPaths: entry.videos.map(videoInfo => new OnDemandMediaLoader({ spider: spider.spider, spiderName, videoInfo, log: this.log })),
           lastChange: entry.timestamp,
           def: {
             link: entry.link,
@@ -487,3 +489,17 @@ let defaultRun = async () => {
 }
 
 defaultRun()
+
+/* config for future asphyxia import
+
+  "asphyxia-yt": {
+    "displayName": "Asphyxia",
+    "link": "https://www.youtube.com/watch?v=ZA0L3BZogQc&list=PL2EMz0UaYFdTOOqToccQkHOiTgTMhbTKb",
+    "discoveryVerb": "demonstrated",
+    "concurrency": 5,
+    "tag": ["asphyxia", "vic"],
+    "rules": {
+      "title": { "match": [" - ([a-z0-9, #&]+)$", "i", 1] }
+    }
+  },
+*/

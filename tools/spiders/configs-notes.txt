@@ -1,0 +1,11 @@
+"asphyxia": {
+  "displayName": "Asphyxia",
+  "link": "https://www.youtube.com/watch?v=ZA0L3BZogQc&list=PL2EMz0UaYFdTOOqToccQkHOiTgTMhbTKb",
+  "discoveryVerb": "demonstrated",
+  "tag": ["asphyxia", "vic"],
+  "timings": "./scrapers/asphyxia/timing",
+  "sliceSubtitles": false,
+  "rules": {
+    "title": { "replace": ["^([a-z0-9 ]) - ", "i", ""] }
+  }
+},
