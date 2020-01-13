@@ -22,6 +22,23 @@
     }
   },
 
+  "asphyxia": {
+    "displayName": "Asphyxia",
+    "spider": "youtube",
+    "link": "https://www.youtube.com/watch?v=ZA0L3BZogQc&list=PL2EMz0UaYFdTOOqToccQkHOiTgTMhbTKb",
+    "erase": true,
+    "discoveryVerb": "demonstrated",
+    "expires": "10m",
+    "expireCache": "2wk",
+    "expireCacheMax": 1,
+    "tags": ["asphyxia", "vic"],
+    "localSubtitles": "spiders/asphyxia-subtitles",
+    "rules": {
+      "title": { "match": [" - ([a-z0-9, #&]+)$", "i", 1] },
+      "requireSubtitles": true
+    }
+  },
+
   "community": {
     "displayName": "Youtube Submissions",
     "spider": "youtube",
