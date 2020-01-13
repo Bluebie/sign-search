@@ -124,11 +124,15 @@ class SpiderNest {
   // optional force argument, if true, causes scrape and build to happen regardless of expiry settings
   // returns true if the index was rebuilt, or false if not
   async runOneSpider(datasetName, force = false) {
-    // check if this dataset is still up to date, and maybe skip spidering it
-    if (!force && !await this.checkExpired(datasetName)) return false
-
     // check config exists
-    if (!this.spiders[datasetName]) throw new Error(`No spider config named ${datasetName} exists`)
+    if (!this.spiders[datasetName]) {
+      throw new Error(`No spider config named ${datasetName} exists`)
+    }
+    
+    // check if this dataset is still up to date, and maybe skip spidering it
+    if (!force && !await this.checkUnexpired(datasetName)) {
+      return
+    }
 
     // log out build timestamps to file for future expiry checking
     this.timestamps[datasetName] = Date.now()
@@ -223,7 +227,7 @@ class SpiderNest {
   }
 
   // returns a boolean (eventually): should the dataset name passed in, be rebuilt now? does it pass expiration rules?
-  async checkExpired(datasetName) {
+  async checkUnxpired(datasetName) {
     let datasetPath = `${this.settings.datasetsPath}/${datasetName}`
 
     // if the dataset has never been built, build it
