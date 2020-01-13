@@ -147,6 +147,7 @@ class SpiderNest {
     let commonLibraryMode = !!this.settings.libraryName
     let content = await Promise.all(Object.values(this.spiders).map(x => x.getContent()))
     let contentLength = content.reduce((prev, curr) => prev + Object.keys(curr).length, 0)
+    let didRebuild
     // if building a common library, set up the library
     if (commonLibraryMode) {
       let buildIDs = await Promise.all(Object.values(this.spiders).map(x => x.buildID()))
@@ -168,6 +169,13 @@ class SpiderNest {
         library = await this.getSearchLibraryWriter({
           name: spiderName, buildID: await spider.buildID(), contentLength: Object.keys(spiderContent).length
         })
+      }
+
+      // skip import if import isn't required
+      if (library.skipBuild) {
+        continue
+      } else {
+        didRebuild = true
       }
 
       // create a place to store a global collectection of reference counted source videos, to avoid downloading
@@ -206,6 +214,8 @@ class SpiderNest {
     if (commonLibraryMode) {
       await library.finish()
     }
+
+    return didRebuild
   }
 
   // creates a SearchLibraryWriter for the SpiderConductor to use to do a build
@@ -485,19 +495,19 @@ let defaultRun = async () => {
   await nest.load()
   
   // run in series does one spider at a time, for easier interpreting of the live terminal output
-  let totalRebuilds = await nest.runInSeries()
+  await nest.runInSeries()
   // run executes all the spider operations at the same time, encouraging concurrency, for a faster overall scrape
   //let totalRebuilds = await nest.run()
   // run a single specific spider, and force the scrape
   //let totalRebuilds = 1; await nest.runOneSpider('community', true)
 
   // rebuild the search libraries / common search library
-  await nest.buildDatasets()
+  let didRebuild = await nest.buildDatasets()
 
   await nest.buildDiscoveryFeeds()
 
-  // if anything changed about the search index, rebuild the datasets torrent
-  if (totalRebuilds > 0) {
+  if (didRebuild) {
+    // if anything changed about the search index, rebuild the datasets torrent
     console.log(`Datasets changed, rebuilding datasets.torrent`)
     
     var opts = {
