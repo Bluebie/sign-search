@@ -422,6 +422,11 @@ class SpiderConductor {
   // scrape and build
   async run() {
     await this.start()
+    if (this.config.erase) {
+      this.log(`Content erased, fresh scrape with no history`)
+      this.spider.erase()
+    }
+
     await this.scrape()
     this.log(`Index tasks have completed!`)
     await this.finish()
@@ -489,17 +494,3 @@ let defaultRun = async () => {
 }
 
 defaultRun()
-
-/* config for future asphyxia import
-
-  "asphyxia-yt": {
-    "displayName": "Asphyxia",
-    "link": "https://www.youtube.com/watch?v=ZA0L3BZogQc&list=PL2EMz0UaYFdTOOqToccQkHOiTgTMhbTKb",
-    "discoveryVerb": "demonstrated",
-    "concurrency": 5,
-    "tag": ["asphyxia", "vic"],
-    "rules": {
-      "title": { "match": [" - ([a-z0-9, #&]+)$", "i", 1] }
-    }
-  },
-*/

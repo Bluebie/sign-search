@@ -23,7 +23,6 @@ class SignBankSpider extends Spider {
   }
 
   beforeScrape() {
-    this.erase() // always erase the content and do a fresh build with signbank
     this.glossTags = {}
   }
   
