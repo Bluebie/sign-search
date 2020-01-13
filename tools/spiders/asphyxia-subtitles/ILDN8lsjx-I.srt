@@ -1,0 +1,33 @@
+1
+00:00:00,000 --> 00:00:05,500
+You can sign "train" or "train"
+#phrase
+
+2
+00:00:05,500 --> 00:00:09,200
+Seesaw
+
+3
+00:00:09,200 --> 00:00:13,500
+Don't sign "see" then "see in the past"
+#phrase
+
+4
+00:00:13,500 --> 00:00:21,800
+"Park" can be "Park" or it can be a playground.
+#phrase
+
+5
+00:00:21,800 --> 00:00:29,300
+To sign "can of drink" don't sign "can" of "drink"
+#phrase
+
+6
+00:00:29,700 --> 00:00:32,400
+Soft drink
+
+7
+00:00:32,400 --> 00:01:32,400
+Sign "wake up", not "wake" "up"
+#phrase
+

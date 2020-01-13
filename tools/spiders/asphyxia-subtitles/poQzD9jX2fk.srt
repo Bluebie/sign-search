@@ -1,0 +1,46 @@
+1
+00:00:00,000 --> 00:00:02,400
+Look
+#nsw
+
+2
+00:00:02,400 --> 00:00:04,500
+See
+#nsw
+
+3
+00:00:04,500 --> 00:00:06,000
+Right
+meaning right as in "correct" not meaning rights as in "human rights" #nsw
+
+4
+00:00:06,000 --> 00:00:08,000
+Wrong
+
+5
+00:00:08,000 --> 00:00:10,500
+Help
+
+6
+00:00:10,500 --> 00:00:12,800
+Some
+#nsw
+
+7
+00:00:12,800 --> 00:00:14,800
+Nothing, None, Silence
+#nsw
+
+8
+00:00:14,800 --> 00:00:17,400
+Sorry
+In the video I signed 'sorry' with a few too many shakes. Just moving your hand twice will do the job.
+
+9
+00:00:17,400 --> 00:00:19,300
+Most
+
+10
+00:00:19,300 --> 00:01:19,300
+Thing
+

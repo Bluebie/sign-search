@@ -1,0 +1,70 @@
+1
+00:00:00,000 --> 00:00:01,900
+Will
+#nsw
+
+2
+00:00:01,900 --> 00:00:03,600
+Wont
+#nsw
+
+3
+00:00:03,600 --> 00:00:05,000
+Can
+#nsw
+
+4
+00:00:05,000 --> 00:00:06,500
+Can't
+#nsw
+
+5
+00:00:06,500 --> 00:00:08,300
+Want
+#nsw
+
+6
+00:00:08,300 --> 00:00:10,500
+Don't want
+#nsw
+
+7
+00:00:10,500 --> 00:00:11,600
+Have
+#nsw
+
+8
+00:00:11,600 --> 00:00:15,700
+Don't have
+(here I demonstrate the handshape I’m using)
+
+9
+00:00:15,700 --> 00:00:17,700
+Need
+#nsw
+
+10
+00:00:17,700 --> 00:00:19,200
+Must
+#nsw
+
+11
+00:00:19,200 --> 00:00:21,300
+Should
+#nsw
+
+12
+00:00:21,300 --> 00:00:23,600
+Prefer
+#nsw
+
+13
+00:00:23,600 --> 00:00:26,000
+Because
+#nsw
+
+14
+00:00:26,000 --> 00:00:28,000
+Can't be bothered
+(you’ll see that sometimes a whole English phrase is captured with a single sign)
+

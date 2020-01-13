@@ -1,0 +1,15 @@
+1
+00:00:00,000 --> 00:00:04,200
+I went to the shop
+#phrase
+
+2
+00:00:04,200 --> 00:00:08,200
+I will go to the shop
+#phrase
+
+3
+00:00:08,200 --> 00:01:08,200
+I ate dinner
+#phrase
+

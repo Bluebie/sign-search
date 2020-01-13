@@ -1,0 +1,35 @@
+1
+00:00:03,800 --> 00:00:07,800
+How much sugar do you want?
+#phrase
+
+2
+00:00:07,800 --> 00:00:11,100
+How old is your sister?
+#phrase
+
+3
+00:00:11,100 --> 00:00:14,000
+What is the time?
+#phrase
+
+4
+00:00:14,000 --> 00:00:18,900
+Who did you go to the movie with?
+#phrase
+
+5
+00:00:18,900 --> 00:00:24,000
+How many brothers and sisters do you have?
+#phrase
+
+6
+00:00:24,000 --> 00:00:28,600
+When did you start learning Auslan?
+#phrase
+
+7
+00:00:28,600 --> 00:01:28,600
+Why did you clean the house?
+#phrase
+

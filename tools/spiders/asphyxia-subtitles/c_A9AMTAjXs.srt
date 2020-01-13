@@ -1,0 +1,50 @@
+1
+00:00:07,000 --> 00:00:14,000
+striaght ahead
+#phrase
+
+2
+00:00:14,000 --> 00:00:24,000
+at the traffic lights turn left
+#phrase
+
+3
+00:00:24,000 --> 00:00:33,000
+go all the way to the end
+#phrase
+
+4
+00:00:33,000 --> 00:00:43,000
+take the next street on the right
+#phrase
+
+5
+00:00:43,000 --> 00:00:53,000
+take the third street on the left
+#phrase
+
+6
+00:00:53,000 --> 00:01:01,000
+at the roundabout turn right
+#phrase
+
+7
+00:01:01,000 --> 00:01:08,000
+change lanes to the left
+#phrase
+
+8
+00:01:08,000 --> 00:01:11,700
+change lanes to the right
+#phrase
+
+9
+00:01:11,700 --> 00:01:19,000
+soon stop
+#phrase
+
+10
+00:01:19,000 --> 00:01:23,000
+thats it!
+#phrase
+

@@ -1,0 +1,130 @@
+1
+00:00:00,000 --> 00:00:02,000
+A
+#everywhere #wa #nt #sa #qld #nsw #act #tas #asl
+
+2
+00:00:02,000 --> 00:00:03,000
+B
+#everywhere #wa #nt #sa #qld #nsw #act #tas #asl
+
+3
+00:00:03,000 --> 00:00:04,000
+C
+#everywhere #wa #nt #sa #qld #nsw #act #tas #asl
+
+4
+00:00:04,000 --> 00:00:05,100
+D
+#everywhere #wa #nt #sa #qld #nsw #act #tas #asl
+
+5
+00:00:05,100 --> 00:00:06,700
+E
+#everywhere #wa #nt #sa #qld #nsw #act #tas #asl
+
+6
+00:00:06,700 --> 00:00:08,300
+F
+#everywhere #wa #nt #sa #qld #nsw #act #tas #asl
+
+7
+00:00:08,300 --> 00:00:10,000
+G
+#everywhere #wa #nt #sa #qld #nsw #act #tas #asl
+
+8
+00:00:10,000 --> 00:00:11,000
+H
+#everywhere #wa #nt #sa #qld #nsw #act #tas #asl
+
+9
+00:00:11,000 --> 00:00:12,000
+I
+#everywhere #wa #nt #sa #qld #nsw #act #tas #asl
+
+10
+00:00:12,000 --> 00:00:14,000
+J
+#everywhere #wa #nt #sa #qld #nsw #act #tas #asl
+
+11
+00:00:14,000 --> 00:00:15,000
+K
+#everywhere #wa #nt #sa #qld #nsw #act #tas #asl
+
+12
+00:00:15,000 --> 00:00:16,500
+L
+#everywhere #wa #nt #sa #qld #nsw #act #tas #asl
+
+13
+00:00:16,500 --> 00:00:17,800
+M
+#everywhere #wa #nt #sa #qld #nsw #act #tas #asl
+
+14
+00:00:17,800 --> 00:00:19,000
+N
+#everywhere #wa #nt #sa #qld #nsw #act #tas #asl
+
+15
+00:00:19,000 --> 00:00:20,000
+O
+#everywhere #wa #nt #sa #qld #nsw #act #tas #asl
+
+16
+00:00:20,000 --> 00:00:22,300
+P
+#everywhere #wa #nt #sa #qld #nsw #act #tas #asl
+
+17
+00:00:22,300 --> 00:00:23,800
+Q
+#everywhere #wa #nt #sa #qld #nsw #act #tas #asl
+
+18
+00:00:23,800 --> 00:00:25,000
+R
+#everywhere #wa #nt #sa #qld #nsw #act #tas #asl
+
+19
+00:00:25,000 --> 00:00:26,000
+S
+#everywhere #wa #nt #sa #qld #nsw #act #tas #asl
+
+20
+00:00:26,000 --> 00:00:28,500
+T
+#everywhere #wa #nt #sa #qld #nsw #act #tas #asl
+
+21
+00:00:28,500 --> 00:00:29,800
+U
+#everywhere #wa #nt #sa #qld #nsw #act #tas #asl
+
+22
+00:00:29,800 --> 00:00:31,000
+V
+#everywhere #wa #nt #sa #qld #nsw #act #tas #asl
+
+23
+00:00:31,000 --> 00:00:32,000
+W
+#everywhere #wa #nt #sa #qld #nsw #act #tas #asl
+
+24
+00:00:32,000 --> 00:00:33,500
+X
+#everywhere #wa #nt #sa #qld #nsw #act #tas #asl
+
+25
+00:00:33,500 --> 00:00:34,700
+Y
+#everywhere #wa #nt #sa #qld #nsw #act #tas #asl
+
+26
+00:00:34,700 --> 00:01:34,700
+Z
+#everywhere #wa #nt #sa #qld #nsw #act #tas #asl
+

@@ -1,0 +1,20 @@
+1
+00:00:00,000 --> 00:00:04,400
+I want a drink
+#phrase
+
+2
+00:00:04,400 --> 00:00:08,000
+Do you want to watch a movie?
+#phrase
+
+3
+00:00:08,000 --> 00:00:12,000
+My father is very tall
+#phrase
+
+4
+00:00:12,000 --> 00:01:12,000
+Can I have the salt please?
+#phrase
+

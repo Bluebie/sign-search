@@ -1,0 +1,161 @@
+1
+00:00:06,800 --> 00:00:17,700
+I'm a nurse
+#phrase
+
+2
+00:00:17,700 --> 00:00:42,000
+I'm a medical student
+#phrase
+
+3
+00:00:42,000 --> 00:00:53,000
+I'm an Ambulance officer
+#phrase
+
+4
+00:00:53,000 --> 00:01:04,000
+I want to help you
+#phrase
+
+5
+00:01:04,000 --> 00:01:19,400
+Why did you call an ambulance?
+#phrase
+
+6
+00:01:19,400 --> 00:01:25,200
+Tell me your medical history
+#phrase
+
+7
+00:01:25,200 --> 00:01:27,600
+Asthma
+
+8
+00:01:27,600 --> 00:01:29,400
+Epilepsy
+
+9
+00:01:29,400 --> 00:01:31,000
+Diabetes
+
+10
+00:01:31,000 --> 00:01:32,200
+Stroke
+
+11
+00:01:32,200 --> 00:01:35,000
+Heart attack history
+#phrase
+
+12
+00:01:51,000 --> 00:02:04,000
+Do you take any regular medication?
+#phrase
+
+13
+00:02:04,000 --> 00:02:12,000
+Do you have pain?
+#phrase
+
+14
+00:02:12,000 --> 00:02:19,000
+Where is the pain?
+#phrase
+
+15
+00:02:19,000 --> 00:02:25,000
+Can you describe the pain?
+#phrase
+
+16
+00:02:25,000 --> 00:02:27,000
+Crushing
+
+17
+00:02:27,000 --> 00:02:29,000
+Tight
+
+18
+00:02:29,000 --> 00:02:30,600
+Sharp
+
+19
+00:02:30,600 --> 00:02:32,200
+Stabbing
+
+20
+00:02:32,200 --> 00:02:34,000
+Burning
+
+21
+00:02:34,000 --> 00:02:37,000
+What does it feel like?
+#phrase
+
+22
+00:02:58,000 --> 00:03:10,000
+When did the pain start?
+#phrase
+
+23
+00:03:10,000 --> 00:03:22,000
+What makes the pain better?
+#phrase
+
+24
+00:03:22,000 --> 00:03:35,100
+What makes the pain worse?
+#phrase
+
+25
+00:03:35,100 --> 00:03:48,000
+Have you taken anything for the pain?
+#phrase
+
+26
+00:03:48,000 --> 00:03:54,000
+I want to know how bad your pain is
+#phrase
+
+27
+00:03:54,000 --> 00:04:00,000
+If 1 is good and 10 is bad
+#phrase
+
+28
+00:04:00,000 --> 00:04:03,500
+Where are you on the scale?
+#phrase
+
+29
+00:04:22,000 --> 00:04:32,000
+Can you walk?
+#phrase
+
+30
+00:04:32,000 --> 00:04:44,000
+When did you last have something to eat or drink?
+#phrase
+
+31
+00:04:44,000 --> 00:04:53,100
+Have you had any water?
+#phrase
+
+32
+00:04:53,100 --> 00:05:09,400
+I'm going to put a needle in your arm so i can give you medication. Is that alright?
+#phrase
+
+33
+00:05:09,400 --> 00:05:21,200
+Do you have health insurance?
+#phrase
+
+34
+00:05:21,200 --> 00:05:36,000
+Would you like to go to a public hospital or private hospital?
+#phrase
+

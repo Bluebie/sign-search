@@ -1,0 +1,57 @@
+1
+00:00:00,000 --> 00:00:03,000
+Interesting
+In NSW this is used in the sense of "that's interesting" but a different sign is used in the sense of "interesting, tell me more!" #nsw
+
+2
+00:00:03,000 --> 00:00:06,000
+Smart
+#nsw
+
+3
+00:00:06,000 --> 00:00:08,300
+Stupid
+#nsw
+
+4
+00:00:08,300 --> 00:00:10,700
+Dangerous
+
+5
+00:00:10,700 --> 00:00:12,500
+Little
+#nsw
+
+6
+00:00:12,500 --> 00:00:15,400
+Big
+#nsw
+
+7
+00:00:15,400 --> 00:00:17,000
+Give
+#nsw
+
+8
+00:00:17,000 --> 00:00:19,200
+Take
+#nsw
+
+9
+00:00:19,200 --> 00:00:20,800
+Fast
+#nsw
+
+10
+00:00:20,800 --> 00:00:23,200
+Slow
+
+11
+00:00:23,200 --> 00:00:25,700
+Enough
+#nsw
+
+12
+00:00:25,700 --> 00:01:25,700
+Wait
+

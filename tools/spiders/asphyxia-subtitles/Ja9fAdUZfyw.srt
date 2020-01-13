@@ -1,0 +1,15 @@
+1
+00:00:00,000 --> 00:00:03,000
+Are you a teacher?
+#phrase
+
+2
+00:00:03,000 --> 00:00:05,700
+Where do you live?
+#phrase
+
+3
+00:00:05,700 --> 00:01:05,700
+I like swimming because It makes me strong and fit
+#phrase
+

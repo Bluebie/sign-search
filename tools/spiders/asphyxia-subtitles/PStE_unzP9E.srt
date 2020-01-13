@@ -1,0 +1,88 @@
+1
+00:00:00,700 --> 00:00:02,000
+Classifier
+
+2
+00:00:05,000 --> 00:00:07,000
+Person
+#classifier #nsw
+
+3
+00:00:10,200 --> 00:00:12,000
+Animal
+#classifier #nsw
+
+4
+00:00:18,000 --> 00:00:20,000
+Vehicle
+#classifier #nsw
+
+5
+00:00:20,000 --> 00:00:21,000
+So
+
+6
+00:00:21,000 --> 00:00:25,300
+I want to show a car crash
+Phrase demonstraion #phrase
+
+7
+00:00:25,300 --> 00:00:26,000
+Car
+#classifier #nsw
+
+8
+00:00:28,000 --> 00:00:31,500
+Car crash
+#classifier #nsw
+
+9
+00:00:31,500 --> 00:00:33,000
+Woman
+Phrase demonstrating specifing a detail about a classifier sign #classifier
+
+10
+00:00:33,000 --> 00:00:34,500
+Dog
+Dog is shown on Asphyxia's right hand, patting the lap twice
+
+11
+00:00:34,500 --> 00:00:35,000
+Dog
+#classifier
+
+12
+00:00:35,000 --> 00:00:36,500
+Person walking dog
+Demonstration of classifier sign usage #classifier
+
+13
+00:00:36,500 --> 00:00:39,500
+Dog runs ahead
+Demonstration of classifier sign usage #classifier
+
+14
+00:00:39,500 --> 00:00:41,000
+Motorbike, Motorcycle
+Established sign for Motorbike #nsw
+
+15
+00:00:41,000 --> 00:00:42,000
+driving a vehicle
+Classifier signing a vehicle driving forward #nsw #classifier
+
+16
+00:00:42,000 --> 00:00:44,500
+motorbike stops
+Demonstration of a vehicle stopping using classifier signing #nsw #classifier
+
+17
+00:00:44,500 --> 00:00:47,000
+two people
+Two people shown using classifier signing #nsw #classifier
+
+18
+00:00:47,000 --> 00:01:47,000
+two people meeting
+Two people shown meeting, using classifier signing #nsw #classifier
+
