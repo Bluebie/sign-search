@@ -12,6 +12,7 @@ class YoutubeSpider extends Spider {
   constructor(config, ...args) {
     super(config, ...args)
     this.youtubeInfo = {}
+    this.expiredCount = 0
     this.store.push('youtubeInfo')
   }
   
@@ -32,9 +33,12 @@ class YoutubeSpider extends Spider {
   async parseVideo(videoID) {
     // check if youtube cache data exists and has expired
     if (this.config.expireCache && this.youtubeInfo[videoID]) {
-      let fetched = this.youtubeInfo[videoID]._spiderFetched
-      if (fetched && fetched < Date.now() - parseDuration(this.config.expireCache)) {
-        delete this.youtubeInfo[videoID]
+      if (!this.config.expireCacheMax || this.expiredCount < this.config.expireCacheMax) {
+        this.expiredCount += 1
+        let fetched = this.youtubeInfo[videoID]._spiderFetched
+        if (fetched && fetched < Date.now() - parseDuration(this.config.expireCache)) {
+          delete this.youtubeInfo[videoID]
+        }
       }
     }
 
