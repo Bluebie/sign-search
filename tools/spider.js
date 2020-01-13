@@ -241,7 +241,7 @@ class SpiderNest {
     let datasetPath = `${this.settings.datasetsPath}/${datasetName}`
 
     // if the dataset has never been built, build it
-    if (!await fs.pathExists(datasetPath)) return true
+    if (!this.settings.libraryName && !await fs.pathExists(datasetPath)) return true
     if (!this.timestamps[datasetName]) return true
     
     // if the config doesn't have an expires rule, just rebuild it always
