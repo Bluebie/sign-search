@@ -130,7 +130,7 @@ class SpiderNest {
     }
     
     // check if this dataset is still up to date, and maybe skip spidering it
-    if (!force && !await this.checkUnexpired(datasetName)) {
+    if (!force && !await this.checkOutdated(datasetName)) {
       return
     }
 
@@ -237,7 +237,7 @@ class SpiderNest {
   }
 
   // returns a boolean (eventually): should the dataset name passed in, be rebuilt now? does it pass expiration rules?
-  async checkUnxpired(datasetName) {
+  async checkOutdated(datasetName) {
     let datasetPath = `${this.settings.datasetsPath}/${datasetName}`
 
     // if the dataset has never been built, build it
