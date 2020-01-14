@@ -43,7 +43,9 @@ class YoutubeSpider extends Spider {
     }
 
     if (!this.youtubeInfo[videoID]) {
-      this.youtubeInfo[videoID] = await util.promisify(ytdl.getInfo)(`https://www.youtube.com/watch?v=${encodeURIComponent(videoID)}`)
+      let info = await util.promisify(ytdl.getInfo)(`https://www.youtube.com/watch?v=${encodeURIComponent(videoID)}`)
+      let { title, ext, description, duration, webpage_url, upload_date } = info
+      this.youtubeInfo[videoID] = { title, ext, description, duration, webpage_url, upload_date }
       this.youtubeInfo[videoID]._spiderFetched = Date.now()
     }
     let info = this.youtubeInfo[videoID]
