@@ -152,6 +152,18 @@ class YoutubeSpider extends Spider {
       download.on('error', (err)=> reject( err ))
     })
   }
+
+  // housekeeping: clean up any stragler youtube cache items - anything over 4 times the max cache duration just gets deleted
+  // this could happen if videos are removed from a playlist
+  afterScrape() {
+    if (!this.config.expireCache) return
+    let minTimestamp = Date.now() - (parseDuration(this.config.expireCache) * 4)
+    for (let videoID in this.youtubeInfo) {
+      if (this.youtubeInfo[videoID]._spiderFetched < minTimestamp) {
+        delete this.youtubeInfo[videoID]
+      }
+    }
+  }
 }
 
 module.exports = YoutubeSpider
