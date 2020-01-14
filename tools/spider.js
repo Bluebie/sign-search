@@ -230,7 +230,8 @@ class SpiderNest {
     // create a SearchLibraryWriter with reasonable values
     let searchLibrary = await (new SearchLibraryWriter(libraryPath, {
       format: 'sint8', scaling: 8, vectorDB: this.vectorDB, shardBits, buildID,
-      log: (...args)=> this.log(...args)
+      log: (...args)=> this.log(...args),
+      keepRecentBuilds: 10, // keep a bunch because anxiety about breaking things
     })).open()
 
     return searchLibrary
