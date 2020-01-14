@@ -426,27 +426,40 @@ class SpiderConductor {
   async finish() {
     await fs.writeFile(`${this.nest.settings.spiderPath}/frozen-data/${this.name}.cbor`, await this.spider.serialize())
 
-    // detect newly found content
-    let newContent = await this.getNewContent()
-    // build a list of new content
-    let updateCbor = []
-    let updateTxt = []
-    for (let key of Object.keys(newContent)) {
-      let content = newContent[key]
-      this.log(`New: ${content.link} - ${content.words}`)
-      updateCbor.push(cbor.encode({
-        provider: this.name,
-        providerLink: this.config.link,
-        id: key,
-        link: content.link,
-        words: [(content.title || content.words)].flat(),
-        verb: content.discoveryVerb || this.config.discoveryVerb,
-        timestamp: Date.now(),
-        body: content.body
-      }))
-      updateTxt.push(`${this.name} ${this.verb} [${content.title ? content.title : content.words.join(', ')}](${content.link}) (timestamp: ${content.timestamp || Date.now()})\n`)
-    }
     this.writeQueue.add(async () => {
+      // load the existing update log
+      let updateLog = cbor.decodeAll(await fs.readFile(`${this.nest.settings.datasetsPath}/update-log.cbor`))
+
+      // detect newly found content
+      let newContent = await this.getNewContent()
+
+      // filter out repeats of content that's already been in the log
+      for (let key in newContent) {
+        let link = newContent[key].link.toString()
+        if (updateLog.some(({ link: updateLink })=> link == updateLink.toString())) {
+          delete newContent[key]
+        }
+      }
+
+      // build a list of new content
+      let updateCbor = []
+      let updateTxt = []
+      for (let key of Object.keys(newContent)) {
+        let content = newContent[key]
+        this.log(`New: ${content.link} - ${content.words}`)
+        updateCbor.push(cbor.encode({
+          provider: this.name,
+          providerLink: this.config.link,
+          id: key,
+          link: content.link,
+          words: [(content.title || content.words)].flat(),
+          verb: content.discoveryVerb || this.config.discoveryVerb,
+          timestamp: Date.now(),
+          body: content.body
+        }))
+        updateTxt.push(`${this.name} ${this.verb} [${content.title ? content.title : content.words.join(', ')}](${content.link}) (timestamp: ${content.timestamp || Date.now()})\n`)
+      }
+    
       await Promise.all([
         fs.appendFile(`${this.nest.settings.datasetsPath}/update-log.cbor`, Buffer.concat(updateCbor)),
         fs.appendFile(`${this.nest.settings.datasetsPath}/update-log.txt`, updateTxt.join(''))
