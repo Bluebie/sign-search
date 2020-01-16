@@ -26,11 +26,11 @@
 
 @font-face {
   font-family: 'auslan-symbol';
-  src:  url('assets/fonts/find-sign-icomoon.eot?pyrih3');
-  src:  url('assets/fonts/find-sign-icomoon.eot?pyrih3#iefix') format('embedded-opentype'),
-    url('assets/fonts/find-sign-icomoon.ttf?pyrih3') format('truetype'),
-    url('assets/fonts/find-sign-icomoon.woff?pyrih3') format('woff'),
-    url('assets/fonts/find-sign-icomoon.svg?pyrih3#find-sign-icomoon') format('svg');
+  src:  url('assets/fonts/find-sign-icomoon.eot?pyrih33');
+  src:  url('assets/fonts/find-sign-icomoon.eot?pyrih33#iefix') format('embedded-opentype'),
+    url('assets/fonts/find-sign-icomoon.ttf?pyrih33') format('truetype'),
+    url('assets/fonts/find-sign-icomoon.woff?pyrih33') format('woff'),
+    url('assets/fonts/find-sign-icomoon.svg?pyrih33#find-sign-icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: block;
