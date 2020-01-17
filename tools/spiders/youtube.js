@@ -130,9 +130,13 @@ class YoutubeSpider extends Spider {
         sliceDef.id += `-${id}`
         this.content[sliceDef.id] = sliceDef  
       })
-    } else if (!this.config.rules || !this.config.rules.requireSubtitles) {
-      // no clipping rules, just import the whole video
-      this.content[def.id] = def
+    } else {
+      if (this.config.rules && this.config.rules.requireSubtitles) {
+        this.log(`Video ${def.link} skipped due to requireSubtitles rule not being satisfied by any enabled subtitle sources`)
+      } else {
+        // no clipping rules, just import the whole video
+        this.content[def.id] = def
+      }
     }
   }
 

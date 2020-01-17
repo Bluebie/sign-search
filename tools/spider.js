@@ -510,9 +510,9 @@ let defaultRun = async () => {
   // run in series does one spider at a time, for easier interpreting of the live terminal output
   await nest.runInSeries()
   // run executes all the spider operations at the same time, encouraging concurrency, for a faster overall scrape
-  //let totalRebuilds = await nest.run()
+  //await nest.run()
   // run a single specific spider, and force the scrape
-  //let totalRebuilds = 1; await nest.runOneSpider('community', true)
+  //await nest.runOneSpider('asphyxia', true)
 
   // rebuild the search libraries / common search library
   let didRebuild = await nest.buildDatasets()
