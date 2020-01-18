@@ -90,7 +90,6 @@ class SignBankSpider extends Spider {
     let keywordsText = page('#keywords').first().text().replace(/[\n\t ]+/g, ' ').trim().split(': ')[1]
     let def = {
       link: url,
-      title: keywordsText,
       words: this.extractWords(keywordsText, ','),
       tags: [],
       videos: page('video source').toArray().map( x => x.attribs.src ).filter(obj => !obj.match(/Definition/)),
