@@ -254,16 +254,17 @@ main#results .result .video_player button.next_vid {
 main#results .result .video_player button.prev_vid { left: 0; border-top-left-radius: 6px; border-bottom-left-radius: 6px; }
 main#results .result .video_player button.next_vid { right: 0; border-top-right-radius: 6px; border-bottom-right-radius: 6px; }
 
-main#results .result div:not(.video_player) {
+main#results .result > *:not(.video_player) {
   padding-left: 0.7rem;
   margin-bottom: 0.1rem;
   padding-right: 0.5rem;
 }
 
-main#results .result .gloss_list {
+main#results .result .gloss_list, main#results .result .keywords {
   margin-top: 0.3rem;
   margin-bottom: 0rem;
   font-size: 1.3rem;
+  font-weight: normal;
   text-transform: capitalize;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -308,7 +309,7 @@ div#pagination {
   justify-content: center;
 }
 
-div#pagination * {
+div#pagination a {
   font-family: 'auslan-symbol' !important;
   /* Better Font Rendering =========== */
   -webkit-font-smoothing: antialiased;
@@ -328,7 +329,7 @@ div#pagination * {
   background-color: transparent;
 }
 
-div#pagination *[aria-current] {
+div#pagination a[aria-current=page], div#pagination a[aria-current=true] {
   background-color: var(--module-bg);
   border-radius: 30px;
   cursor: default;
