@@ -4,8 +4,12 @@ body {
   padding-right: 1ex;
 }
 
-body, img#header, form#search_form, input#search_box, div.inset_box {
+body, img#header, form#search_form, input#search_box {
   display: block;
+  width: 100%;
+}
+
+div.inset_box {
   width: 100%;
 }
 
@@ -36,7 +40,7 @@ main#results .result div {
   margin: 0 0 0 0;
 }
 
-main#results .result .gloss_list {
+main#results .result .gloss_list, main#results .result .keywords {
   font-size: 0.9rem;
   font-weight: 600;
 }
