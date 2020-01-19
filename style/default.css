@@ -43,6 +43,9 @@
   -moz-osx-font-smoothing: grayscale;
   text-decoration: none;
 }
+.icon-search:before {
+  content: "\260c";
+}
 .icon-interpret:before {
   content: "\2687";
 }
@@ -85,13 +88,7 @@ form#search_form {
 }
 
 /* magnifing glass symbol in search form */
-form#search_form::before {
-  font-family: 'auslan-symbol' !important;
-  /* Better Font Rendering =========== */
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
-  content: "\260c";
+form#search_form .input_icon {
   position: absolute;
   width: 1em;
   height: 1em;
