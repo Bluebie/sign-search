@@ -195,8 +195,8 @@ class SpiderNest {
             link: entry.link,
             glossList: (entry.title ? [entry.title].flat() : entry.words),
             body: entry.body,
-            spider: spiderName,
-            key: entryID
+            provider: spiderName,
+            id: entryID
           }
         })
         progress.tick({ spiderName, entryID })
