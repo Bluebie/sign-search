@@ -252,6 +252,7 @@ main#results .result .video_player button.prev_vid { left: 0; border-top-left-ra
 main#results .result .video_player button.next_vid { right: 0; border-top-right-radius: 6px; border-bottom-right-radius: 6px; }
 
 main#results .result > *:not(.video_player) {
+  display: block;
   padding-left: 0.7rem;
   margin-bottom: 0.1rem;
   padding-right: 0.5rem;
@@ -286,7 +287,7 @@ main#results .result .mini_def {
   overflow: hidden;
   line-height: var(--line-height);
   font-size: 0.95em;
-  max-height: calc(var(--line-height) * 3 - 1rem);
+  max-height: calc(var(--line-height) * 4 - 1rem);
 }
 
 /* alert notices on search results */
