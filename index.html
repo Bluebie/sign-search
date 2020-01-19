@@ -15,7 +15,7 @@
     <meta property="og:description" content="Find Sign is an Auslan Search Engine. It helps find Auslan resources from around the internet in one place. Deaf community can send websites and videos to include and help make Auslan vocabulary easier to find.">
     <meta property="og:title" content="Find Sign - Auslan Search Engine">
   </head>
-  <body class=home>
+  <body class=home data-hook=true>
     <a href="#"><img id=header role=img alt="Find Sign logo" src="style/assets/find-sign-logo.svg"></a>
     <form id=search_form data-signtip=search role=search autocomplete="off" action="no-javascript.html">
       <input id=search_box autocomplete="off" autocapitalize="none">
@@ -24,7 +24,7 @@
       <a href="about.html"      data-signtip=about>About</a>
       <a href="technology.html" data-signtip=technology>Technology</a>
       <a href="contribute.html" data-signtip=contribute>Add Video</a>
-      <a href="https://findsign.tumblr.com/" data-signtip=news>News</a>
+      <a href="https://blog.auslan.fyi/" data-signtip=news>News</a>
     </nav>
 
     <main id=results role=main></main>
@@ -38,11 +38,7 @@
     </div>
 
     <!-- software that runs find-sign client side is in these libraries -->
-    <script defer src="node_modules/jquery/dist/jquery.min.js"></script>
-    <script defer src="lib/vector-utilities.js"></script>
-    <script defer src="lib/vector-library/reader.js"></script>
-    <script defer src="lib/search-library/reader.js"></script>
-    <script defer src="lib/search-ui.js"></script>
+    <script defer src="lib/bundle.js"></script>
 
     <script>
     // fight the evil fbclid and gclid thingies
