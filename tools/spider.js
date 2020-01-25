@@ -1,8 +1,12 @@
 const fs = require('fs-extra')
 const util = require('util')
 const cbor = require('borc')
+
 const VectorLibraryReader = require('../lib/vector-library/reader')
-const SearchLibraryWriter = require('../lib/search-library/writer')
+const SearchLibrary = require('../lib/search-library/library-node')
+const HandbrakeEncoder = require('../lib/search-library/encoder-handbrake')
+const MediaCache = require('../lib/search-library/media-cache')
+
 const PQueue = require('p-queue').default
 const parseDuration = require('parse-duration')
 const prettyMs = require('pretty-ms')
@@ -14,6 +18,7 @@ const dateFNS = require('date-fns')
 const createTorrent = util.promisify(require('create-torrent'))
 const ProgressBar = require('progress')
 const stripJsonComments = require('strip-json-comments')
+
 
 class OnDemandMediaLoader {
   constructor({spider, spiderName, sourceVideoCache, videoInfo, log}) {
@@ -30,10 +35,14 @@ class OnDemandMediaLoader {
     return objectHash([this.spiderName, this.info], { algorithm: 'sha256' })
   }
 
+  getExtension() {
+    return this.info.extension
+  }
+
   // gets a hash without including clipping data, for source video identification
   getSourceVideoHash() {
     let info = JSON.parse(JSON.stringify(this.info))
-    info.clipping = false
+    if (info.clipping) info.clipping = false
     return objectHash([this.spiderName, info], { algorithm: 'sha256' })
   }
 
@@ -57,6 +66,10 @@ class OnDemandMediaLoader {
   // once it's imported completely, we can remove the file we downloaded temporarily
   async releaseVideoPath() {
     // we'll handle this later via cleanupJobs object
+  }
+
+  toString() {
+    return `<OnDemandMediaLoader for ${this.spiderName} ${JSON.stringify(this.info)}>`
   }
 }
 
@@ -84,7 +97,7 @@ class SpiderNest {
     await fs.ensureDir(this.settings.logsPath)
     
     if (await fs.pathExists(this.buildTimestampsFile)) {
-      this.buildTimestampsLock = await lockfile.lock(this.buildTimestampsFile, { stale: 1000 * 60 * 8 })
+      this.buildTimestampsLock = await lockfile.lock(this.buildTimestampsFile) //, { stale: 1000 * 60 * 8 })
       try {
         this.timestamps = cbor.decode(await fs.readFile(this.buildTimestampsFile))
       } catch (err) { console.log(`build-timestamps.cbor is corrupt? ignoring. Error: ${err}`) }
@@ -148,6 +161,7 @@ class SpiderNest {
     let content = await Promise.all(Object.values(this.spiders).map(x => x.getContent()))
     let contentLength = content.reduce((prev, curr) => prev + Object.keys(curr).length, 0)
     let didRebuild
+
     // if building a common library, set up the library
     if (commonLibraryMode) {
       let buildIDs = await Promise.all(Object.values(this.spiders).map(x => x.buildID()))
@@ -186,19 +200,27 @@ class SpiderNest {
       for (let entryID in spiderContent) {
         let entry = spiderContent[entryID]
         this.log(`Importing ${spiderName} ${entry.link}: ${entry.title || entry.words.join(', ')}`)
-        await library.append({
-          words: entry.words,
-          tags: [...(spider.config.tags || []), ...(entry.tags || [])].filter((v,i,a) => a.indexOf(v) === i).map(x => `${x}`.toLowerCase()),
-          videoPaths: entry.videos.map(videoInfo => new OnDemandMediaLoader({ spider: spider.spider, sourceVideoCache, spiderName, videoInfo, log: this.log })),
-          lastChange: entry.timestamp,
-          def: {
-            link: entry.link,
-            glossList: (entry.title ? [entry.title].flat() : entry.words),
-            body: entry.body,
-            provider: spiderName,
-            id: entryID
+
+        // check if an override file exists
+        let overrideObject = {}
+        if (this.settings.overridesPath) {
+          let overridePath = `${this.settings.overridesPath}/${spiderName}:${entryID}.json`
+          if (await fs.pathExists(overridePath)) {
+            this.log(`Implementing override data from ${overridePath}`)
+            overrideObject = JSON.parse(await fs.readFile(overridePath))
           }
-        })
+        }
+
+        await library.addDefinition(Object.assign({
+          title: entry.title || entry.words.join(', '),
+          keywords: entry.words,
+          tags: [...(spider.config.tags || []), ...(entry.tags || [])].filter((v,i,a) => a.indexOf(v) === i).map(x => `${x}`.toLowerCase()),
+          link: entry.link,
+          body: entry.body,
+          media: entry.videos.map(videoInfo => new OnDemandMediaLoader({ spider: spider.spider, sourceVideoCache, spiderName, videoInfo, log: this.log })),
+          provider: spiderName,
+          id: entryID
+        }, overrideObject))
         progress.tick({ spiderName, entryID })
       }
 
@@ -207,13 +229,15 @@ class SpiderNest {
 
       // finish the library writer if necessary
       if (!commonLibraryMode) {
-        await library.finish()
+        await library.save()
+        //await library.cleanup()
       }
     }
     this.log = oldLog
 
     if (commonLibraryMode) {
-      await library.finish()
+      await library.save()
+      //await library.cleanup()
     }
 
     return didRebuild
@@ -229,11 +253,13 @@ class SpiderNest {
     let shardBits = 1
     while (contentLength / 30 > 2 ** shardBits) shardBits += 1
     // create a SearchLibraryWriter with reasonable values
-    let searchLibrary = await (new SearchLibraryWriter(libraryPath, {
-      format: 'sint8', scaling: 8, vectorDB: this.vectorDB, shardBits, buildID,
+    let searchLibrary = await (new SearchLibrary({
+      path: libraryPath, vectorBits: 8, vectorLibrary: this.vectorDB, buildID,
       log: (...args)=> this.log(...args),
-      keepRecentBuilds: 10, // keep a bunch because anxiety about breaking things
-    })).open()
+      mediaFormats: [new HandbrakeEncoder()],
+      mediaCache: new MediaCache({ path: libraryPath, log: this.log }),
+      cleanupKeywords: true,
+    }))
 
     return searchLibrary
   }
@@ -494,9 +520,10 @@ let defaultRun = async () => {
     logsPath: '../logs', // path to logs directory
     searchUIPath: '../index.html', // relative path to index.html file, to write discovery log to
     libraryName: 'search-index', // should the datasets be combined in to one build? what should it be called?
+    overridesPath: './spiders/overrides', // directory which has "{search result uri}.json" format, which overrides values the spider fetched on specific results
     discoveryFeed: {
       minEntries: 12,
-      minDuration: '1wk',
+      minDuration: '1 month',
       maxEntries: 24,
       title: "Discovered Signs",
       description: "Signs that have recently been discovered by Find Sign’s robotic spiders as they explore the Auslan web",
@@ -509,7 +536,7 @@ let defaultRun = async () => {
   await nest.load()
   
   // run in series does one spider at a time, for easier interpreting of the live terminal output
-  await nest.runInSeries()
+  //await nest.runInSeries()
   // run executes all the spider operations at the same time, encouraging concurrency, for a faster overall scrape
   //await nest.run()
   // run a single specific spider, and force the scrape
