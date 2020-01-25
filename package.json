@@ -6,6 +6,7 @@
   "main": "index.js",
   "dependencies": {
     "borc": "^2.1.1",
+    "byline": "^5.0.0",
     "cheerio": "^1.0.0-rc.3",
     "create-torrent": "^4.4.1",
     "date-fns": "^2.9.0",
@@ -15,7 +16,6 @@
     "got": "^10.2.1",
     "handbrake-js": "^4.0.0",
     "jquery": "^3.4.1",
-    "line-reader": "^0.4.0",
     "nanohtml": "^1.9.0",
     "nanomorph": "^5.4.0",
     "object-hash": "^2.0.1",
@@ -33,20 +33,23 @@
   },
   "devDependencies": {
     "browserify": "^16.5.0",
-    "tinyify": "^2.5.2",
+    "common-shakeify": "^0.6.2",
+    "uglifyify": "^5.0.2",
     "unassertify": "^2.1.1",
     "watchify": "^3.11.1"
   },
   "browserify": {
     "transform": [
-      "nanohtml"
+      "nanohtml",
+      "unassertify",
+      "uglifyify"
     ]
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "spider": "cd tools && node spider.js",
-    "watch": "rm lib/bundle.js.gz; ./node_modules/.bin/watchify lib/user-interface.js -o lib/bundle.js -v -i fs-extra -i crypto -i process -p tinyify -d --full-paths",
-    "build": "./node_modules/.bin/browserify                    lib/user-interface.js -o lib/bundle.js -v -i fs-extra -i crypto -i process -p tinyify; gzip -9 -k -f lib/bundle.js"
+    "watch": "rm lib/bundle.js.gz; ./node_modules/.bin/watchify lib/user-interface.js -o lib/bundle.js -v -i fs-extra -i crypto -i process -d --full-paths",
+    "build": "                   ./node_modules/.bin/browserify lib/user-interface.js -o lib/bundle.js -v -i fs-extra -i crypto -i process; gzip -9 -k -f lib/bundle.js"
   },
   "keywords": [
     "auslan"
