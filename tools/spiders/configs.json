@@ -82,7 +82,7 @@
     "expires": "24hr",
     "link": "http://www.auslanstageleft.com.au/media/101-auslan-theatre-signs/",
     "discoveryVerb": "demonstrated",
-    "tags": ["auslan-stage-left", "description", "arts"]
+    "tags": ["auslan-stage-left", "description", "semantic.arts"]
   },
 
   "toddslan": {
