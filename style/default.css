@@ -72,7 +72,7 @@
 }
 
 body {
-  width: 800px;
+  width: 900px;
   margin-left: auto;
   margin-right: auto;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -150,7 +150,7 @@ nav {
   flex-direction: row;
   justify-content: space-evenly;
   width: 500px;
-  margin: 1.5rem auto 1.5rem auto;
+  margin: 2.5rem auto 2.5rem auto;
   font-size: 1.2em;
 }
 
@@ -171,7 +171,7 @@ body.notice main div {
 
 
 main#results {
-  margin-top: 2em;
+  margin-top: 3em;
 }
 
 main#results .result {
@@ -181,8 +181,8 @@ main#results .result {
   display: block;
   color: inherit;
   text-decoration: none;
-  padding-left: 207px;
-  min-height: 126px;
+  padding-left: 257px;
+  min-height: 156px;
   overflow: hidden;
   animation: result-in var(--fade-duration);
 
@@ -211,11 +211,11 @@ main#results .result .video_player {
   display: block;
   background-color: var(--submodule-bg);
   border-radius: 6px;
-  width: 200px;
-  height: 112px;
+  width: 250px;
+  height: 140px;
   position: absolute;
   overflow: hidden;
-  margin-left: -200px;
+  margin-left: -250px;
   margin-top: 7px;
 
   /* very fancy soon to be out of style custom 'neumorphic' style box */
@@ -246,7 +246,7 @@ main#results .result .video_player button.prev_vid,
 main#results .result .video_player button.next_vid {
   position: absolute;
   top: 0; bottom: 0; margin: 0; 
-  width: 25px;
+  width: 32px;
   border: 0 none;
   padding: 0;
   font-size: inherit;
@@ -290,12 +290,16 @@ main#results .result .link {
 
 main#results .result .mini_def {
   --line-height: 1.14em;
+  --visible-lines: 6;
   text-overflow: ellipsis;
   white-space: pre-line;
   overflow: hidden;
   line-height: var(--line-height);
   font-size: 0.95em;
-  max-height: calc(var(--line-height) * 4 - 1rem);
+  max-height: calc(var(--line-height) * var(--visible-lines) - 1rem);
+}
+main#results .result .alert + .mini_def {
+  --visible-lines: 5;
 }
 
 /* alert notices on search results */
