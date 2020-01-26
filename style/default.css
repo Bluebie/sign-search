@@ -169,6 +169,7 @@ body.notice main div {
   display: inline-block;
 }
 
+body main span.deemphasis { opacity: 0.5; font-style: italic; font-size: 0.8em }
 
 main#results {
   margin-top: 3em;
