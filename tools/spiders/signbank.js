@@ -36,9 +36,6 @@ class SignBankSpider extends Spider {
     } else if (task == 'tag') {
       // index stuff linked from a tag results page
       return this.indexTag(...args)
-    // } else if (task == 'search') {
-    //   // scrape a search result page
-    //   return this.indexSearchResults(...args)
     } else if (task == 'definition') {
       // scrape a definition page
       return this.indexDefinitionPage(...args)
