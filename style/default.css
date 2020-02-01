@@ -32,6 +32,14 @@
   }
 }
 
+@media (prefers-color-scheme: light) {
+  @import url(default-light.css);
+}
+
+@media (max-width: 899px) {
+  @import url(default-mobile.css);
+}
+
 @font-face {
   font-family: 'auslan-symbol';
   src:  url('assets/fonts/find-sign-icomoon.eot?pyrih33');
