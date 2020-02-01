@@ -262,7 +262,7 @@ main#results .result .video_player button.next_vid {
   font-weight: inherit;
   font-family: inherit;
   color: inherit;
-  background-color: hsla(var(--hue), var(--module-bg-sat), var(--module-bg-lum), 35%);
+  background-color: hsla(var(--hue), var(--module-bg-sat), var(--module-bg-lum), 40%);
   /* backdrop-filter: blur(2px); */
 }
 main#results .result .video_player button.prev_vid { left: 0; border-top-left-radius: 6px; border-bottom-left-radius: 6px; }
