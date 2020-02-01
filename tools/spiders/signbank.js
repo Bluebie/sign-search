@@ -130,7 +130,7 @@ class SignBankSpider extends Spider {
   async fetch( url ) {
     let filename = this.tempFile(`${this.hash(url)}.${url.split(/\?#/g)[0].split(/([\/.])/g).slice(-1)[0]}`)
     await pipeline(
-      await got.stream({ url, headers: {'User-Agent': "find.auslan.fyi"}, timeout: parseMs(this.config.timeout || '15m') }),
+      await got.stream({ url, headers: {'User-Agent': signSearchConfig.userAgent}, timeout: parseMs(this.config.timeout || '15m') }),
       fs.createWriteStream(filename)
     )
     return filename

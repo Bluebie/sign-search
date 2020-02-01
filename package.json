@@ -58,6 +58,7 @@
     "title": "Find Sign",
     "lang": "en",
     "location": "https://find.auslan.fyi",
+    "userAgent": "find.auslan.fyi",
     "logoPath": "style/assets/find-sign-logo.svg",
     "openGraph": {
       "image": "https://find.auslan.fyi/style/assets/open-graph-image@3x.png",
