@@ -2,13 +2,23 @@
   "signbank": {
     "displayName": "SignBank",
     "spider": "signbank",
-    "expires": "48hr",
-    "erase": true,
+
+    "//1": "Last I checked, a full sweep of Auslan Signbank requires 5414 http requests. 1.5 min interval makes a full update roughly weekly",
+    "interval": "1m 30s",
+    
+    "//2": "link is mainly used in the discovery rss feed when new items are found",
     "link": "http://www.auslan.org.au/",
-    "concurrency": 5,
+    
+    "//3": "url is used internally by the spider, it's the dictionary endpoint it navigates through, where ajax/tags/ should be mounted",
     "url": "http://www.auslan.org.au/dictionary/",
+    
+    "//4": "discoveryVerb is used in the discovery feed to describe what it means when new content is added here",
     "discoveryVerb": "documented",
+    
+    "//5": "these tags are added to every listing from Auslan SignBank",
     "tags": ["signbank", "established"],
+    
+    "//6": "maps state image urls to tag sets, to translate that (very inaccessible) presentation in to meaningful machine data",
     "regions": {
       "/static/img/maps/Auslan/AustraliaWide-traditional.png": ["everywhere", "southern", "northern", "wa", "nt", "sa", "qld", "nsw", "act", "vic", "tas"],
       "/static/img/maps/Auslan/SouthernDialect-traditional.png": ["southern", "wa", "nt", "sa", "vic", "tas"],
