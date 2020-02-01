@@ -1,5 +1,0 @@
-jWdaRrp5ZVM - Tense
-
-0:00   I went to the shop > -#established #phrase
-0:04.2 I will go to the shop > -#established #phrase
-0:08.2 I ate dinner > -#established #phrase
