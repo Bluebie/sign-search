@@ -1,56 +1,39 @@
 // Scraper to load video content from youtube playlists
 const util = require('util')
 const fs = require('fs-extra')
-const ytdl = require('youtube-dl')
-const Spider = require('../../lib/spider.js')
-const vid_data = require('vid_data')
-const parseDuration = require('parse-duration')
-const subtitleParser = require('subtitles-parser-vtt');
+const ytdl = require('youtube-dl') // used to actually download videos from youtube for local thumbnail encode
+const ytScraper = require('yt-scraper') // used to fetch info about each video in youtube playlist
+const vid_data = require('vid_data') // used to fetch contents of youtube playlist - max 100 entries, should find something better
+const base = require('../../lib/search-spider/plugin-base') // base class, provides standard functionality of a spider plugin
+const parseDuration = require('parse-duration') // parse string durations, useful for parsing stuff in the config
+const subtitleParser = require('subtitles-parser-vtt') // parse or construct srt/vtt style subtitle files, for slicing multi-sign videos
 
 // A spider which indexes an youtube playlists and creates a search index from that content
-class YoutubeSpider extends Spider {
+class YoutubeSpider extends base {
   constructor(config, ...args) {
     super(config, ...args)
-    this.youtubeInfo = {}
-    this.expiredCount = 0
-    this.store.push('youtubeInfo')
   }
   
   async index(task = false, ...args) {
     if (!task) {
       // index playlist content and generate tasks for each video in the playlist
-      let tasks = (await vid_data.get_playlist_videos(this.config.link)).map(videoID =>
+      let subtasks = (await vid_data.get_playlist_videos(this.config.link)).map(videoID =>
         ['video', videoID]
       )
-      return { tasks }
+      return { subtasks }
     } else if (task == 'video') {
       let [videoID] = args
-      return await this.parseVideo(videoID)
+      return await this.videoTask(videoID)
     }
   }
 
   // fetch info about a video, parse it in to the content store
-  async parseVideo(videoID) {
-    // check if youtube cache data exists and has expired
-    if (this.config.expireCache && this.youtubeInfo[videoID]) {
-      if (!this.config.expireCacheMax || this.expiredCount < this.config.expireCacheMax) {
-        this.expiredCount += 1
-        let fetched = this.youtubeInfo[videoID]._spiderFetched
-        if (fetched && fetched < Date.now() - parseDuration(this.config.expireCache)) {
-          delete this.youtubeInfo[videoID]
-        }
-      }
-    }
-
-    if (!this.youtubeInfo[videoID]) {
-      let info = await util.promisify(ytdl.getInfo)(`https://www.youtube.com/watch?v=${encodeURIComponent(videoID)}`)
-      let { title, ext, description, duration, webpage_url, upload_date } = info
-      this.youtubeInfo[videoID] = { title, ext, description, duration, webpage_url, upload_date }
-      this.youtubeInfo[videoID]._spiderFetched = Date.now()
-    }
-    let info = this.youtubeInfo[videoID]
-    let { title, ext, description, duration, webpage_url, upload_date } = info
-    let timestamp = Date.UTC(upload_date.substr(0, 4), upload_date.substr(4, 2), upload_date.substr(6, 2))
+  async videoTask(videoID) {
+    //let info = await util.promisify(ytdl.getInfo)(`https://www.youtube.com/watch?v=${encodeURIComponent(videoID)}`)
+    //let { title, ext, description, duration, webpage_url, upload_date } = info
+    //let timestamp = Date.UTC(upload_date.substr(0, 4), upload_date.substr(4, 2), upload_date.substr(6, 2))
+    let info = await ytScraper.videoInfo(videoID)
+    let { title, description, url, length, dates } = info
     
     if (this.config.rules && this.config.rules.title && this.config.rules.title.replace) {
       this.config.rules.title.replace.forEach(rule => {
@@ -61,25 +44,24 @@ class YoutubeSpider extends Spider {
 
     let def = {
       id: videoID,
-      link: webpage_url,
-      hash: this.hash({ title, description, duration, webpage_url, upload_date }),
-      timestamp,
+      link: `https://youtu.be/${videoID}`,
+      timestamp: dates.published,
       title,
       words: this.extractWords(title),
       tags: this.extractTags(description),
       body: this.stripTags(description),
-      videos: [ { youtubeLink: webpage_url, ext } ]
+      videos: [ { youtubeLink: url, ext: 'mp4' } ]
     }
 
     // fetch remote subtitles if necessary
-    if (this.config.fetchSubtitles && !info._spideredSubtitles) {
+    if (this.config.fetchSubtitles) {
       let options = {
         auto: false, // don't fetch autosubs (Voice To Text auto transcription)
         all: true, // download all subtitles
         format: 'vtt', // ask for the WebVTT (SRT) format
       }
       
-      let subtitleFiles = await util.promisify(ytdl.getSubs)(webpage_url, options)
+      let subtitleFiles = await util.promisify(ytdl.getSubs)(url, options)
       info._spideredSubtitles = {}
       await Promise.all(subtitleFiles.map(async filename => {
         let lang = filename.split('.').slice(-2, -1)[0]
@@ -107,18 +89,18 @@ class YoutubeSpider extends Spider {
       def.videos.forEach(v => v.clipping = {})
       if (this.config.clipping.start) def.videos.forEach(v => v.clipping.start = parseDuration(this.config.clipping.start) / 1000)
       if (this.config.clipping.end) def.videos.forEach(v => v.clipping.end = parseDuration(this.config.clipping.end) / 1000)
-      this.content[videoID] = def
+      return { data: [def] }
     } else if (vttText) {
       // split using subtitle timing and data
       def.videos.forEach(v => v.clipping = {}) // make sure clipping object exists
       let defJSON = JSON.stringify(def) // deep copy using JSON
       let parsedVTT = subtitleParser.fromSrt(vttText, true)
       // iterate the items in the subtitle file, creating individual sign definitions for each
-      parsedVTT.forEach(({id, startTime, endTime, text}) => {
+      let sliceDefs = parsedVTT.map(({id, startTime, endTime, text}) => {
         let sliceDef = JSON.parse(defJSON) // deep copy the def by passing through JSON
         sliceDef.videos.forEach(v => { // setup the start and end times
           v.clipping.start = startTime / 1000
-          v.clipping.end = endTime / 1000
+          v.clipping.end = Math.min(endTime / 1000, length + 0.999)
         })
         sliceDef.link += `?t=${Math.floor(startTime / 1000)}` // modify link to link to specific part of video
         let taglessText = this.stripTags(text)
@@ -128,31 +110,37 @@ class YoutubeSpider extends Spider {
         let bodyOverride = taglessText.split("\n").slice(1).join("\n").trim()
         if (bodyOverride.length > 0) sliceDef.body = bodyOverride
         sliceDef.id += `-${id}`
-        this.content[sliceDef.id] = sliceDef  
+        return sliceDef
       })
+      return { data: sliceDefs }
     } else {
       if (this.config.rules && this.config.rules.requireSubtitles) {
         this.log(`Video ${def.link} skipped due to requireSubtitles rule not being satisfied by any enabled subtitle sources`)
       } else {
         // no clipping rules, just import the whole video
-        this.content[def.id] = def
+        return { data: [def] }
       }
     }
   }
 
   // fetch a video for a specific piece of content, return the path. SpiderConductor should delete the file when it's done importing
-  fetch({ youtubeLink, ext }) {
+  fetch({ youtubeLink }) {
     return new Promise((resolve, reject) => {
-      let path = this.tempFile(`${this.hash(youtubeLink)}.${ext}`)
+      let path
       let args = ['--socket-timeout', '60']
 
       // ask youtube-dl to grab the video file from Instagram
       let download = ytdl(youtubeLink, args)
-      // pipe the video file in to the temporary file
-      download.pipe(fs.createWriteStream( path ))
-      // hook up events to resolve the promise when it's done downloading or has an error
-      download.on('complete', ()=> resolve( path ))
-      download.on('end', ()=> resolve( path ))
+
+      download.on('info', (info)=> {
+        path = this.tempFile(`${this.hash(youtubeLink)}.${info.ext}`)
+        // pipe the video file in to the temporary file
+        download.pipe(fs.createWriteStream( path ))
+        // hook up events to resolve the promise when it's done downloading
+        download.on('complete', ()=> resolve( path ))
+        download.on('end', ()=> resolve( path ))
+      })
+      // handle errors
       download.on('error', (err)=> reject( err ))
     })
   }
