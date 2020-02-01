@@ -290,8 +290,8 @@ main#results .result .link {
 }
 
 main#results .result .mini_def {
-  --line-height: 1.14em;
-  --visible-lines: 6;
+  --line-height: 1.4em;
+  --visible-lines: 4.65;
   text-overflow: ellipsis;
   white-space: pre-line;
   overflow: hidden;
