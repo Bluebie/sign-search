@@ -7,6 +7,7 @@
 // Usage:
 //  > node build-indexed-vector-library.js path/to/fasttext-database.vec
 const promisify = require('util').promisify
+const englishTextFilter = require('../lib/vector-library/text-filter-english')
 const crypto = require('crypto')
 const fs = require('fs-extra')
 const zlib = require('zlib')
@@ -56,10 +57,7 @@ async function run(fasttextPath) {
             hash.update(data)
             return new Uint8Array(hash.digest())
           },
-          textFilter: (text) => {
-            if (text.length > 1 && text.match(/^[A-Z0-9]$/)) return text.trim()
-            return text.trim().toLowerCase()
-          }
+          textFilter: englishTextFilter
         })
       } else {
         let word = elements.shift()

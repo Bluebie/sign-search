@@ -1,5 +1,6 @@
 node_modules
 datasets/*
+lib/bundle.*
 tools/scrapers/auslan-signbank/*-cache
 tools/scrapers/auslan-signbank/definition-links.json
 .stignore
