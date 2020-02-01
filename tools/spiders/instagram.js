@@ -2,17 +2,19 @@
 const util = require('util')
 const fs = require('fs-extra')
 const ytdl = require('youtube-dl')
-const Spider = require('../../lib/spider.js')
+const base = require('../../lib/search-spider/plugin-base')
 const instagram = require('user-instagram')
 
 
 // A spider which indexes an instagram feed and creates a search index from that content
-class InstagramSpider extends Spider {
+class InstagramSpider extends base {
   constructor(config, ...args) {
     super(config, ...args)
+    this.content = {}
+    this.store.push('content')
   }
   
-  async index(task = false) {
+  async index() {
     let titleRegexp = new RegExp(this.config.wordsRegexp[0], this.config.wordsRegexp[1])
     let { posts } = await instagram(`https://www.instagram.com/${this.config.user}`)
     for (let post of posts) {
@@ -43,6 +45,8 @@ class InstagramSpider extends Spider {
         this.log(`Skipped ${post.captionText.split("\n")[0]}`)
       }
     }
+
+    return { data: Object.values(this.content) }
   }
 
   // fetch a video for a specific piece of content

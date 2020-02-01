@@ -88,7 +88,7 @@
   "toddslan": {
     "displayName": "Toddslan",
     "spider": "instagram",
-    "expires": "1hr",
+    "interval": "10m",
     "user": "toddslan",
     "tags": ["toddslan", "invented"],
     "link": "https://www.instagram.com/toddslan",
@@ -103,7 +103,7 @@
   "v-alford": {
     "displayName": "Vanessa Alford",
     "spider": "instagram",
-    "expires": "1hr",
+    "interval": "10m",
     "user": "v.alford",
     "link": "https://www.instagram.com/v.alford",
     "discoveryVerb": "demonstrated",
