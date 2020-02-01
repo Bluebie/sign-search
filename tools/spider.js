@@ -4,6 +4,7 @@ const createTorrent = util.promisify(require('create-torrent'))
 const HandbrakeEncoder = require('../lib/search-library/encoder-handbrake')
 
 const SpiderNest = require('../lib/search-spider/nest')
+const signSearchConfig = require('../package.json').signSearch
 
 
 let defaultRun = async () => {
@@ -29,9 +30,9 @@ let defaultRun = async () => {
       minDuration: '1 month',
       maxEntries: 24,
       title: "Discovered Signs",
-      description: "Signs that have recently been discovered by Find Sign’s robotic spiders as they explore the Auslan web",
-      id: "https://find.auslan.fyi/",
-      link: "https://find.auslan.fyi/"
+      description: `Signs that have recently been discovered by ${signSearchConfig.title}’s robotic spiders as they explore the web`,
+      id: `${signSearchConfig.location}/`,
+      link: `${signSearchConfig.location}/`
     }
   })
   
@@ -60,9 +61,9 @@ let defaultRun = async () => {
     
     var opts = {
       name: "datasets",
-      comment: "Find Sign (Australian Sign Language Search Engine) live datasets directory",
+      comment: `${signSearchConfig.openGraph.title} dataset`,
       createdBy: "WebTorrent: tools/spider.js",
-      urlList: ["https://find.auslan.fyi/"]
+      urlList: [`${signSearchConfig.location}/`]
     }
 
     console.log("Creating torrent...")

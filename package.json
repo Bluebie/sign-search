@@ -8,6 +8,7 @@
     "borc": "^2.1.1",
     "byline": "^5.0.0",
     "cheerio": "^1.0.0-rc.3",
+    "clean-html": "^1.5.0",
     "create-torrent": "^4.4.1",
     "date-fns": "^2.9.0",
     "delay": "^4.3.0",
@@ -15,6 +16,7 @@
     "fs-extra": "^8.1.0",
     "got": "^10.2.1",
     "handbrake-js": "^4.0.0",
+    "hyperstream": "^1.2.2",
     "jquery": "^3.4.1",
     "nanohtml": "^1.9.0",
     "nanomorph": "^5.4.0",
@@ -29,7 +31,8 @@
     "subtitles-parser-vtt": "0.0.5",
     "user-instagram": "^1.0.4",
     "vid_data": "^1.0.0",
-    "youtube-dl": "^2.3.0"
+    "youtube-dl": "^2.3.0",
+    "yt-scraper": "^2.0.1"
   },
   "devDependencies": {
     "browserify": "^16.5.0",
@@ -50,6 +53,17 @@
     "spider": "cd tools && node spider.js",
     "watch": "rm lib/bundle.js.gz; ./node_modules/.bin/watchify lib/user-interface.js -o lib/bundle.js -v -i fs-extra -i crypto -i process -d --full-paths",
     "build": "                   ./node_modules/.bin/browserify lib/user-interface.js -o lib/bundle.js -v -i fs-extra -i crypto -i process; gzip -9 -k -f lib/bundle.js"
+  },
+  "signSearch": {
+    "title": "Find Sign",
+    "lang": "en",
+    "location": "https://find.auslan.fyi",
+    "logoPath": "style/assets/find-sign-logo.svg",
+    "openGraph": {
+      "image": "https://find.auslan.fyi/style/assets/open-graph-image@3x.png",
+      "description": "Find Sign is an Auslan Search Engine. It helps find Auslan resources from around the internet in one place. Deaf community can send websites and videos to include and help make Auslan vocabulary easier to find.",
+      "title": "Find Sign - Auslan Search Engine"
+    }
   },
   "keywords": [
     "auslan"
