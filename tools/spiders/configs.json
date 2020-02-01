@@ -79,7 +79,7 @@
   "stage-left": {
     "displayName": "Auslan Stage Left",
     "spider": "auslan-stage-left",
-    "expires": "24hr",
+    "interval": "24hr",
     "link": "http://www.auslanstageleft.com.au/media/101-auslan-theatre-signs/",
     "discoveryVerb": "demonstrated",
     "tags": ["auslan-stage-left", "description", "semantic.arts"]

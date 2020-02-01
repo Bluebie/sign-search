@@ -1,20 +1,20 @@
 // Scraper to load video content from Auslan Stage Left's 101 Performance Signs webpage
 const fs = require('fs-extra')
 const youtubedl = require('youtube-dl')
-const Spider = require('../../lib/spider.js')
+const base = require('../../lib/search-spider/plugin-base')
 
 
-class StageLeftSpider extends Spider {
+class StageLeftSpider extends base {
   constructor(config, ...args) {
     super(config, ...args)
   }
   
   // scrape task routing function, detects type of scrape task requested and routes to appropriate internal function
-  async index(task = false, ...args) {
+  async index() {
     let page = await this.openWeb("http://www.auslanstageleft.com.au/media/101-auslan-theatre-signs/")
 
     // reset content
-    this.content = {}
+    let data = []
     page(".ult-modal-img.overlay-show").each((i, img)=> {
       let container = page(img.parent.parent)
       let glossList = container.find('h3').first().text().split(/[\\\/]+/).map((x)=> x.trim())
@@ -22,15 +22,15 @@ class StageLeftSpider extends Spider {
       let embedURL = page(`.ult-overlay.${buttonID} iframe`)[0].attribs.src
       let vimeoID = embedURL.split('/').slice(-1)[0].split("?")[0]
       let videoLink = `https://vimeo.com/${vimeoID}`
-      this.content[vimeoID] = {
-        id: `${vimeoID}`,
-        hash: this.hash(videoLink + glossList.join(', ')),
+      data.push({
+        id: vimeoID,
         words: glossList,
+        link: videoLink,
         tags: [],
         videos: [videoLink],
-        link: videoLink
-      }
+      })
     })
+    return { data }
   }
 
   // fetch a video for a specific piece of content
