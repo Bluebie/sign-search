@@ -4,8 +4,8 @@ const cleanHtml = require('clean-html')
 const appRootPath = require('app-root-path')
 
 const DocumentTemplate = appRootPath.require('/lib/views/html-document')
-const FeedProvider = appRootPath.require('/lib/views/feed-provider')
-const StaticPageProvider = appRootPath.require('/lib/views/static-page-provider')
+const FeedProvider = appRootPath.require('/lib/views/provider-feed')
+const StaticPageProvider = appRootPath.require('/lib/views/provider-static-page')
 
 const defaultConfig = appRootPath.require('/package.json').signSearch
 
