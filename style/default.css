@@ -97,14 +97,14 @@ img#header {
   cursor: pointer;
 }
 
-form#search_form {
+form#search-form {
   font-size: 1.6em;
   width: 500px;
   margin: 0 auto 0 auto;
 }
 
 /* magnifing glass symbol in search form */
-form#search_form .input_icon {
+form#search-form .input-icon {
   position: absolute;
   width: 1em;
   height: 1em;
@@ -112,7 +112,7 @@ form#search_form .input_icon {
   margin-top: 0.65em;
 }
 
-input#search_box {
+input#search-box {
   display: block;
   font-family: inherit;
   font-size: inherit;
@@ -179,11 +179,11 @@ body.notice main div {
 
 body main span.deemphasis { opacity: 0.5; font-style: italic; font-size: 0.8em }
 
-main#results {
+body.search-results main {
   margin-top: 3em;
 }
 
-main#results .result {
+body.search-results main .result {
   background-color: var(--module-bg);
   border-radius: 10px;
   margin-top: 1.1em;
@@ -216,7 +216,7 @@ main#results .result {
   to   { opacity: 1; }
 }
 
-main#results .result .video_player {
+body.search-results main .result .video-player {
   display: block;
   background-color: var(--submodule-bg);
   border-radius: 6px;
@@ -243,16 +243,16 @@ main#results .result .video_player {
   ;
 }
 
-main#results .result .video_player video.video_thumb {
+body.search-results main .result .video-player video.video-thumb {
   width: 100%; height: 100%; border-radius: 6px;
 }
-main#results .result .video_player img.video_thumb,
-main#results .result .video_player picture.video_thumb {
+body.search-results main .result .video-player img.video-thumb,
+body.search-results main .result .video-player picture.video-thumb {
   width: auto; height: 100%; margin-left: auto; margin-right: auto; display: block;
 }
 
-main#results .result .video_player button.prev_vid,
-main#results .result .video_player button.next_vid {
+body.search-results main .result .video-player button.prev-vid,
+body.search-results main .result .video-player button.next-vid {
   position: absolute;
   top: 0; bottom: 0; margin: 0; 
   width: 32px;
@@ -265,17 +265,17 @@ main#results .result .video_player button.next_vid {
   background-color: hsla(var(--hue), var(--module-bg-sat), var(--module-bg-lum), 40%);
   /* backdrop-filter: blur(2px); */
 }
-main#results .result .video_player button.prev_vid { left: 0; border-top-left-radius: 6px; border-bottom-left-radius: 6px; }
-main#results .result .video_player button.next_vid { right: 0; border-top-right-radius: 6px; border-bottom-right-radius: 6px; }
+body.search-results main .result .video-player button.prev-vid { left: 0; border-top-left-radius: 6px; border-bottom-left-radius: 6px; }
+body.search-results main .result .video-player button.next-vid { right: 0; border-top-right-radius: 6px; border-bottom-right-radius: 6px; }
 
-main#results .result > *:not(.video_player) {
+body.search-results main .result > *:not(.video-player) {
   display: block;
   padding-left: 0.7rem;
   margin-bottom: 0.1rem;
   padding-right: 0.5rem;
 }
 
-main#results .result .gloss_list, main#results .result .keywords {
+body.search-results main .result .keywords {
   margin-top: 0.3rem;
   margin-bottom: 0rem;
   font-size: 1.3rem;
@@ -286,18 +286,19 @@ main#results .result .gloss_list, main#results .result .keywords {
   overflow: hidden;
 }
 
-main#results .result .link, main#results .result .tags {
+body.search-results main .result .link,
+body.search-results main .result .tags {
   text-overflow: ellipsis;
   font-size: 80%;
   white-space: nowrap;
   overflow: hidden;
 }
 
-main#results .result .link {
+body.search-results main .result .link {
   text-decoration: underline;
 }
 
-main#results .result .mini_def {
+body.search-results main .result .body {
   --line-height: 1.4em;
   --visible-lines: 4.65;
   text-overflow: ellipsis;
@@ -307,13 +308,13 @@ main#results .result .mini_def {
   font-size: 0.95em;
   max-height: calc(var(--line-height) * var(--visible-lines) - 1rem);
 }
-main#results .result .alert + .mini_def {
+body.search-results main .result .alert + .body {
   --visible-lines: 5;
 }
 
 /* alert notices on search results */
-main#results .result.invented { background-color: var(--alert-bg); }
-main#results .result .alert:before {
+body.search-results main .result.invented { background-color: var(--alert-bg); }
+body.search-results main .result .alert:before {
   font-family: 'auslan-symbol';
   content: "!";
   padding-right: 0.3em;
@@ -357,8 +358,8 @@ div#pagination a[aria-current=page], div#pagination a[aria-current=true] {
   inset +0.2rem +0.25rem +0.6rem +0.20rem hsla(var(--hue), calc(var(--module-bg-sat) + 3%), calc(var(--module-bg-lum) - 5%), 100%);
 }
 
-.home div.inset_box { display: block; }
-div.inset_box {
+.home div.inset-box { display: block; }
+div.inset-box {
   display: none;
   width: 500px;
   min-height: 300px;
@@ -382,33 +383,33 @@ div.inset_box {
   ;
 }
 
-div.inset_box a[rel="alternate"] {
+div.inset-box a[rel="alternate"] {
   display: block;
   width: 1em; height: 1em;
   float: right;
 }
 
-div.inset_box h2, div.inset_box div.discovery_link {
+div.inset-box h2, div.inset-box div.discovery-link {
   font-size: 1em;
   margin: 0;
   padding: 0;
 }
 
-div.inset_box div.discovery_link {
+div.inset-box div.discovery-link {
   display: list-item;
   list-style-position: inside;
   list-style-type: square;
   padding-left: 0.5em;
 }
 
-div.inset_box a {
+div.inset-box a {
   color: inherit;
 }
 
-main#article {
+body.static-page main {
   margin-bottom: 5em;
 }
 
-main#article a {
+body.static-page main a {
   color: inherit;
 }

@@ -4,7 +4,7 @@ body {
   padding-right: 1ex;
 }
 
-body, img#header, form#search_form, input#search_box {
+body, img#header, form#search-form, input#search-box {
   display: block;
   width: 100%;
 }
@@ -15,37 +15,37 @@ div.inset_box {
 
 nav { width: 100% }
 
-img#header, input#search_box, main#results, div#pagination { margin-top: 1ex; }
+img#header, input#search_box, body.search-results main, div#pagination { margin-top: 1ex; }
 
 /* patches to search result display */
-main#results .result {
+body.search-results main .result {
   padding: 1ex;
   margin-top: 1ex;
   height: auto;
 }
 
-main#results .result .video_player {
+body.search-results main .result .video-player {
   width: calc(100vw - 4ex);
   height: calc((100vw - 4ex) * (9/16));
   margin: 0 0 0 0;
   position: relative;
 }
 
-main#results .result .video_player button.prev_vid,
-main#results .result .video_player button.next_vid {
+body.search-results main .result .video-player button.prev-vid,
+body.search-results main .result .video-player button.next-vid {
   width: calc((100vw - 4ex) * 0.127);
 }
 
-main#results .result div {
+body.search-results main .result div {
   margin: 0 0 0 0;
 }
 
-main#results .result .gloss_list, main#results .result .keywords {
+body.search-results main .result .keywords {
   font-size: 0.9rem;
   font-weight: 600;
 }
 
-main#results .result .link {
+body.search-results main .result .link {
   font-size: 0.7rem;
 }
 

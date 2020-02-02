@@ -15,3 +15,4 @@ logs/*
 tools/scrapers/youtube/playlist-keys.json
 .dat
 datasets.torrent
+/*.html

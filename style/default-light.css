@@ -21,7 +21,7 @@ img#header {
   filter: saturate(150%);
 }
 
-form#search_form::before {
+form#search-form::before {
   filter: var(--filter-fg);
 }
 

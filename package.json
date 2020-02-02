@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "description": "Search Sign Language Dictionaries intelligently with word2vec and traditional more brute force approaches",
-  "main": "index.js",
+  "main": "frontend.js",
   "dependencies": {
     "app-root-path": "^3.0.0",
     "borc": "^2.1.1",
@@ -52,8 +52,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "spider": "cd tools && node spider.js",
-    "watch": "rm lib/bundle.js.gz; ./node_modules/.bin/watchify lib/user-interface.js -o lib/bundle.js -v -i fs-extra -i crypto -i process -d --full-paths",
-    "build": "                   ./node_modules/.bin/browserify lib/user-interface.js -o lib/bundle.js -v -i fs-extra -i crypto -i process; gzip -9 -k -f lib/bundle.js"
+    "watch": "rm lib/bundle.js.gz; ./node_modules/.bin/watchify lib/frontend.js -o lib/bundle.js -v -i fs-extra -i crypto -i process -d",
+    "build": "                   ./node_modules/.bin/browserify lib/frontend.js -o lib/bundle.js -v -i fs-extra -i crypto -i process; gzip -9 -k -f lib/bundle.js"
   },
   "signSearch": {
     "title": "Find Sign",
@@ -61,10 +61,22 @@
     "location": "https://find.auslan.fyi",
     "userAgent": "find.auslan.fyi",
     "logoPath": "style/assets/find-sign-logo.svg",
+    "navLinks": [
+      ["About", "about.html"],
+      ["Technology", "technology.html"],
+      ["Add Video", "contribute.html"],
+      ["News", "https://blog.auslan.fyi/"]
+    ],
     "openGraph": {
       "image": "https://find.auslan.fyi/style/assets/open-graph-image@3x.png",
       "description": "Find Sign is an Auslan Search Engine. It helps find Auslan resources from around the internet in one place. Deaf community can send websites and videos to include and help make Auslan vocabulary easier to find.",
       "title": "Find Sign - Auslan Search Engine"
+    },
+    "discoveryFeed": {
+      "length": 20,
+      "title": "Find Sign Updates",
+      "description": "Find Sign regularly checks the web for Auslan demonstration videos. When it finds new things, they're added to this feed so you can see what's new.",
+      "link": "https://find.auslan.fyi/"
     }
   },
   "keywords": [
