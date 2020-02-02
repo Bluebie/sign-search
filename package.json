@@ -5,6 +5,7 @@
   "description": "Search Sign Language Dictionaries intelligently with word2vec and traditional more brute force approaches",
   "main": "index.js",
   "dependencies": {
+    "app-root-path": "^3.0.0",
     "borc": "^2.1.1",
     "byline": "^5.0.0",
     "cheerio": "^1.0.0-rc.3",
