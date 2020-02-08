@@ -1,5 +1,6 @@
 const fs = require('fs-extra')
 const util = require('util')
+const gzip = util.promisify(require('zlib').gzip)
 const createTorrent = util.promisify(require('create-torrent'))
 const HandbrakeEncoder = require('../lib/search-library/encoder-handbrake')
 
@@ -57,7 +58,11 @@ let defaultRun = async () => {
 
     console.log("Creating torrent...")
     let torrent = await createTorrent('../datasets', opts)
-    await fs.writeFile('../datasets.torrent', torrent)
+    await Promise.all([
+      fs.writeFile('../datasets.torrent', torrent),
+      fs.writeFile('../datasets.torrent.gz', await gzip(torrent, { level: 9 }))
+    ])
+
     console.log("datasets.torrent updated")
   }
 
