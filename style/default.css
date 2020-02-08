@@ -32,14 +32,6 @@
   }
 }
 
-@media (prefers-color-scheme: light) {
-  @import url(default-light.css);
-}
-
-@media (max-width: 899px) {
-  @import url(default-mobile.css);
-}
-
 @font-face {
   font-family: 'auslan-symbol';
   src:  url('assets/fonts/find-sign-icomoon.eot?pyrih33');
@@ -153,7 +145,7 @@ input#search-box {
   ;
 }
 
-nav {
+#nav-links {
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
@@ -163,9 +155,9 @@ nav {
 }
 
 /* hide links in results view */
-body.results nav { display: none }
+body.search-results #nav-links { display: none }
 
-nav a {
+#nav-links a {
   color: inherit;
 }
 
@@ -322,14 +314,14 @@ body.search-results main .result .alert:before {
   top: 0.075rem;
 }
 
-div#pagination {
+#pagination {
   margin: 2em 0 2em 0;
   display: flex;
   flex-direction: row;
   justify-content: center;
 }
 
-div#pagination a {
+#pagination a {
   font-family: 'auslan-symbol' !important;
   /* Better Font Rendering =========== */
   -webkit-font-smoothing: antialiased;
@@ -349,7 +341,7 @@ div#pagination a {
   background-color: transparent;
 }
 
-div#pagination a[aria-current=page], div#pagination a[aria-current=true] {
+#pagination a[aria-current=page], #pagination a[aria-current=true] {
   background-color: var(--module-bg);
   border-radius: 30px;
   cursor: default;
@@ -358,9 +350,7 @@ div#pagination a[aria-current=page], div#pagination a[aria-current=true] {
   inset +0.2rem +0.25rem +0.6rem +0.20rem hsla(var(--hue), calc(var(--module-bg-sat) + 3%), calc(var(--module-bg-lum) - 5%), 100%);
 }
 
-.home div.inset-box { display: block; }
 div.inset-box {
-  display: none;
   width: 500px;
   min-height: 300px;
   margin: 0 auto 3em auto;
@@ -412,4 +402,106 @@ body.static-page main {
 
 body.static-page main a {
   color: inherit;
+}
+
+@media (prefers-color-scheme: light) {
+  /*
+  opt-in light-mode theme for accessibility sake
+  changes some page-wide colors, and applies some filters to fix some
+  of the symbols to look right
+  */
+  :root {
+    --base-bg-sat: 43%;
+    --base-bg-lum: 90%;
+    --base-fg-sat: 20%;
+    --base-fg-lum: 22%;
+    /* --filter-fg: saturate(150%) brightness(25%); */
+    --module-bg-sat: 35%;
+    --module-bg-lum: 83%;
+    --submodule-bg-sat: 33%;
+    --submodule-bg-lum: 75%;
+    --outer-shadow-alpha: 40%;
+    --outer-highlight-alpha: 100%;
+  }
+
+  img#header {
+    filter: saturate(150%);
+  }
+
+  form#search-form::before {
+    filter: var(--filter-fg);
+  }
+
+  #pagination * {
+    filter: var(--filter-fg);
+  }
+}
+
+@media (max-width: 899px) {
+  /* general layout patches on mobile */
+  body {
+    padding-left: 1ex;
+    padding-right: 1ex;
+  }
+  
+  body, img#header, form#search-form, input#search-box {
+    display: block;
+    width: 100%;
+  }
+  
+  div.inset-box {
+    width: 100%;
+  }
+  
+  #nav-links { width: 100% }
+  
+  img#header, input#search-box, body.search-results main, #pagination { margin-top: 1ex; }
+  
+  /* patches to search result display */
+  body.search-results main .result {
+    padding: 1ex;
+    margin-top: 1ex;
+    height: auto;
+  }
+  
+  body.search-results main .result .video-player {
+    width: calc(100vw - 4ex);
+    height: calc((100vw - 4ex) * (9/16));
+    margin: 0 0 0 0;
+    position: relative;
+  }
+  
+  body.search-results main .result .video-player button.prev-vid,
+  body.search-results main .result .video-player button.next-vid {
+    width: calc((100vw - 4ex) * 0.127);
+  }
+  
+  body.search-results main .result div {
+    margin: 0 0 0 0;
+  }
+  
+  body.search-results main .result .keywords {
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+  
+  body.search-results main .result .link {
+    font-size: 0.7rem;
+  }
+  
+  
+  /* patches for pagination buttons */
+  #pagination { justify-content: space-evenly; }
+  #pagination a {
+    width: 11vw;
+    height: 11vw;
+    font-size: 9vw;
+    line-height: 11vw;
+  }
+  
+  /* on extremely tiny widths, change the nav list to vertical */
+  @media (max-width: 300px) {
+    #nav-links { display: block; }
+    #nav-links a { display: block; margin: 1.5rem 0 1.5rem 0; text-align: center; }
+  }
 }
