@@ -14,5 +14,7 @@ logs/*
 *.tmp
 tools/scrapers/youtube/playlist-keys.json
 .dat
-datasets.torrent
+/datasets.torrent
+/datasets.torrent.*
 /*.html
+/*.html.gz

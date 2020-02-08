@@ -24,15 +24,6 @@ let defaultRun = async () => {
         new HandbrakeEncoder(),
         //new HandbrakeEncoder({ maxWidth: 1280, maxHeight: 720, quality: 25 }) // 720p build
       ],
-    },
-    discoveryFeed: {
-      minEntries: 12,
-      minDuration: '1 month',
-      maxEntries: 24,
-      title: "Discovered Signs",
-      description: `Signs that have recently been discovered by ${signSearchConfig.title}’s robotic spiders as they explore the web`,
-      id: `${signSearchConfig.location}/`,
-      link: `${signSearchConfig.location}/`
     }
   })
   
@@ -52,8 +43,6 @@ let defaultRun = async () => {
 
   // rebuild the search libraries / common search library
   let didRebuild = await nest.buildDatasets()
-
-  await nest.buildDiscoveryFeeds()
 
   if (didRebuild) {
     // if anything changed about the search index, rebuild the datasets torrent
