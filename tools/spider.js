@@ -47,7 +47,7 @@ let defaultRun = async () => {
 
   if (didRebuild) {
     // if anything changed about the search index, rebuild the datasets torrent
-    console.log(`Datasets changed, rebuilding datasets.torrent`)
+    nest.log(`Datasets changed, rebuilding datasets.torrent`)
     
     var opts = {
       name: "datasets",
@@ -56,14 +56,14 @@ let defaultRun = async () => {
       urlList: [`${signSearchConfig.location}/`]
     }
 
-    console.log("Creating torrent...")
+    nest.log("Creating torrent...")
     let torrent = await createTorrent('../datasets', opts)
     await Promise.all([
       fs.writeFile('../datasets.torrent', torrent),
       fs.writeFile('../datasets.torrent.gz', await gzip(torrent, { level: 9 }))
     ])
 
-    console.log("datasets.torrent updated")
+    nest.log("datasets.torrent updated")
   }
 
   // unlock spider files
