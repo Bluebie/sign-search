@@ -11,7 +11,8 @@ class StageLeftSpider extends base {
   
   // scrape task routing function, detects type of scrape task requested and routes to appropriate internal function
   async index() {
-    let page = await this.openWeb("http://www.auslanstageleft.com.au/media/101-auslan-theatre-signs/")
+    let url = "http://www.auslanstageleft.com.au/media/101-auslan-theatre-signs/"
+    let page = await this.openWeb(url)
 
     // reset content
     let data = []
@@ -26,6 +27,11 @@ class StageLeftSpider extends base {
         id: vimeoID,
         words: glossList,
         link: videoLink,
+        nav: [
+          [this.config.displayName, this.config.siteLink],
+          ["101 Auslan Theatre Signs", url],
+          [glossList.join(", "), videoLink]
+        ],
         tags: [],
         videos: [videoLink],
       })

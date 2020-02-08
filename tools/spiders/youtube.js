@@ -87,6 +87,8 @@ class YoutubeSpider extends base {
       let slices = subtitles.map(({id, start, end, text}) => {
         let taglessText = this.stripTags(text) // text without hashtags included
         let bodyOverride = taglessText.split("\n").slice(1).join("\n").trim()
+        let title = taglessText.split("\n")[0]
+        let link = `${def.link}?t=${Math.floor(start)}`
         return {
           ...def,
           id: `${def.id}-${id}`,
@@ -94,9 +96,10 @@ class YoutubeSpider extends base {
             ...video,
             clipping: { start, end: Math.min(end, parseFloat(length_seconds) + 0.999) }
           })),
-          title: taglessText.split("\n")[0],
+          title,
+          link,
+          nav: [...def.nav, [title, link]],
           words: this.extractWords(taglessText.split("\n")[0]),
-          link: `${def.link}?t=${Math.floor(start)}`,
           tags: [...def.tags, ...this.extractTags(text)],
           body: bodyOverride.length > 0 ? bodyOverride : def.body
         }

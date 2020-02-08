@@ -1,6 +1,6 @@
 {
   "signbank": {
-    "displayName": "SignBank",
+    "displayName": "Auslan Signbank",
     "spider": "signbank",
 
     "//1": "Last I checked, a full sweep of Auslan Signbank requires 5414 http requests. 1.5 min interval makes a full update roughly weekly",
@@ -84,6 +84,7 @@
     "spider": "auslan-stage-left",
     "interval": "24hr",
     "link": "http://www.auslanstageleft.com.au/media/101-auslan-theatre-signs/",
+    "siteLink": "http://www.auslanstageleft.com.au/",
     "discoveryVerb": "demonstrated",
     "tags": ["auslan-stage-left", "description", "semantic.arts"]
   },

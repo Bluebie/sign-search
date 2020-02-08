@@ -97,9 +97,15 @@ class SignBankSpider extends base {
     }
 
     // build definition data object, to be stored in the frozen-data and used to build search index later
+    let idGloss = this.basenameFromURL(url)
     let def = {
-      id: this.basenameFromURL(url),
+      id: idGloss,
       link: url,
+      nav: [
+        [this.config.displayName, this.config.link],
+        ["Dictionary", this.config.url],
+        [`ID Gloss: ${idGloss}`, url]
+      ],
       title: keywordsText,
       words: this.extractWords(keywordsText),
       tags,
