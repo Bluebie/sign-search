@@ -44,12 +44,17 @@
   font-display: block;
 }
 
-*[class^="icon-"] {
+*[class^="icon-"], *[class*=" icon-"] {
   font-family: 'auslan-symbol';
   /* Better Font Rendering =========== */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-decoration: none;
+  font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
+  line-height: 1;
 }
 .icon-search:before {
   content: "\260c";
@@ -65,6 +70,21 @@
 }
 .icon-feed:before {
   content: "\25ce";
+}
+.icon-spinner:before {
+  content: "\293e";
+}
+.icon-spinner5:before {
+  content: "\e98a";
+}
+.icon-spinner8:before {
+  content: "\e98d";
+}
+.icon-zoom-in:before {
+  content: "\e993";
+}
+.icon-link:before {
+  content: "\e9d7";
 }
 
 * {
@@ -162,12 +182,27 @@ body.search-results #nav-links { display: none }
 }
 
 body.notice main { text-align: center; }
-body.notice main div {
+body.notice main div.notice-box {
   background-color: var(--module-bg);
   border-radius: calc(1em + 4ex);
-  padding: 2ex 3ex;
+  padding: 2ex 2ex;
+  text-indent: 1ex;
   display: inline-block;
 }
+
+.animated-spinner {
+  display: inline-block;
+  position: relative;
+  left: -1ex;
+  width: 1.6em; height: 1.6em;
+  /* margin: -0.2em 0.2em -0.15em -0.7em; */
+  vertical-align: -0.4em;
+  border-radius: 50%;
+  border: 0.2em solid hsla(var(--hue), calc(var(--module-bg-sat) + 10%), calc(var(--module-bg-lum) - 40%), 20%);
+  border-top-color: var(--base-fg);
+  animation: animated-spinner-keyframes 1.25s linear infinite;
+}
+@keyframes animated-spinner-keyframes { to { transform: rotate(360deg) } }
 
 body main span.deemphasis { opacity: 0.5; font-style: italic; font-size: 0.8em }
 
@@ -286,8 +321,18 @@ body.search-results main .result .tags {
   overflow: hidden;
 }
 
-body.search-results main .result .link {
+body.search-results main .result .link a {
   text-decoration: underline;
+  font-style: normal;
+  color: inherit;
+}
+
+/* add forward slashes to nav breadcrumb type links */
+body.search-results main .result .link a:not(:first-child):before {
+  content: "/";
+  padding-left: 0.7ex;
+  padding-right: 0.7ex;
+  display: inline-block; /* removes underline */
 }
 
 body.search-results main .result .body {
@@ -486,7 +531,7 @@ body.static-page main a {
   }
   
   body.search-results main .result .link {
-    font-size: 0.7rem;
+    font-size: 0.8rem;
   }
   
   
@@ -498,10 +543,21 @@ body.static-page main a {
     font-size: 9vw;
     line-height: 11vw;
   }
+
+  #pagination a[aria-current=page] {
+    border-radius: 11vw;
+  }
   
   /* on extremely tiny widths, change the nav list to vertical */
   @media (max-width: 300px) {
     #nav-links { display: block; }
     #nav-links a { display: block; margin: 1.5rem 0 1.5rem 0; text-align: center; }
+    body.search-results main .result .link a {
+      display: none;
+    }
+    body.search-results main .result .link a:first-of-type,
+    body.search-results main .result .link a:last-of-type {
+      display: unset;
+    }
   }
 }
