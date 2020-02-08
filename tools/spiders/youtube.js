@@ -1,12 +1,12 @@
 // Scraper to load video content from youtube playlists
 const util = require('util')
 const fs = require('fs-extra')
-const ytdl = require('youtube-dl') // used to actually download videos from youtube for local thumbnail encode
-const ytScraper = require('yt-scraper') // used to fetch info about each video in youtube playlist
-const vid_data = require('vid_data') // used to fetch contents of youtube playlist - max 100 entries, should find something better
+const ytpl = require('ytpl') // used to fetch the contents of youtube playlists
+const ytdl = require('ytdl-core') // used to fetch info about the youtube videos
 const base = require('../../lib/search-spider/plugin-base') // base class, provides standard functionality of a spider plugin
 const parseDuration = require('parse-duration') // parse string durations, useful for parsing stuff in the config
 const subtitleParser = require('subtitles-parser-vtt') // parse or construct srt/vtt style subtitle files, for slicing multi-sign videos
+const signSearchConfig = require('../../package').signSearch
 
 // A spider which indexes an youtube playlists and creates a search index from that content
 class YoutubeSpider extends base {
@@ -17,23 +17,20 @@ class YoutubeSpider extends base {
   async index(task = false, ...args) {
     if (!task) {
       // index playlist content and generate tasks for each video in the playlist
-      let subtasks = (await vid_data.get_playlist_videos(this.config.link)).map(videoID =>
-        ['video', videoID]
+      let playlist = (await ytpl(this.config.link, { limit: 0 }))
+      let subtasks = playlist.items.map(item => 
+        ['video', item.id]
       )
       return { subtasks }
     } else if (task == 'video') {
-      let [videoID] = args
-      return await this.videoTask(videoID)
+      return await this.videoTask(...args)
     }
   }
 
   // fetch info about a video, parse it in to the content store
   async videoTask(videoID) {
-    //let info = await util.promisify(ytdl.getInfo)(`https://www.youtube.com/watch?v=${encodeURIComponent(videoID)}`)
-    //let { title, ext, description, duration, webpage_url, upload_date } = info
-    //let timestamp = Date.UTC(upload_date.substr(0, 4), upload_date.substr(4, 2), upload_date.substr(6, 2))
-    let info = await ytScraper.videoInfo(videoID)
-    let { title, description, url, length, dates } = info
+    let info = await ytdl.getBasicInfo(videoID)
+    let { title, description, video_url, author, length_seconds } = info
     
     if (this.config.rules && this.config.rules.title && this.config.rules.title.replace) {
       this.config.rules.title.replace.forEach(rule => {
@@ -44,75 +41,67 @@ class YoutubeSpider extends base {
 
     let def = {
       id: videoID,
-      link: `https://youtu.be/${videoID}`,
-      timestamp: dates.published,
+      link: `https://youtu.be/${videoID}`, // important! short urls make the ?t=secs positioning work right in subtitle sliced entries
+      nav: [
+        ["Youtube", "https://www.youtube.com/"],
+        [author.name || this.config.displayName, author.channel_url || author.user_url || this.config.link],
+        [title, video_url]
+      ],
       title,
       words: this.extractWords(title),
       tags: this.extractTags(description),
       body: this.stripTags(description),
-      videos: [ { youtubeLink: url, ext: 'mp4' } ]
-    }
-
-    // fetch remote subtitles if necessary
-    if (this.config.fetchSubtitles) {
-      let options = {
-        auto: false, // don't fetch autosubs (Voice To Text auto transcription)
-        all: true, // download all subtitles
-        format: 'vtt', // ask for the WebVTT (SRT) format
-      }
-      
-      let subtitleFiles = await util.promisify(ytdl.getSubs)(url, options)
-      info._spideredSubtitles = {}
-      await Promise.all(subtitleFiles.map(async filename => {
-        let lang = filename.split('.').slice(-2, -1)[0]
-        info._spideredSubtitles[lang] = (await fs.readFile(filename)).toString()
-        await fs.remove(filename)
-      }))
+      videos: [ { youtubeLink: video_url, ext: 'mp4' } ]
     }
 
     // choose the best subtitle source, if any are available
-    let vttText = false
-    if (await fs.pathExists(`${this.config.localSubtitles}/${videoID}.srt`)) {
-      vttText = (await fs.readFile(`${this.config.localSubtitles}/${videoID}.srt`)).toString()
-    } else if (Object.keys(info._spideredSubtitles || {}).length == 1) {
-      // if there's only one subtitle stream, use that
-      vttText = Object.values(info._spideredSubtitles)[0]
-    } else if (Object.keys(info._spideredSubtitles || {}).length > 1 && this.config.preferSubtitleLanguage) {
-      let list = this.config.preferSubtitleLanguage.map(lang => info._spideredSubtitles[lang]).filter(x => !!x)
-      if (list.length > 0) {
-        vttText = list[0]
+    let subtitles = false
+    //let vttText = false
+    if (this.config.localSubtitles && await fs.pathExists(`${this.config.localSubtitles}/${videoID}.srt`)) {
+      subtitles = await this.openLocalSRT(`${this.config.localSubtitles}/${videoID}.srt`)
+    } else if (this.config.fetchSubtitles
+      && info.player_response
+      && info.player_response.captions
+      && info.player_response.captions.playerCaptionsTracklistRenderer
+      && info.player_response.captions.playerCaptionsTracklistRenderer.captionTracks
+      && info.player_response.captions.playerCaptionsTracklistRenderer.captionTracks.length > 0) {
+      let captionTracks = info.player_response.captions.playerCaptionsTracklistRenderer.captionTracks
+      let matchTrack = captionTracks.find(({languageCode})=> languageCode.includes(this.config.fetchSubtitles.toString()))
+      if (matchTrack) {
+        this.log(`Fetching youtube captions track "${matchTrack.name.simpleText}" for slicing`)
+        subtitles = await this.openYoutubeSubs(matchTrack.baseUrl)
       }
     }
 
-    if (!vttText && this.config.clipping) {
+    if (!subtitles && this.config.clipping) {
       // if clipping options are specified in the config, set them up for the spider to implement on import
       def.videos.forEach(v => v.clipping = {})
       if (this.config.clipping.start) def.videos.forEach(v => v.clipping.start = parseDuration(this.config.clipping.start) / 1000)
       if (this.config.clipping.end) def.videos.forEach(v => v.clipping.end = parseDuration(this.config.clipping.end) / 1000)
       return { data: [def] }
-    } else if (vttText) {
+
+    } else if (subtitles) {
       // split using subtitle timing and data
       def.videos.forEach(v => v.clipping = {}) // make sure clipping object exists
-      let defJSON = JSON.stringify(def) // deep copy using JSON
-      let parsedVTT = subtitleParser.fromSrt(vttText, true)
       // iterate the items in the subtitle file, creating individual sign definitions for each
-      let sliceDefs = parsedVTT.map(({id, startTime, endTime, text}) => {
-        let sliceDef = JSON.parse(defJSON) // deep copy the def by passing through JSON
-        sliceDef.videos.forEach(v => { // setup the start and end times
-          v.clipping.start = startTime / 1000
-          v.clipping.end = Math.min(endTime / 1000, length + 0.999)
-        })
-        sliceDef.link += `?t=${Math.floor(startTime / 1000)}` // modify link to link to specific part of video
-        let taglessText = this.stripTags(text)
-        sliceDef.title = taglessText.split("\n")[0]
-        sliceDef.words = this.extractWords(sliceDef.title)
-        sliceDef.tags = [...sliceDef.tags, ...this.extractTags(text)]
+      let slices = subtitles.map(({id, start, end, text}) => {
+        let taglessText = this.stripTags(text) // text without hashtags included
         let bodyOverride = taglessText.split("\n").slice(1).join("\n").trim()
-        if (bodyOverride.length > 0) sliceDef.body = bodyOverride
-        sliceDef.id += `-${id}`
-        return sliceDef
+        return {
+          ...def,
+          id: `${def.id}-${id}`,
+          videos: def.videos.map(video => ({
+            ...video,
+            clipping: { start, end: Math.min(end, parseFloat(length_seconds) + 0.999) }
+          })),
+          title: taglessText.split("\n")[0],
+          words: this.extractWords(taglessText.split("\n")[0]),
+          link: `${def.link}?t=${Math.floor(start)}`,
+          tags: [...def.tags, ...this.extractTags(text)],
+          body: bodyOverride.length > 0 ? bodyOverride : def.body
+        }
       })
-      return { data: sliceDefs }
+      return { data: slices }
     } else {
       if (this.config.rules && this.config.rules.requireSubtitles) {
         this.log(`Video ${def.link} skipped due to requireSubtitles rule not being satisfied by any enabled subtitle sources`)
@@ -126,35 +115,45 @@ class YoutubeSpider extends base {
   // fetch a video for a specific piece of content, return the path. SpiderConductor should delete the file when it's done importing
   fetch({ youtubeLink }) {
     return new Promise((resolve, reject) => {
-      let path
-      let args = ['--socket-timeout', '60']
-
-      // ask youtube-dl to grab the video file from Instagram
-      let download = ytdl(youtubeLink, args)
-
-      download.on('info', (info)=> {
-        path = this.tempFile(`${this.hash(youtubeLink)}.${info.ext}`)
-        // pipe the video file in to the temporary file
-        download.pipe(fs.createWriteStream( path ))
-        // hook up events to resolve the promise when it's done downloading
-        download.on('complete', ()=> resolve( path ))
-        download.on('end', ()=> resolve( path ))
+      let readStream = ytdl(youtubeLink, {
+        lang: signSearchConfig.lang,
+        quality: 'highestvideo',
+        filter: format => format.container === 'mp4'
       })
-      // handle errors
-      download.on('error', (err)=> reject( err ))
+
+      let path
+      readStream.on('info', (info, format)=> {
+        path = this.tempFile(`${this.hash(youtubeLink)}.${format.container || 'mp4'}`)
+        readStream.pipe(fs.createWriteStream(path))
+      })
+      readStream.on('end', ()=> resolve(path))
+      readStream.on('error', (err)=> reject(err))
     })
   }
 
-  // housekeeping: clean up any stragler youtube cache items - anything over 4 times the max cache duration just gets deleted
-  // this could happen if videos are removed from a playlist
-  afterScrape() {
-    if (!this.config.expireCache) return
-    let minTimestamp = Date.now() - (parseDuration(this.config.expireCache) * 4)
-    for (let videoID in this.youtubeInfo) {
-      if (this.youtubeInfo[videoID]._spiderFetched < minTimestamp) {
-        delete this.youtubeInfo[videoID]
+  // open youtube's xml captions format and return an internal standard subtitle timing array
+  async openYoutubeSubs(captionURL) {
+    let xml = await this.openXML(captionURL)
+    xml.transcript.text.map(({_: text, $: attr}, id)=> {
+      return {
+        id, text,
+        start: parseFloat(attr.start),
+        end: parseFloat(attr.start) + parseFloat(attr.dur)
       }
-    }
+    })
+  }
+
+  // open a local srt/vtt file and return an internal standard subtitle timing array
+  async openLocalSRT(path) {
+    let parsedVTT = subtitleParser.fromSrt((await fs.readFile(path)).toString(), true)
+    // iterate the items in the subtitle file, creating individual sign definitions for each
+    return parsedVTT.map(({id, startTime, endTime, text}) => {
+      return {
+        id, text,
+        start: startTime / 1000,
+        end: endTime / 1000,
+      }
+    })
   }
 }
 

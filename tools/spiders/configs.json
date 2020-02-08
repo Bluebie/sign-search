@@ -56,7 +56,7 @@
     "interval": "15m",
     "tags": ["community"],
     "localSubtitles": "spiders/youtube-subtitles",
-    "fetchSubtitles": true,
+    "fetchSubtitles": "en",
     "preferSubtitleLanguage": ["en.AU", "en.GB", "en.NZ", "en", "en.US", "en.CA"],
     "rules": {
       "title": { "replace": [["^.+( - |: )", "", ""]] }
