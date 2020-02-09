@@ -31,7 +31,6 @@ class InstagramSpider extends base {
           [this.config.displayName, this.config.link],
           [post.shortcode, post.link]
         ]
-        content.hash = this.hash(`timestamp=${post.timestamp} shortcode=${post.shortcode}: ${post.captionText}`)
         content.timestamp = post.timestamp * 1000
 
         content.title = titleMatch[this.config.wordsRegexp[2]]

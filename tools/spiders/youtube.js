@@ -91,7 +91,7 @@ class YoutubeSpider extends base {
         let link = `${def.link}?t=${Math.floor(start)}`
         return {
           ...def,
-          id: `${def.id}-${id}`,
+          id: `${def.id}-start=${Math.floor(starts * 1000) / 1000}`,
           videos: def.videos.map(video => ({
             ...video,
             clipping: { start, end: Math.min(end, parseFloat(length_seconds) + 0.999) }
