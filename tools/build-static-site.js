@@ -4,6 +4,7 @@ const beautify = require('js-beautify').html
 const util = require('util')
 const zlib = require('zlib')
 const gzip = util.promisify(zlib.gzip)
+const { SitemapStream, streamToPromise } = require('sitemap')
 
 const DocumentTemplate = appRootPath.require('/lib/views/html-document')
 const FeedProvider = appRootPath.require('/lib/views/provider-feed')
@@ -55,18 +56,26 @@ async function build() {
     "no-javascript": new StaticPageProvider('no-javascript')
   }
 
-  // write pages
+  // write pages, and build a sitemap
+  let sitemap = new SitemapStream({ hostname: defaultConfig.location });
   let staticPageTasks = Object.entries(pageProviders).map(async ([pageName, provider]) => {
     let pagePath = appRootPath.resolve(`/${pageName}.html`)
     let pageString = await buildPage(provider)
+    // add to sitemap
+    sitemap.write(pageName == 'index' ? '/' : `/${pageName}.html`)
+    // rewrite file if content changed, including compressed version
     await writeFileIfChanged(pagePath, pageString)
   })
 
   // await all files to finish writing
   await Promise.all([
     ...feedWriteTasks,
-    ...staticPageTasks
+    ...staticPageTasks,
   ])
+  
+  // finalise the sitemap
+  sitemap.end()
+  await writeFileIfChanged(appRootPath.resolve('/sitemap.xml'), await streamToPromise(sitemap))
 
   console.log('Build complete')
 }
