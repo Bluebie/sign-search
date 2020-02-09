@@ -2,8 +2,6 @@
 const util = require('util')
 const stream = require('stream')
 const fs = require('fs-extra')
-const nodeurl = require('url')
-const path = require('path')
 const base = require('../../lib/search-spider/plugin-base')
 const parseMs = require('parse-duration')
 const got = require('got')
@@ -104,7 +102,7 @@ class SignBankSpider extends base {
       nav: [
         [this.config.displayName, this.config.link],
         ["Dictionary", this.config.url],
-        [`ID Gloss: ${idGloss}`, url]
+        [`gloss: ${idGloss}`, url]
       ],
       title: keywordsText,
       words: this.extractWords(keywordsText),
@@ -164,11 +162,6 @@ class SignBankSpider extends base {
 
     // return object, keyed by glossIDs and with def objects as values
     return content
-  }
-
-  // extracts the gloss or tag from a full signbank deployment url
-  basenameFromURL(url, ext='.html') {
-    return decodeURIComponent(path.basename(nodeurl.parse(url).pathname, ext))
   }
 
   // fetch a video for a specific piece of content
