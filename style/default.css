@@ -32,59 +32,9 @@
   }
 }
 
-@font-face {
-  font-family: 'auslan-symbol';
-  src:  url('assets/fonts/find-sign-icomoon.eot?pyrih33');
-  src:  url('assets/fonts/find-sign-icomoon.eot?pyrih33#iefix') format('embedded-opentype'),
-    url('assets/fonts/find-sign-icomoon.ttf?pyrih33') format('truetype'),
-    url('assets/fonts/find-sign-icomoon.woff?pyrih33') format('woff'),
-    url('assets/fonts/find-sign-icomoon.svg?pyrih33#find-sign-icomoon') format('svg');
-  font-weight: normal;
-  font-style: normal;
-  font-display: block;
-}
-
-*[class^="icon-"], *[class*=" icon-"] {
-  font-family: 'auslan-symbol';
-  /* Better Font Rendering =========== */
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-decoration: none;
-  font-style: normal;
-	font-weight: normal;
-	font-variant: normal;
-	text-transform: none;
-  line-height: 1;
-}
-.icon-search:before {
-  content: "\260c";
-}
-.icon-interpret:before {
-  content: "\2687";
-}
-.icon-clear:before {
-  content: "\2715";
-}
-.icon-spinner:before {
-  content: "\293e";
-}
-.icon-feed:before {
-  content: "\25ce";
-}
-.icon-spinner:before {
-  content: "\293e";
-}
-.icon-spinner5:before {
-  content: "\e98a";
-}
-.icon-spinner8:before {
-  content: "\e98d";
-}
-.icon-zoom-in:before {
-  content: "\e993";
-}
-.icon-link:before {
-  content: "\e9d7";
+svg.icon {
+  fill: var(--base-fg);
+  width: 1em; height: 1em;
 }
 
 * {
@@ -116,7 +66,7 @@ form#search-form {
 }
 
 /* magnifing glass symbol in search form */
-form#search-form .input-icon {
+form#search-form .input-icon, form#search-form svg.icon-search {
   position: absolute;
   width: 1em;
   height: 1em;
@@ -367,23 +317,13 @@ body.search-results main .result .alert:before {
 }
 
 #pagination a {
-  font-family: 'auslan-symbol' !important;
-  /* Better Font Rendering =========== */
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  display: inline-block;
   font-size: 2.6rem;
   padding: 0;
   outline: 0 none;
-  color: inherit;
-  width: 60px;
-  line-height: 56px;
+  width: 60px; height: 60px;
   text-decoration: none;
   text-align: center;
-  vertical-align: middle;
-  /* deprecated when switch to <a> links: */
-  height: 60px;
-  cursor: pointer; 
-  background-color: transparent;
 }
 
 #pagination a[aria-current=page], #pagination a[aria-current=true] {
@@ -393,6 +333,12 @@ body.search-results main .result .alert:before {
   box-shadow:
   inset +0.1rem +0.15rem +0.4rem +0.05rem hsla(var(--hue), calc(var(--module-bg-sat) + 3%), calc(var(--module-bg-lum) - 10%), 100%),
   inset +0.2rem +0.25rem +0.6rem +0.20rem hsla(var(--hue), calc(var(--module-bg-sat) + 3%), calc(var(--module-bg-lum) - 5%), 100%);
+}
+
+#pagination a svg {
+  width: 2.6rem;
+  height: 2.6rem;
+  vertical-align: -0.2em;
 }
 
 div.inset-box {
@@ -542,6 +488,10 @@ body.static-page main a {
     height: 11vw;
     font-size: 9vw;
     line-height: 11vw;
+  }
+  #pagination a svg {
+    width: 9vw; height: 9vw;
+    vertical-align: -1vw
   }
 
   #pagination a[aria-current=page] {
