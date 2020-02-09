@@ -45,7 +45,7 @@ class YoutubeSpider extends base {
       nav: [
         ["Youtube", "https://www.youtube.com/"],
         [author.name || this.config.displayName, author.channel_url || author.user_url || this.config.link],
-        [title, video_url]
+        [info.title, video_url]
       ],
       title,
       words: this.extractWords(title),
@@ -91,7 +91,7 @@ class YoutubeSpider extends base {
         let link = `${def.link}?t=${Math.floor(start)}`
         return {
           ...def,
-          id: `${def.id}-start=${Math.floor(starts * 1000) / 1000}`,
+          id: `${def.id}-start=${Math.floor(start * 1000) / 1000}`,
           videos: def.videos.map(video => ({
             ...video,
             clipping: { start, end: Math.min(end, parseFloat(length_seconds) + 0.999) }
@@ -120,8 +120,7 @@ class YoutubeSpider extends base {
     return new Promise((resolve, reject) => {
       let readStream = ytdl(youtubeLink, {
         lang: signSearchConfig.lang,
-        quality: 'highestvideo',
-        filter: format => format.container === 'mp4'
+        quality: 'highest'
       })
 
       let path
