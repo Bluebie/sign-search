@@ -66,6 +66,8 @@ let defaultRun = async () => {
     nest.log("datasets.torrent updated")
   }
 
+  nest.log(" ============= All spider tasks complete! ============= ")
+
   // unlock spider files
   await nest.unload()
 }
