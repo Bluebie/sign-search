@@ -28,6 +28,7 @@
     "progress": "^2.0.3",
     "proper-lockfile": "^4.1.1",
     "request": "^2.88.0",
+    "sitemap": "^5.1.0",
     "strip-json-comments": "^3.0.1",
     "subtitles-parser-vtt": "0.0.5",
     "user-instagram": "^1.0.4",
@@ -35,7 +36,7 @@
     "youtube-dl": "^2.3.0",
     "yt-scraper": "^2.0.1",
     "ytdl-core": "^1.0.7",
-    "ytpl": "^0.1.19"
+    "ytpl": "github:NotArandomGUY/node-ytpl#master"
   },
   "devDependencies": {
     "browserify": "^16.5.0",
@@ -63,6 +64,8 @@
     "location": "https://find.auslan.fyi",
     "userAgent": "find.auslan.fyi",
     "logoPath": "style/assets/find-sign-logo.svg",
+    "resultsPerPage": 10,
+    "resultsMaxPages": 8,
     "navLinks": [
       ["About", "about.html"],
       ["Technology", "technology.html"],
