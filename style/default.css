@@ -262,6 +262,10 @@ body.search-results main .result .keywords {
   white-space: nowrap;
   overflow: hidden;
 }
+body.search-results main .result .keywords a {
+  text-decoration: none;
+  color: inherit;
+}
 
 body.search-results main .result .link,
 body.search-results main .result .tags {
