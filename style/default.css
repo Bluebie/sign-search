@@ -305,12 +305,8 @@ body.search-results main .result .alert + .body {
 
 /* alert notices on search results */
 body.search-results main .result.invented { background-color: var(--alert-bg); }
-body.search-results main .result .alert:before {
-  font-family: 'auslan-symbol';
-  content: "!";
-  padding-right: 0.3em;
-  position: relative;
-  top: 0.075rem;
+body.search-results main .result .alert svg {
+  vertical-align: -0.2ex;
 }
 
 #pagination {
