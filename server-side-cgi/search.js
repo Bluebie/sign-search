@@ -5,6 +5,7 @@ const process = require('process')
 const arp = require('app-root-path')
 const fs = require('fs-extra')
 const crypto = require('crypto')
+const util = require('util')
 
 const HTMLDocument = arp.require('lib/views/html-document')
 const ErrorPage = arp.require('lib/views/provider-error-page')
@@ -20,14 +21,50 @@ async function digest(algo, data) {
   return new Uint8Array(hash.digest())
 }
 
+// handle an incomming cgi request, making a similar interface to node's http server
+async function handleCGI(handler) {
+  let url = new URL(process.env.REQUEST_URI || `${process.env.SCRIPT_NAME}?${process.env.QUERY_STRING}`, `http://${process.env.HTTP_HOST || process.env.SERVER_NAME}/`)
+  url.protocol = process.env.HTTPS ? 'https' : 'http'
+  let request = {
+    method: process.env.REQUEST_METHOD,
+    headers: {},
+    url,
+  }
+
+  Object.entries(process.env).forEach(([key, value])=> {
+    if (key.startsWith('HTTP_')) {
+      request.headers[key.slice(5).toLowerCase().replace('_', '-')] = value
+    }
+  })
+
+  let respond = async (status, headers, body) => {
+    if (!Buffer.isBuffer(body)) body = Buffer.from(body, 'utf-8')
+    let finalHeaders = {
+      'Status': status,
+      'Content-Length': Buffer.byteLength(body),
+      'Content-Type': 'text/plain; charset=utf-8',
+      ...headers,
+    }
+
+    let write = util.promisify(process.stdout.write).bind(process.stdout)
+    await write(Object.entries(finalHeaders).map(([key, value])=> {
+      return `${key}: ${value}\n`
+    }).join("") + "\n")
+    await write(body)
+  }
+
+  await handler(request, respond)
+}
+
 // run the cgi-bin script
-async function run() {
+async function handleRequest(request, respond) {
   let document = new HTMLDocument({
     ...signSearchConfig,
     disable: { javascript: true, analytics: true }
   })
 
   try {
+    // initialise search engine
     let engine = new SearchEngine({
       vectorLibraryPath: arp.resolve('datasets/cc-en-300-8bit'),
       searchLibraryPath: arp.resolve('datasets/search-index'),
@@ -35,28 +72,29 @@ async function run() {
         fs, digest, webURL: 'datasets/search-index'
       }
     })
+    // load any data needed to make it queryable
     await engine.load()
     
-    // decode query string
-    let { query, offset } = Object.fromEntries(
-      process.env.QUERY_STRING.split('&').map(pair => pair.split('=').map(x => decodeURIComponent(x.replace(/\+/g, ' '))))
-    )
+    // grab content from query string that we need
+    let query = document.query = request.url.searchParams.get('query') || ''
+    let offset = parseInt(request.url.searchParams.get('offset')) || 0
+
+    if (query.trim() == '') throw new Error("Please enter a search query");
+
     // set document query string to fill search box
-    document.query = query
     let results = await engine.query(query)
     
     if (results.length == 0) throw new Error("No results found")
     
-    await document.setBody(new ResultsPage({ results, offset: parseInt(offset) || 0, query }))
+    await document.setBody(new ResultsPage({ results, offset, query }))
   } catch (err) {
     await document.setBody(new ErrorPage(err.message))
   }
   
-  let body = document.toHTML().toString()
-  console.log(`Content-Type: text/html; charset=utf-8`)
-  //console.log(`Content-Length: ${Buffer.byteLength(body)}`)
-  console.log(``)
-  console.log(body)
+  await respond(200, {
+    'Content-Type': 'text/html; charset=utf-8'
+  }, document.toHTML().toString())
 }
 
-run()
+
+handleCGI(handleRequest)
