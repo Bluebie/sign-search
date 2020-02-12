@@ -1,4 +1,4 @@
-1
+﻿1
 00:00:07,000 --> 00:00:14,500
 Social, Socialise
 #nsw
@@ -24,7 +24,7 @@ Community
 #nsw
 
 6
-00:00:38,800 --> 00:01:38,800
+00:00:38,800 --> 00:00:47,140
 Culture
-Interestingly, this is a loan sign from American Sign Language #nsw
+Culture is sometimes signed the same way in American Sign Language #nsw
 
