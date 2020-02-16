@@ -18,3 +18,5 @@ rsync -avzr --delete-after \
   --exclude="/.dat" \
   --exclude="/datasets" \
   ~/Sync/sign-search/* -e ssh web@auslan.fyi:/home/web/beta.find.auslan.fyi
+echo "Ensuring all packages are installed and rebuilding static site and feeds..."
+ssh web@auslan.fyi "cd ~/beta.find.auslan.fyi; npm i; npm run-script build"
