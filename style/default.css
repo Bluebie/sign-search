@@ -364,7 +364,7 @@ div.inset-box {
   ;
 }
 
-div.inset-box a[rel="alternate"] {
+div.inset-box a.icon-feed {
   display: block;
   width: 1em; height: 1em;
   float: right;
