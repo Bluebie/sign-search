@@ -63,11 +63,13 @@ class SignBankSpider extends base {
 
     // add tasks for definitions found, if we're not on the root tags page    
     page('#searchresults table a').each((i, aLink)=> {
-      if (!aLink.parent.childNodes.some(x => x.type == 'text' && x.data.includes('*'))) { // don't include asterisk listings (they're non-public and will 404)
-        let link = this.relativeLink(url, aLink.attribs.href)
-        let gloss = this.basenameFromURL(link)
+      let link = this.relativeLink(url, aLink.attribs.href)
+      let gloss = this.basenameFromURL(link)
+      data.glosses.push(gloss)
+      // don't include asterisk listings in scrape (they're non-public and will 404)
+      // but include them in data for better consistency in case they're published later
+      if (!aLink.parent.childNodes.some(x => x.type == 'text' && x.data.includes('*'))) {
         subtasks.push(['definition', link])
-        data.glosses.push(gloss)
       }
     })
 
