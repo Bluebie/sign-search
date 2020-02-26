@@ -5,7 +5,6 @@ const ytdl = require('youtube-dl')
 const base = require('../../lib/search-spider/plugin-base')
 const instagram = require('user-instagram')
 
-
 // A spider which indexes an instagram feed and creates a search index from that content
 class InstagramSpider extends base {
   constructor(config, ...args) {
@@ -16,7 +15,7 @@ class InstagramSpider extends base {
   
   async index() {
     let titleRegexp = new RegExp(this.config.wordsRegexp[0], this.config.wordsRegexp[1])
-    let { posts } = await instagram(`https://www.instagram.com/${this.config.user}`)
+    let { posts } = await instagram(this.config.scrapeLink || this.config.link)
     for (let post of posts) {
       // check it meets the rules
       let titleMatch = post.captionText.match(titleRegexp)
