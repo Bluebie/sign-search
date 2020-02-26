@@ -4,7 +4,7 @@
     "spider": "signbank",
 
     "//1": "Last I checked, a full sweep of Auslan Signbank requires 5414 http requests. 1.5 min interval makes a full update roughly weekly",
-    "interval": "1m 30s",
+    "interval": "2 mins",
     
     "//2": "link is mainly used in the discovery rss feed when new items are found",
     "link": "http://www.auslan.org.au/",
@@ -38,7 +38,7 @@
     "spider": "youtube",
     "link": "https://www.youtube.com/watch?v=ZA0L3BZogQc&list=PL2EMz0UaYFdTOOqToccQkHOiTgTMhbTKb",
     "discoveryVerb": "demonstrated",
-    "interval": "5m",
+    "interval": "30 mins",
     "tags": ["asphyxia", "vic"],
     "localSubtitles": "spiders/asphyxia-subtitles",
     "rules": {
@@ -53,7 +53,7 @@
     "link": "https://www.youtube.com/playlist?list=PL7B7aOPg0nscWFz5013_SXane_K3HheCe",
     "erase": true,
     "discoveryVerb": "added",
-    "interval": "15m",
+    "interval": "30 mins",
     "tags": ["community"],
     "localSubtitles": "spiders/youtube-subtitles",
     "fetchSubtitles": "en",
@@ -69,7 +69,7 @@
     "link": "https://www.youtube.com/playlist?list=PL23jooyW_IDy1kCG9xZHRKhpCKo7YXa6d",
     "erase": true,
     "discoveryVerb": "explained",
-    "interval": "10m",
+    "interval": "30 mins",
     "tags": ["signpedia", "description", "iconic", "nsw"],
     "clipping": {
       "start": "2200ms"
@@ -82,7 +82,7 @@
   "stage-left": {
     "displayName": "Auslan Stage Left",
     "spider": "auslan-stage-left",
-    "interval": "24hr",
+    "interval": "1 week",
     "link": "http://www.auslanstageleft.com.au/media/101-auslan-theatre-signs/",
     "siteLink": "http://www.auslanstageleft.com.au/",
     "discoveryVerb": "demonstrated",
@@ -92,7 +92,7 @@
   "toddslan": {
     "displayName": "Toddslan",
     "spider": "instagram",
-    "interval": "10m",
+    "interval": "1 hour",
     "user": "toddslan",
     "tags": ["toddslan", "invented"],
     "link": "https://www.instagram.com/toddslan",
@@ -107,7 +107,7 @@
   "v-alford": {
     "displayName": "Vanessa Alford",
     "spider": "instagram",
-    "interval": "10m",
+    "interval": "1 hour",
     "user": "v.alford",
     "link": "https://www.instagram.com/v.alford",
     "discoveryVerb": "demonstrated",
