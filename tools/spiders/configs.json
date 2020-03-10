@@ -122,5 +122,27 @@
     "modifiers": {
       "downcase": true
     }
+  },
+
+  "dion-insta": {
+    "displayName": "Dion",
+    "spider": "instagram",
+    "interval": "1 hour",
+    "user": "eccentic_dag",
+    "scrapeLink": "https://ig-fs-cf-prox.bluebie.workers.dev/eccentic_dag/",
+    "link": "https://www.instagram.com/eccentic_dag/",
+    "discoveryVerb": "demonstrated",
+    "wordsRegexp": ["^Sign for ['‘\"“]?([a-z0-9'’, -–—]+?)['’\"”]?$", "ium", 1],
+    "tags": ["dion"],
+    "rules": {
+      "has": ["Sign for "],
+      "hasnt": []
+    },
+    "modifiers": {
+      "downcase": true,
+      "replace": [
+        ["-", "gui", " "]
+      ]
+    }
   }
 }

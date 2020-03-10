@@ -33,7 +33,14 @@ class InstagramSpider extends base {
         content.timestamp = post.timestamp * 1000
 
         content.title = titleMatch[this.config.wordsRegexp[2]]
-        if (this.config.modifiers && this.config.modifiers.downcase) content.title = content.title.toLowerCase()
+        if (this.config.modifiers) {
+          if (this.config.modifiers.downcase) content.title = content.title.toLowerCase()
+          if (this.config.modifiers.replace) {
+            this.config.modifiers.replace.forEach(([regexpString, regexpFlags, replacementString]) => {
+              content.title = content.title.replace(new RegExp(regexpString, regexpFlags), replacementString)
+            })
+          }
+        }
         content.words = this.extractWords(content.title)
         content.tags = this.extractTags(post.captionText)
         content.body = this.stripTags(post.captionText)

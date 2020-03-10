@@ -41,6 +41,7 @@ let defaultRun = async () => {
   // await nest.runOneSpider('stage-left')
   // await nest.runOneSpider('toddslan')
   // await nest.runOneSpider('v-alford')
+  // await nest.runOneSpider('dion-insta')
 
   // rebuild the search libraries / common search library
   let didRebuild = await nest.buildDatasets()
