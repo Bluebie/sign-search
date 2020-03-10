@@ -27,7 +27,7 @@ class InstagramSpider extends base {
         content.link = post.link
         content.nav = [
           ["Instagram", "https://www.instagram.com/"],
-          [this.config.displayName, this.config.link],
+          [`@${this.config.user}`, this.config.link],
           [post.shortcode, post.link]
         ]
         content.timestamp = post.timestamp * 1000
