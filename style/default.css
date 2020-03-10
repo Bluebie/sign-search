@@ -364,23 +364,27 @@ div.inset-box {
   ;
 }
 
-div.inset-box a.icon-feed {
+#recently-added-list a.icon-feed {
   display: block;
   width: 1em; height: 1em;
   float: right;
 }
 
-div.inset-box h2, div.inset-box div.discovery-link {
+#recently-added-list h2, #recently-added-list div.discovery-link {
   font-size: 1em;
   margin: 0;
   padding: 0;
 }
 
-div.inset-box div.discovery-link {
+#recently-added-list div.discovery-link {
   display: list-item;
   list-style-position: inside;
   list-style-type: square;
   padding-left: 0.5em;
+}
+
+#recently-added-list time.entry-timestamp {
+  display: none;
 }
 
 div.inset-box a {
