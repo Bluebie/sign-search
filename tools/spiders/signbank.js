@@ -33,7 +33,7 @@ class SignBankSpider extends base {
     if (!task) {
       // load root tag page, ignoring workflow: tags as they are only useful internally
       // TODO: make the blocked tag prefixes configurable for compatibility with international SignBank deployments
-      let tags = (await this.openJSON(this.relativeLink(this.config.url, 'ajax/tags/'))).filter(x => !x.startsWith("workflow:"))
+      let tags = (await this.openJSON(this.relativeLink(this.config.url, 'ajax/tags/')))
       return { subtasks: tags.map(tagName => 
         ['tag', this.relativeLink(this.config.url, `tag/${encodeURI(tagName)}/?query=&page=1`)]
       )}
@@ -156,7 +156,7 @@ class SignBankSpider extends base {
       // iterate through all the glossID links that were on that tag results page
       glosses.forEach(gloss => {
         // if we have that definition page indexed, and it doesn't already have that tag, append the tag
-        if (content[gloss] && !content[gloss].tags.includes(tag)) {
+        if (content[gloss] && !content[gloss].tags.includes(tag) && !tag.startsWith("workflow")) {
           content[gloss].tags.push(tag)
         }
       })
