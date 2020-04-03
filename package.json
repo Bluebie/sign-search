@@ -61,9 +61,11 @@
   "signSearch": {
     "title": "Find Sign",
     "lang": "en",
+    "signLang": "auslan",
     "location": "https://find.auslan.fyi",
     "userAgent": "find.auslan.fyi",
     "logoPath": "style/assets/find-sign-logo.svg",
+    "regions": ["wa", "nt", "sa", "qld", "nsw", "act", "vic", "tas"],
     "resultsPerPage": 10,
     "resultsMaxPages": 8,
     "navLinks": [

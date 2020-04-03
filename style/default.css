@@ -266,6 +266,22 @@ body.search-results main .result .keywords a {
   text-decoration: none;
   color: inherit;
 }
+body.search-results main .result .map-component {
+  float: right;
+  width: 43px;
+  height: 32px;
+  margin-right: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+body.search-results main .result .map-component .region {
+  fill: hsla(var(--hue), var(--base-fg-sat), var(--base-fg-lum), 0.25);
+  stroke: var(--module-bg);
+  stroke-width: 10px;
+}
+body.search-results main .result .map-component .region.active {
+  fill: var(--base-fg);
+}
 
 body.search-results main .result .link,
 body.search-results main .result .tags {
