@@ -268,9 +268,8 @@ body.search-results main .result .keywords a {
 }
 body.search-results main .result .map-component {
   float: right;
-  width: 43px;
+  width: 55px;
   height: 32px;
-  margin-right: 0.5rem;
   margin-top: 0.5rem;
 }
 
