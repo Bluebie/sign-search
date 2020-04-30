@@ -17,7 +17,7 @@
     "got": "^10.2.1",
     "handbrake-js": "^4.0.0",
     "hyperstream": "^1.2.2",
-    "jquery": "^3.4.1",
+    "jquery": "^3.5.0",
     "js-beautify": "^1.10.3",
     "nanohtml": "^1.9.0",
     "nanomorph": "^5.4.0",
