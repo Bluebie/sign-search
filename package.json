@@ -16,7 +16,6 @@
     "fs-extra": "^8.1.0",
     "got": "^10.2.1",
     "handbrake-js": "^4.0.0",
-    "hyperstream": "^1.2.2",
     "js-beautify": "^1.10.3",
     "nanohtml": "^1.9.0",
     "nanomorph": "^5.4.0",
