@@ -119,6 +119,7 @@
       "has": ["#wantlearnauslan"],
       "hasnt": []
     },
+    "blocklist": ["BsDwEUcnh5i"],
     "modifiers": {
       "downcase": true
     }
