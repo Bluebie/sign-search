@@ -43,6 +43,7 @@ async function build() {
   await feedProvider.load()
   let feeds = feedProvider.toFeeds()
   // write feeds
+  await fs.ensureDir(appRootPath.resolve('/feeds'))
   let feedWriteTasks = Object.entries(feeds).map(([filename, contents]) => 
     writeFileIfChanged(appRootPath.resolve(`/feeds/${filename}`), contents)
   )
