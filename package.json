@@ -16,6 +16,8 @@
     "fs-extra": "^8.1.0",
     "got": "^10.2.1",
     "handbrake-js": "^4.0.0",
+    "instagram-private-api": "^1.42.0",
+    "instamancer": "^3.3.1",
     "js-beautify": "^1.10.3",
     "nanohtml": "^1.9.0",
     "nanomorph": "^5.4.0",
