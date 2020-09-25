@@ -84,7 +84,8 @@
       "title": "Find Sign Updates",
       "description": "Find Sign regularly checks the web for Auslan demonstration videos. When it finds new things, they're added to this feed so you can see what's new.",
       "link": "https://find.auslan.fyi/"
-    }
+    },
+    "newsRSS": "https://blog.auslan.fyi/rss"
   },
   "keywords": [
     "auslan"
