@@ -1,6 +1,9 @@
 // Scraper to load video content from instagram sources
 // This version attempts to do full scrapes, making it at least ten times fancier
 // in a complete view of the content
+// This seems to be broken. Youtube-dl does paginate through but seems to miss some posts containing videos
+// Worth looking in to, maybe it doesn't see carousel posts, or doesn't see single video posts, as they are
+// different post types in instagram land
 const util = require('util')
 const fs = require('fs-extra')
 const ytdl = require('youtube-dl')
@@ -68,6 +71,8 @@ class InstafancierSpider extends base {
       ))
 
       return def
+    } else {
+      this.log(`Skipped due to rules failure ${post.webpage_url} - ${post.description}`)
     }
   }
 

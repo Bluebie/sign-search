@@ -91,24 +91,24 @@
 
   "toddslan": {
     "displayName": "Toddslan",
-    "spider": "instagram",
-    "interval": "1 hour",
+    "spider": "instagram-private-api",
+    "interval": "48 hour",
     "user": "toddslan",
     "tags": ["toddslan", "invented"],
-    "scrapeLink": "https://ig-fs-cf-prox.bluebie.workers.dev/toddslan/",
     "link": "https://www.instagram.com/toddslan/",
     "discoveryVerb": "invented",
-    "wordsRegexp": ["(“|\")([a-z0-9/\\,'‘’() _!?-]+)(”|\")", "i", 2],
+    "wordsRegexp": ["(“|\")?([a-z0-9/\\,'‘’ _!?-]+)(”|\")?", "i", 2],
     "rules": {
       "has": ["#thisisnot", "#auslan", "#toddslan"],
       "hasnt": []
-    }
+    },
+    "blocklist": ["BzS0rckhJUU", "BxR6w5iFHbm"]
   },
 
   "v-alford": {
     "displayName": "Vanessa Alford",
-    "spider": "instagram",
-    "interval": "1 hour",
+    "spider": "instagram-private-api",
+    "interval": "48 hour",
     "user": "v.alford",
     "scrapeLink": "https://ig-fs-cf-prox.bluebie.workers.dev/v.alford/",
     "link": "https://www.instagram.com/v.alford/",
@@ -124,25 +124,25 @@
     }
   },
 
-  "dion-insta": {
-    "displayName": "Dion",
-    "spider": "instagram",
-    "interval": "1 hour",
-    "user": "eccentic_dag",
-    "scrapeLink": "https://ig-fs-cf-prox.bluebie.workers.dev/eccentic_dag/",
-    "link": "https://www.instagram.com/eccentic_dag/",
+  "latrobe-ig": {
+    "displayName": "La Trobe University",
+    "spider": "instagram-private-api",
+    "interval": "24 hours",
+    "rootScrapeProbability": 0.0,
+    "user": "latrobeuni_auslan",
+    "link": "https://www.instagram.com/latrobeuni_auslan/",
     "discoveryVerb": "demonstrated",
-    "wordsRegexp": ["^Sign for ['‘\"“]?([a-z0-9'’, -–—]+?)['’\"”]?$", "ium", 1],
-    "tags": ["dion"],
+    "wordsRegexp": ["^([a-z]+?: )?([a-z \\/0-9‘'’,()_-]+)", "ium", 2],
+    "tags": ["latrobe"],
     "rules": {
-      "has": ["Sign for "],
-      "hasnt": []
+      "has": ["#auslan"],
+      "hasnt": ["#challenge", "Challenge", "challenge"],
+      "title": { "replace": [["-", " ", ""]] }
     },
+    "blocklist": ["B92vadunLNa", "CEAx_OQHkuR", "CFfxwNCn83r", "CFYVmXaHBD5", "CFdmTYJnnD8", "CFYF1T8n9oj"],
     "modifiers": {
       "downcase": true,
-      "replace": [
-        ["-", "gui", " "]
-      ]
+      "replace": []
     }
   }
 }
