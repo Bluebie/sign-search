@@ -47,6 +47,9 @@ async function build() {
     writeFileIfChanged(appRootPath.resolve(`/feeds/${filename}`), contents)
   )
 
+  // await all feeds to write
+  await Promise.all(feedWriteTasks)
+
   // write static-ish pages
   let pageProviders = {
     index: feedProvider,
@@ -67,11 +70,8 @@ async function build() {
     await writeFileIfChanged(pagePath, pageString)
   })
 
-  // await all files to finish writing
-  await Promise.all([
-    ...feedWriteTasks,
-    ...staticPageTasks,
-  ])
+  // await all pages to finish writing
+  await Promise.all(staticPageTasks)
   
   // finalise the sitemap
   sitemap.end()
