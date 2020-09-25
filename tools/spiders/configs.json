@@ -137,13 +137,12 @@
     "tags": ["latrobe"],
     "rules": {
       "has": ["#auslan"],
-      "hasnt": ["#challenge", "Challenge", "challenge"],
-      "title": { "replace": [["-", " ", ""]] }
+      "hasnt": ["#challenge", "Challenge", "challenge"]
     },
     "blocklist": ["B92vadunLNa", "CEAx_OQHkuR", "CFfxwNCn83r", "CFYVmXaHBD5", "CFdmTYJnnD8", "CFYF1T8n9oj"],
     "modifiers": {
       "downcase": true,
-      "replace": []
+      "replace": [["\\-", "gmi", " "]]
     }
   }
 }

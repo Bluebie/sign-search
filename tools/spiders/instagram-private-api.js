@@ -5,7 +5,9 @@ const fs = require('fs-extra')
 const base = require('../../lib/search-spider/plugin-base')
 const got = require('got') // for downloading videos
 const IgApiClient = require('instagram-private-api').IgApiClient
+const appRootPath = require('app-root-path')
 const process = require('process')
+const delay = require('delay')
 
 // A spider which indexes an instagram feed and creates a search index from that content
 class InstaPrivateSpider extends base {
@@ -18,37 +20,56 @@ class InstaPrivateSpider extends base {
   async initForIndex() {
     if (!this.state) this.state = {}
     if (!this.state.video_urls) this.state.video_urls = {}
+    let igstate = appRootPath.resolve('/tools/spiders/frozen-data/insta-state.json')
 
-    if (!InstaPrivateSpider.client) {
-      InstaPrivateSpider.client = new IgApiClient()
-      InstaPrivateSpider.client.state.generateDevice(`sign-search-scraper`)
-    }
+    this.ig = new IgApiClient()
+    this.ig.state.generateDevice(`sign-search-scraper`)
 
-    this.ig = InstaPrivateSpider.client
+    this.ig.request.end$.subscribe(async () => {
+      const serialized = await this.ig.state.serialize()
+      delete serialized.constants // this deletes the version info, so you'll always use the version provided by the library
+      await fs.writeJSON(igstate, serialized, { spaces: 2 })
+    })
     
-    if (process.env.IG_USERNAME && process.env.IG_PASSWORD && !InstaPrivateSpider.auth) {
-      this.log(`Logging in to Instagram as ${process.env.IG_USERNAME}...`)
-      await this.ig.simulate.preLoginFlow()
-      InstaPrivateSpider.auth = await this.ig.account.login(process.env.IG_USERNAME, process.env.IG_PASSWORD)
-      await this.ig.simulate.postLoginFlow()
-      this.log(`Logged in to Instagram as ${process.env.IG_USERNAME}`)
+    if (await fs.pathExists(igstate)) {
+      await this.ig.state.deserialize(await fs.readJSON(igstate));
     }
+  }
 
-    if (!this.state.user) {
-      this.log(`Looking up target user ${this.config.user}...`)
-      this.state.user = await this.ig.user.searchExact(this.config.user)
+  async instaAttempt(block) {
+    try {
+      return await block()
+    } catch (err) {
+      this.log(err)
+      await delay(5000 + (10000 * Math.random()))
+      if (process.env.IG_USERNAME && process.env.IG_PASSWORD) {
+        this.log(`Logging in to Instagram as ${process.env.IG_USERNAME}...`)
+        await this.ig.simulate.preLoginFlow()
+        this.auth = await this.ig.account.login(process.env.IG_USERNAME, process.env.IG_PASSWORD)
+        await this.ig.simulate.postLoginFlow()
+        this.log(`Logged in to Instagram as ${process.env.IG_USERNAME}`)
+        await delay(3000 * Math.random())
+        this.log(`Reattempting request...`)
+        return await block()
+      }
     }
   }
 
   async index() {
     if (!this.ig) await this.initForIndex()
     this.log(`Loading feed...`)
-    let feed = await this.ig.feed.user(this.state.user.pk)
+
+    if (!this.state.user) {
+      this.log(`Looking up target user ${this.config.user}...`)
+      this.state.user = await this.instaAttempt(()=> this.ig.user.searchExact(this.config.user))
+    }
+
+    let feed = await this.instaAttempt(() => this.ig.feed.user(this.state.user.pk))
 
     this.state.video_urls = {}
 
     let collection = []
-    var feedResponse = await feed.request()
+    var feedResponse = await this.instaAttempt(()=> feed.request())
     while (feedResponse && feedResponse.items.length > 0) {
       // collect up all the feed items
       feedResponse.items.forEach(item => {
@@ -77,7 +98,9 @@ class InstaPrivateSpider extends base {
       })
       // load the next page in
       if (feedResponse.more_available) {
-        feedResponse = await feed.request()
+        console.log('Loading more posts... (after delay)')
+        await delay(5000 + (Math.random() * 10000))
+        feedResponse = await this.instaAttempt(()=> feed.request())
       } else {
         // finished, return the subtasks
         return { data: collection }
