@@ -52,7 +52,7 @@ class YoutubeSpider extends base {
       tags: this.extractTags(description),
       body: this.stripTags(description),
       timestamp: Date.parse(publishDate),
-      videos: [ { youtubeLink: video_url, ext: 'mp4' } ]
+      videos: [ video_url ]
     }
 
     // choose the best subtitle source, if any are available
@@ -117,7 +117,7 @@ class YoutubeSpider extends base {
   }
 
   // fetch a video for a specific piece of content, return the path. SpiderConductor should delete the file when it's done importing
-  fetch({ youtubeLink }) {
+  fetch( youtubeLink ) {
     return new Promise((resolve, reject) => {
       let readStream = ytdl(youtubeLink, {
         lang: signSearchConfig.lang,
