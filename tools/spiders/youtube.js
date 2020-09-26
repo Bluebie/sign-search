@@ -45,14 +45,14 @@ class YoutubeSpider extends base {
       nav: [
         ["Youtube", "https://www.youtube.com/"],
         [author.name || this.config.displayName, author.channel_url || author.user_url || this.config.link],
-        [info.title, video_url]
+        [title, video_url]
       ],
       title,
       words: this.extractWords(title),
       tags: this.extractTags(description),
       body: this.stripTags(description),
       timestamp: Date.parse(publishDate),
-      videos: [ video_url ]
+      videos: [ { link: video_url } ]
     }
 
     // choose the best subtitle source, if any are available
@@ -117,16 +117,16 @@ class YoutubeSpider extends base {
   }
 
   // fetch a video for a specific piece of content, return the path. SpiderConductor should delete the file when it's done importing
-  fetch( youtubeLink ) {
+  fetch( { link } ) {
     return new Promise((resolve, reject) => {
-      let readStream = ytdl(youtubeLink, {
+      let readStream = ytdl(link, {
         lang: signSearchConfig.lang,
         quality: 'highest'
       })
 
       let path
       readStream.on('info', (info, format)=> {
-        path = this.tempFile(`${this.hash(youtubeLink)}.${format.container || 'mp4'}`)
+        path = this.tempFile(`${this.hash(link)}.${format.container || 'mp4'}`)
         readStream.pipe(fs.createWriteStream(path))
       })
       readStream.on('end', ()=> resolve(path))
