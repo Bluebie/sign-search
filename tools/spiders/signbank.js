@@ -116,6 +116,12 @@ class SignBankSpider extends base {
         return `${title}: ${entries.join('; ')}`
       }).join("\n").split("\n").slice(0, 5).join("\n")
     }
+
+    // discover timestamp from Last Modified header on video
+    let videoInfo = await this.headRequest(def.videos[0])
+    if (videoInfo.headers['last-modified']) {
+      def.timestamp = Date.parse(videoInfo.headers['last-modified'])
+    }
     
     // discover links to other sign definition pages, like previous sign, next sign buttons
     let subtasks = []

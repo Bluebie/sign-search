@@ -27,6 +27,7 @@ class StageLeftSpider extends base {
         id: vimeoID,
         words: glossList,
         link: videoLink,
+        timestamp: Date.parse('2017-02-06'),
         nav: [
           [this.config.displayName, this.config.siteLink],
           ["101 Auslan Theatre Signs", url],
