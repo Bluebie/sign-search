@@ -53,7 +53,7 @@ let defaultRun = async () => {
     var opts = {
       name: "datasets",
       comment: `${signSearchConfig.openGraph.title} dataset`,
-      createdBy: "WebTorrent: tools/spider.js",
+      createdBy: "WebTorrent, sign-search: tools/spider.js",
       urlList: [`${signSearchConfig.location}/`]
     }
 
