@@ -92,7 +92,7 @@
   "toddslan": {
     "displayName": "Toddslan",
     "spider": "instagram-private-api",
-    "interval": "48 hour",
+    "interval": "8 hour",
     "user": "toddslan",
     "tags": ["toddslan", "invented"],
     "link": "https://www.instagram.com/toddslan/",
@@ -108,7 +108,7 @@
   "v-alford": {
     "displayName": "Vanessa Alford",
     "spider": "instagram-private-api",
-    "interval": "48 hour",
+    "interval": "7 hour",
     "user": "v.alford",
     "scrapeLink": "https://ig-fs-cf-prox.bluebie.workers.dev/v.alford/",
     "link": "https://www.instagram.com/v.alford/",
@@ -128,7 +128,7 @@
   "latrobe-ig": {
     "displayName": "La Trobe University",
     "spider": "instagram-private-api",
-    "interval": "24 hours",
+    "interval": "6 hours",
     "rootScrapeProbability": 0.0,
     "user": "latrobeuni_auslan",
     "link": "https://www.instagram.com/latrobeuni_auslan/",
