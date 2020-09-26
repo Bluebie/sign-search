@@ -98,7 +98,7 @@ class InstaPrivateSpider extends base {
       })
       // load the next page in
       if (feedResponse.more_available) {
-        console.log('Loading more posts... (after delay)')
+        this.log('Loading more posts... (after delay)')
         await delay(5000 + (Math.random() * 10000))
         feedResponse = await this.instaAttempt(()=> feed.request())
       } else {
