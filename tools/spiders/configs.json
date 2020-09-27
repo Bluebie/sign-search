@@ -82,7 +82,7 @@
   "stage-left": {
     "displayName": "Auslan Stage Left",
     "spider": "auslan-stage-left",
-    "interval": "1 week",
+    "interval": "6 hours",
     "link": "http://www.auslanstageleft.com.au/media/101-auslan-theatre-signs/",
     "siteLink": "http://www.auslanstageleft.com.au/",
     "discoveryVerb": "demonstrated",
