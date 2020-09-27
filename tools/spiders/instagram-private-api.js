@@ -8,6 +8,8 @@ const IgApiClient = require('instagram-private-api').IgApiClient
 const appRootPath = require('app-root-path')
 const process = require('process')
 const delay = require('delay')
+const nacl = require('tweetnacl')
+const cbor = require('borc')
 
 // A spider which indexes an instagram feed and creates a search index from that content
 class InstaPrivateSpider extends base {
@@ -20,7 +22,9 @@ class InstaPrivateSpider extends base {
   async initForIndex() {
     if (!this.state) this.state = {}
     if (!this.state.video_urls) this.state.video_urls = {}
-    let igstate = appRootPath.resolve('/tools/spiders/frozen-data/insta-state.json')
+    let igstate = appRootPath.resolve('/tools/spiders/frozen-data/insta-state.secretbox.cbor')
+    let authHash = nacl.hash(Buffer.from(`${process.env.IG_USERNAME}:${process.env.IG_PASSWORD}`))
+    let secretKey = authHash.slice(0, nacl.secretbox.keyLength)
 
     this.ig = new IgApiClient()
     this.ig.state.generateDevice(`sign-search-scraper`)
@@ -28,11 +32,21 @@ class InstaPrivateSpider extends base {
     this.ig.request.end$.subscribe(async () => {
       const serialized = await this.ig.state.serialize()
       delete serialized.constants // this deletes the version info, so you'll always use the version provided by the library
-      await fs.writeJSON(igstate, serialized, { spaces: 2 })
+      // encrypt the insta cookies so it doesn't matter if public web can access them
+      let secret = cbor.encode(serialized)
+      let nonce = nacl.randomBytes(nacl.secretbox.nonceLength)
+      let secretbox = nacl.secretbox(secret, nonce, secretKey)
+      await fs.writeFile(igstate, cbor.encode({ nonce, secretbox }))
     })
     
     if (await fs.pathExists(igstate)) {
-      await this.ig.state.deserialize(await fs.readJSON(igstate));
+      let { nonce, secretbox } = cbor.decode(await fs.readFile(igstate))
+      let serialized = cbor.decode(nacl.secretbox.open(secretbox, nonce, secretKey))
+      if (serialized) {
+        await this.ig.state.deserialize(serialized)
+      } else {
+        this.log("Instagram cookie jar decrypt failed, state not reinstated")
+      }
     }
   }
 

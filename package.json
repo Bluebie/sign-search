@@ -31,6 +31,7 @@
     "sitemap": "^5.1.0",
     "strip-json-comments": "^3.0.1",
     "subtitles-parser-vtt": "0.0.5",
+    "tweetnacl": "^1.0.3",
     "user-instagram": "^1.0.4",
     "xml2js": "^0.4.23",
     "youtube-dl": "^2.3.0",
