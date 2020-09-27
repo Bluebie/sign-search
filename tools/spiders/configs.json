@@ -96,7 +96,7 @@
     "user": "toddslan",
     "tags": ["toddslan", "invented"],
     "link": "https://www.instagram.com/toddslan/",
-    "discoveryVerb": "invented",
+    "discoveryVerb": "shared a home-sign",
     "wordsRegexp": ["(“|\")?([a-z0-9/\\,'‘’ _!?-]+)(”|\")?", "i", 2],
     "rules": {
       "has": ["#thisisnot", "#auslan", "#toddslan"],
