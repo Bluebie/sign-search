@@ -35,7 +35,7 @@ class InstafancierSpider extends base {
   async scrapePost(shortcode) {
     let titleRegexp = new RegExp(this.config.wordsRegexp[0], this.config.wordsRegexp[1])
     
-    let playlist = [await util.promisify(ytdl.getInfo)(`${this.host}/p/${shortcode}`)].flat().flat()
+    let playlist = [await util.promisify(ytdl.getInfo)(`${this.host}/p/${shortcode}/`)].flat().flat()
     let post = playlist[0]
 
     let titleMatch = post.description.match(titleRegexp)
