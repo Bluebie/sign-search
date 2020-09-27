@@ -118,9 +118,11 @@ class SignBankSpider extends base {
     }
 
     // discover timestamp from Last Modified header on video
-    let videoInfo = await this.headRequest(def.videos[0])
-    if (videoInfo.headers['last-modified']) {
-      def.timestamp = Date.parse(videoInfo.headers['last-modified'])
+    if (def.videos.length > 0) {
+      let videoInfo = await this.headRequest(def.videos[0])
+      if (videoInfo.headers['last-modified']) {
+        def.timestamp = Date.parse(videoInfo.headers['last-modified'])
+      }
     }
     
     // discover links to other sign definition pages, like previous sign, next sign buttons
@@ -133,8 +135,12 @@ class SignBankSpider extends base {
     // extract the glossID from the URL
     def.id = this.basenameFromURL(def.link)
 
-    // return definition and subtasks
-    return { subtasks, data: { type: "definition", def }}
+    // only return data if this listing has videos. some SignBank entries don't have videos and are corrupt.
+    if (def.videos.length > 0) {
+      return { subtasks, data: { type: "definition", def }}
+    } else {
+      return { subtasks }
+    }
   }
 
   // convert all the output data in to one coherant dataset
