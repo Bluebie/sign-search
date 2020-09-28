@@ -30,7 +30,7 @@ class YoutubeSpider extends base {
   // fetch info about a video, parse it in to the content store
   async videoTask(videoID) {
     let info = await ytdl.getBasicInfo(videoID)
-    let { title, description, video_url, author, length_seconds, publishDate } = info.videoDetails
+    let { title, description, video_url, author, lengthSeconds, publishDate } = info.videoDetails
     
     if (this.config.rules && this.config.rules.title && this.config.rules.title.replace) {
       this.config.rules.title.replace.forEach(rule => {
@@ -49,8 +49,8 @@ class YoutubeSpider extends base {
       ],
       title,
       words: this.extractWords(title),
-      tags: this.extractTags(description),
-      body: this.stripTags(description),
+      tags: this.extractTags(description.simpleText),
+      body: this.stripTags(description.simpleText),
       timestamp: Date.parse(publishDate),
       videos: [ { link: video_url } ]
     }
@@ -95,7 +95,7 @@ class YoutubeSpider extends base {
           id: `${def.id}-start=${Math.floor(start * 1000) / 1000}`,
           videos: def.videos.map(video => ({
             ...video,
-            clipping: { start, end: Math.min(end, parseFloat(length_seconds) + 0.999) }
+            clipping: { start, end: Math.min(end, parseFloat(lengthSeconds) + 0.999) }
           })),
           title,
           link,
