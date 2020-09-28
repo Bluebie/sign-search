@@ -137,7 +137,7 @@
     "tags": ["latrobe"],
     "rules": {
       "has": ["#auslan"],
-      "hasnt": ["#challenge", "Challenge", "challenge"]
+      "hasnt": ["#challenge", "Challenge", "challenge", "sentence", "Sentence", "learned", "Learned"]
     },
     "blocklist": [
       "B92vadunLNa",
@@ -146,8 +146,7 @@
       "CFYVmXaHBD5",
       "CFdmTYJnnD8",
       "CFYF1T8n9oj",
-      "B9qDMq9niKT",
-      "CFL4LkinJv7"
+      "B9qDMq9niKT"
     ],
     "modifiers": {
       "downcase": true,
