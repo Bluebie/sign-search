@@ -133,7 +133,7 @@
     "user": "latrobeuni_auslan",
     "link": "https://www.instagram.com/latrobeuni_auslan/",
     "discoveryVerb": "demonstrated",
-    "wordsRegexp": ["^([a-z]+?: )?([a-z \\/0-9‘'’,()_-]+)", "ium", 2],
+    "wordsRegexp": ["^([a-z]+?: )?([a-z \\/0-9$‘'’,()_-]+)", "ium", 2],
     "tags": ["latrobe"],
     "rules": {
       "has": ["#auslan"],
