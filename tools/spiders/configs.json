@@ -26,6 +26,7 @@
       "/static/img/maps/Auslan/NorthernDialect-traditional.png": ["northern", "qld", "nsw", "act"],
       "/static/img/maps/Auslan/WesternAustralia-traditional.png": ["wa"],
       "/static/img/maps/Auslan/NorthernTerritory-traditional.png": ["nt"],
+      "/static/img/maps/Auslan/SouthAustralia.png": ["sa"],
       "/static/img/maps/Auslan/SouthAustralia-traditional.png": ["sa"],
       "/static/img/maps/Auslan/Queensland-traditional.png": ["qld"],
       "/static/img/maps/Auslan/NewSouthWales-traditional.png": ["nsw", "act"],
