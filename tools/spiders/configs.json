@@ -20,6 +20,7 @@
     
     "//6": "maps state image urls to tag sets, to translate that (very inaccessible) presentation in to meaningful machine data",
     "regions": {
+      "/static/img/maps/Auslan/AustraliaWide.png": ["everywhere", "southern", "northern", "wa", "nt", "sa", "qld", "nsw", "act", "vic", "tas"],
       "/static/img/maps/Auslan/AustraliaWide-traditional.png": ["everywhere", "southern", "northern", "wa", "nt", "sa", "qld", "nsw", "act", "vic", "tas"],
       "/static/img/maps/Auslan/SouthernDialect-traditional.png": ["southern", "wa", "nt", "sa", "vic", "tas"],
       "/static/img/maps/Auslan/NorthernDialect-traditional.png": ["northern", "qld", "nsw", "act"],
