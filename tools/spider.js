@@ -18,7 +18,7 @@ let defaultRun = async () => {
     searchUIPath: '../index.html', // relative path to index.html file, to write discovery log to
     libraryName: 'search-index', // should the datasets be combined in to one build? what should it be called?
     overridesPath: './spiders/overrides', // directory which has "{search result uri}.json" format, which overrides values the spider fetched on specific results
-    writeFrequently: true,
+    writeFrequently: false,
     searchLibraryParams: {
       vectorBits: 6,
       mediaFormats: [
