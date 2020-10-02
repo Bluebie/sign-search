@@ -6,6 +6,7 @@
   "main": "frontend.js",
   "dependencies": {
     "app-root-path": "^3.0.0",
+    "args": "^5.0.1",
     "borc": "^2.1.1",
     "byline": "^5.0.0",
     "cheerio": "^1.0.0-rc.3",
@@ -66,14 +67,35 @@
     "location": "https://find.auslan.fyi",
     "userAgent": "find.auslan.fyi",
     "logoPath": "style/assets/find-sign-logo.svg",
-    "regions": ["wa", "nt", "sa", "qld", "nsw", "act", "vic", "tas"],
+    "regions": [
+      "wa",
+      "nt",
+      "sa",
+      "qld",
+      "nsw",
+      "act",
+      "vic",
+      "tas"
+    ],
     "resultsPerPage": 10,
     "resultsMaxPages": 8,
     "navLinks": [
-      ["About", "about.html"],
-      ["Technology", "technology.html"],
-      ["Add Video", "contribute.html"],
-      ["News", "https://blog.auslan.fyi/"]
+      [
+        "About",
+        "about.html"
+      ],
+      [
+        "Technology",
+        "technology.html"
+      ],
+      [
+        "Add Video",
+        "contribute.html"
+      ],
+      [
+        "News",
+        "https://blog.auslan.fyi/"
+      ]
     ],
     "openGraph": {
       "image": "https://find.auslan.fyi/style/assets/open-graph-image@3x.png",

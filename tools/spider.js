@@ -3,26 +3,41 @@ const util = require('util')
 const gzip = util.promisify(require('zlib').gzip)
 const createTorrent = util.promisify(require('create-torrent'))
 const HandbrakeEncoder = require('../lib/search-library/encoder-handbrake')
+const args = require('args')
 const process = require('process')
 
 const SpiderNest = require('../lib/search-spider/nest')
-const { nextTick } = require('process')
+const { option } = require('args')
 const signSearchConfig = require('../package.json').signSearch
+
+args
+  .option('run', 'Run a specific named spider configuration immediately', "")
+  .option('implementations', 'Path to spider implementations', './spiders')
+  .option('write-frequently', 'Spiders write their state to disk frequently in case of crashes')
+  .option('vector-db-path', 'path to word vector database', '../datasets/cc-en-300-8bit')
+  .option('datasets-path', 'path to datasets folder where search index is built', '../datasets')
+  .option('library-name', 'name of search library (folder name to build under datasets path', 'search-index')
+  .option('entry-overrides-path', 'path to folder with json files defining search index data overrides', './spiders/overrides')
+  .option('logs-path', 'Folder where build logs should be written', '../logs')
+  .option('feeds-path', 'Folder where rss-like feeds are written', '../feeds')
+  .option('library-vector-bits', 'How many bits to allocate to each dimension of each word vector in search library', 6)
 
 
 let defaultRun = async () => {
+  const flags = args.parse(process.argv)
+
   let nest = new SpiderNest({
-    spiderPath: './spiders', // path to spiders directory, containing implementations of each spider type, and where frozen-data is stored
-    vectorDBPath: '../datasets/cc-en-300-8bit', // path to word vector library
-    datasetsPath: '../datasets', // path to datasets folder
-    feedsPath: '../feeds', // path to directory where generated discovery feeds are written
-    logsPath: '../logs', // path to logs directory
+    spiderPath: flags.implementations, // path to spiders directory, containing implementations of each spider type, and where frozen-data is stored
+    vectorDBPath: flags.vectorDbPath, // path to word vector library
+    datasetsPath: flags.datasetsPath, // path to datasets folder
+    feedsPath: flags.feedsPath, // path to directory where generated discovery feeds are written
+    logsPath: flags.logsPath, // path to logs directory
     searchUIPath: '../index.html', // relative path to index.html file, to write discovery log to
-    libraryName: 'search-index', // should the datasets be combined in to one build? what should it be called?
-    overridesPath: './spiders/overrides', // directory which has "{search result uri}.json" format, which overrides values the spider fetched on specific results
-    writeFrequently: false,
+    libraryName: flags.libraryName, // should the datasets be combined in to one build? what should it be called?
+    overridesPath: flags.entryOverridesPath, // directory which has "{search result uri}.json" format, which overrides values the spider fetched on specific results
+    writeFrequently: flags.writeFrequently,
     searchLibraryParams: {
-      vectorBits: 6,
+      vectorBits: flags.libraryVectorBits,
       mediaFormats: [
         new HandbrakeEncoder(),
         //new HandbrakeEncoder({ maxWidth: 1280, maxHeight: 720, quality: 25 }) // 720p build
@@ -33,10 +48,9 @@ let defaultRun = async () => {
   // load data and lock file
   await nest.load()
   
-  let arg = process.argv.slice(-1)[0]
-  if (arg in nest.configs) {
+  if (flags.run !== '') {
     // custom test run one spider immediately
-    await nest.runOneSpider(arg)
+    await nest.runOneSpider(flags.run)
   } else {
     // run in series does one spider at a time as scheduled
     await nest.runInSeries()
