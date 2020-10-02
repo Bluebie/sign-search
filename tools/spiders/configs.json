@@ -135,11 +135,11 @@
     "user": "latrobeuni_auslan",
     "link": "https://www.instagram.com/latrobeuni_auslan/",
     "discoveryVerb": "demonstrated",
-    "wordsRegexp": ["^([a-z]+?: )?([a-z \\/0-9$‘'’,()_-]+)", "ium", 2],
+    "wordsRegexp": ["^([a-z]+?: )?([a-z \\/0-9$‘'’,.()_-]+)", "ium", 2],
     "tags": ["latrobe"],
     "rules": {
       "has": ["#auslan"],
-      "hasnt": ["#challenge", "Challenge", "challenge", "sentence", "Sentence", "learned", "Learned"]
+      "hasnt": ["#challenge", "Challenge", "challenge", "sentence", "Sentence", "learned", "Learned", " vs. ", " vs "]
     },
     "blocklist": [
       "B92vadunLNa",
@@ -148,7 +148,8 @@
       "CFYVmXaHBD5",
       "CFdmTYJnnD8",
       "CFYF1T8n9oj",
-      "B9qDMq9niKT"
+      "B9qDMq9niKT",
+      "CF1Tp1IHY2Z"
     ],
     "modifiers": {
       "downcase": true,
