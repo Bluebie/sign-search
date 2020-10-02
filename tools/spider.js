@@ -3,8 +3,10 @@ const util = require('util')
 const gzip = util.promisify(require('zlib').gzip)
 const createTorrent = util.promisify(require('create-torrent'))
 const HandbrakeEncoder = require('../lib/search-library/encoder-handbrake')
+const process = require('process')
 
 const SpiderNest = require('../lib/search-spider/nest')
+const { nextTick } = require('process')
 const signSearchConfig = require('../package.json').signSearch
 
 
@@ -31,17 +33,14 @@ let defaultRun = async () => {
   // load data and lock file
   await nest.load()
   
-  // run in series does one spider at a time
-  await nest.runInSeries()
-  // run a single specific spider, and force the scrape
-  // await nest.runOneSpider('signbank')
-  // await nest.runOneSpider('asphyxia')
-  // await nest.runOneSpider('community')
-  // await nest.runOneSpider('signpedia')
-  // await nest.runOneSpider('stage-left')
-  // await nest.runOneSpider('toddslan')
-  // await nest.runOneSpider('v-alford')
-  // await nest.runOneSpider('latrobe-ig')
+  let arg = process.argv.slice(-1)[0]
+  if (arg in nest.configs) {
+    // custom test run one spider immediately
+    await nest.runOneSpider(arg)
+  } else {
+    // run in series does one spider at a time as scheduled
+    await nest.runInSeries()
+  }
 
   // rebuild the search libraries / common search library
   let didRebuild = await nest.buildDatasets()
