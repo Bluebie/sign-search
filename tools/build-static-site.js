@@ -17,34 +17,34 @@ const beautifyOptions = {
   max_preserve_newlines: 2
 }
 
-async function buildPage(pageProvider) {
-  let template = new DocumentTemplate({...defaultConfig, ...pageProvider.getConfig()})
+async function buildPage (pageProvider) {
+  const template = new DocumentTemplate({ ...defaultConfig, ...pageProvider.getConfig() })
   await template.setBody(pageProvider)
   return beautify(template.toHTML(), beautifyOptions)
 }
 
 // writes a new file if the contents of the file changed
-async function writeFileIfChanged(path, data) {
+async function writeFileIfChanged (path, data) {
   if (!Buffer.isBuffer(data)) data = Buffer.from(data)
   if (await fs.pathExists(path)) {
-    let oldData = await fs.readFile(path)
+    const oldData = await fs.readFile(path)
     if (oldData.equals(data)) return // no change, nevermind
   }
-  
+
   await Promise.all([
     fs.writeFile(path, data),
     fs.writeFile(`${path}.gz`, await gzip(data, { level: 9 }))
   ])
 }
 
-async function build() {
-  let feedProvider = new FeedProvider
+async function build () {
+  const feedProvider = new FeedProvider()
 
   await feedProvider.load()
-  let feeds = feedProvider.toFeeds()
+  const feeds = feedProvider.toFeeds()
   // write feeds
   await fs.ensureDir(appRootPath.resolve('/feeds'))
-  let feedWriteTasks = Object.entries(feeds).map(([filename, contents]) => 
+  const feedWriteTasks = Object.entries(feeds).map(([filename, contents]) =>
     writeFileIfChanged(appRootPath.resolve(`/feeds/${filename}`), contents)
   )
 
@@ -52,28 +52,28 @@ async function build() {
   await Promise.all(feedWriteTasks)
 
   // write static-ish pages
-  let pageProviders = {
+  const pageProviders = {
     index: feedProvider,
     about: new StaticPageProvider('about'),
     technology: new StaticPageProvider('technology'),
     contribute: new StaticPageProvider('contribute'),
-    "no-javascript": new StaticPageProvider('no-javascript')
+    'no-javascript': new StaticPageProvider('no-javascript')
   }
 
   // write pages, and build a sitemap
-  let sitemap = new SitemapStream({ hostname: defaultConfig.location });
-  let staticPageTasks = Object.entries(pageProviders).map(async ([pageName, provider]) => {
-    let pagePath = appRootPath.resolve(`/${pageName}.html`)
-    let pageString = await buildPage(provider)
+  const sitemap = new SitemapStream({ hostname: defaultConfig.location })
+  const staticPageTasks = Object.entries(pageProviders).map(async ([pageName, provider]) => {
+    const pagePath = appRootPath.resolve(`/${pageName}.html`)
+    const pageString = await buildPage(provider)
     // add to sitemap
-    sitemap.write(pageName == 'index' ? '/' : `/${pageName}.html`)
+    sitemap.write(pageName === 'index' ? '/' : `/${pageName}.html`)
     // rewrite file if content changed, including compressed version
     await writeFileIfChanged(pagePath, pageString)
   })
 
   // await all pages to finish writing
   await Promise.all(staticPageTasks)
-  
+
   // finalise the sitemap
   sitemap.end()
   await writeFileIfChanged(appRootPath.resolve('/sitemap.xml'), await streamToPromise(sitemap))
@@ -82,6 +82,6 @@ async function build() {
 }
 
 build()
-.catch(err => {
-  throw err
-})
+  .catch(err => {
+    throw err
+  })

@@ -7,11 +7,10 @@ const args = require('args')
 const process = require('process')
 
 const SpiderNest = require('../lib/search-spider/nest')
-const { option } = require('args')
 const signSearchConfig = require('../package.json').signSearch
 
 args
-  .option('run', 'Run a specific named spider configuration immediately', "")
+  .option('run', 'Run a specific named spider configuration immediately', '')
   .option('implementations', 'Path to spider implementations', './spiders')
   .option('write-frequently', 'Spiders write their state to disk frequently in case of crashes')
   .option('vector-db-path', 'path to word vector database', '../datasets/cc-en-300-8bit')
@@ -22,11 +21,10 @@ args
   .option('feeds-path', 'Folder where rss-like feeds are written', '../feeds')
   .option('library-vector-bits', 'How many bits to allocate to each dimension of each word vector in search library', 6)
 
-
-let defaultRun = async () => {
+const defaultRun = async () => {
   const flags = args.parse(process.argv)
 
-  let nest = new SpiderNest({
+  const nest = new SpiderNest({
     spiderPath: flags.implementations, // path to spiders directory, containing implementations of each spider type, and where frozen-data is stored
     vectorDBPath: flags.vectorDbPath, // path to word vector library
     datasetsPath: flags.datasetsPath, // path to datasets folder
@@ -39,15 +37,14 @@ let defaultRun = async () => {
     searchLibraryParams: {
       vectorBits: flags.libraryVectorBits,
       mediaFormats: [
-        new HandbrakeEncoder(),
-        //new HandbrakeEncoder({ maxWidth: 1280, maxHeight: 720, quality: 25 }) // 720p build
-      ],
+        new HandbrakeEncoder()
+      ]
     }
   })
-  
+
   // load data and lock file
   await nest.load()
-  
+
   if (flags.run !== '') {
     // custom test run one spider immediately
     await nest.runOneSpider(flags.run)
@@ -57,30 +54,30 @@ let defaultRun = async () => {
   }
 
   // rebuild the search libraries / common search library
-  let didRebuild = await nest.buildDatasets()
+  const didRebuild = await nest.buildDatasets()
 
   if (didRebuild) {
     // if anything changed about the search index, rebuild the datasets torrent
-    nest.log(`Datasets changed, rebuilding datasets.torrent`)
-    
+    nest.log('Datasets changed, rebuilding datasets.torrent')
+
     var opts = {
-      name: "datasets",
+      name: 'datasets',
       comment: `${signSearchConfig.openGraph.title} dataset`,
-      createdBy: "WebTorrent, sign-search: tools/spider.js",
+      createdBy: 'WebTorrent, sign-search: tools/spider.js',
       urlList: [`${signSearchConfig.location}/`]
     }
 
-    nest.log("Creating torrent...")
-    let torrent = await createTorrent('../datasets', opts)
+    nest.log('Creating torrent...')
+    const torrent = await createTorrent(args.datasetsPath, opts)
     await Promise.all([
       fs.writeFile('../datasets.torrent', torrent),
       fs.writeFile('../datasets.torrent.gz', await gzip(torrent, { level: 9 }))
     ])
 
-    nest.log("datasets.torrent updated")
+    nest.log('datasets.torrent updated')
   }
 
-  nest.log(" ============= All spider tasks complete! ============= ")
+  nest.log(' ============= All spider tasks complete! ============= ')
 
   // unlock spider files
   await nest.unload()

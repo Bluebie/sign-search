@@ -11,16 +11,16 @@
 
 const SearchLibrary = require('../lib/search-library/library-node')
 
-async function run(dbPath) {
-  let lib = new SearchLibrary({
+async function run (dbPath) {
+  const lib = new SearchLibrary({
     path: dbPath
   })
-  
+
   await lib.open()
 
   console.log(lib.settings)
   console.warn(`Search Index contains ${lib.index.length} entries`)
 }
 
-let [db] = process.argv.slice(-1)
+const [db] = process.argv.slice(-1)
 run(db)

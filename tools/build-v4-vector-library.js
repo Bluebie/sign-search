@@ -6,7 +6,6 @@
 // Resolution can be adjusted to an arbitrary number of bits below in the resolutionBits constant
 // Usage:
 //  > node build-indexed-vector-library.js path/to/fasttext-database.vec
-const promisify = require('util').promisify
 const englishTextFilter = require('../lib/vector-library/text-filter-english')
 const crypto = require('crypto')
 const fs = require('fs-extra')
@@ -17,10 +16,9 @@ const VectorLibrary = require('../lib/vector-library/library')
 const vectorBits = 8
 const prefixBits = 7
 const shardBits = 14
-const maxEntries = 500_000
+const maxEntries = 500000
 
-
-async function run(fasttextPath) {
+async function run (fasttextPath) {
   console.log(fasttextPath)
   let writer
 
@@ -28,52 +26,56 @@ async function run(fasttextPath) {
   let inputFile = fs.createReadStream(fasttextPath)
   // if it's still gzipped, use zlib to stream unzip it along the way
   if (fasttextPath.match(/\.gz$/)) {
-    let unzip = zlib.createGunzip()
+    const unzip = zlib.createGunzip()
     inputFile = inputFile.pipe(unzip)
   }
   // now pipe it through byline to get lines out
-  let lineStream = byline.createStream(inputFile)
+  const lineStream = byline.createStream(inputFile)
 
   let count = 0
   var progress = new ProgressBar(' [:bar] :rate/wps :percent :etas :word', {
     total: maxEntries, width: 80, head: '>', incomplete: ' ', clear: true
   })
-  for await (let line of lineStream) {
+  for await (const line of lineStream) {
     if (count >= maxEntries) {
       lineStream.destroy()
       progress.terminate()
       continue
     } else {
-      let elements = line.toString().replace("\n", '').split(' ')
-      
-      if (elements.length == 2) {
-        let [totalWords, vectorSize] = elements.map(n => parseInt(n))
+      const elements = line.toString().replace('\n', '').split(' ')
+
+      if (elements.length === 2) {
+        const [totalWords, vectorSize] = elements.map(n => parseInt(n))
         console.log(`Starting transfer from vector library containing ${totalWords} words with vector size of ${vectorSize}`)
         writer = new VectorLibrary({
           path: `../datasets/word-vectors-${fasttextPath.split('/').slice(-1)[0].replace('.vec', '').replace('.gz', '').replace(/\./g, '-')}-${vectorBits}bit`,
-          fs, vectorSize, prefixBits, shardBits, vectorBits,
+          fs,
+          vectorSize,
+          prefixBits,
+          shardBits,
+          vectorBits,
           digest: async (algo, data) => {
-            let hash = crypto.createHash(algo)
+            const hash = crypto.createHash(algo)
             hash.update(data)
             return new Uint8Array(hash.digest())
           },
           textFilter: englishTextFilter
         })
       } else {
-        let word = elements.shift()
-        let vector = elements.map((x)=> parseFloat(x))
-        
+        const word = elements.shift()
+        const vector = elements.map(x => parseFloat(x))
+
         await writer.addDefinition(word, vector)
-        if (count % 1000 == 0) progress.interrupt(`count: ${count}, word: ${word}`)
+        if (count % 1000 === 0) progress.interrupt(`count: ${count}, word: ${word}`)
         count += 1
         progress.tick({ word })
       }
     }
   }
-  
-  console.log("Finishing up...")
+
+  console.log('Finishing up...')
   await writer.save()
-  console.log("Vector Library Build Complete!")
+  console.log('Vector Library Build Complete!')
 }
 
 run(process.argv.slice(-1)[0])

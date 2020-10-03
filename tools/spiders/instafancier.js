@@ -8,37 +8,35 @@ const util = require('util')
 const fs = require('fs-extra')
 const ytdl = require('youtube-dl')
 const base = require('../../lib/search-spider/plugin-base')
-//const instagram = require('user-instagram')
-//const { post } = require('request')
 
 // A spider which indexes an instagram feed and creates a search index from that content
 class InstafancierSpider extends base {
-  constructor(config, ...args) {
+  constructor (config, ...args) {
     super(config, ...args)
-    this.host = "https://www.instagram.com"
+    this.host = 'https://www.instagram.com'
   }
-  
-  async index(mode = 'root', shortcode) {
-    if (mode == 'root') {
-      // ask youtube-dl to read in the whole playlist of every post on the instagram profile
-      let playlist = await util.promisify(ytdl.getInfo)(`${this.host}/${this.config.user}/`)
 
-      let subtasks = playlist.map(item => ['post', item.id])
+  async index (mode = 'root', shortcode) {
+    if (mode === 'root') {
+      // ask youtube-dl to read in the whole playlist of every post on the instagram profile
+      const playlist = await util.promisify(ytdl.getInfo)(`${this.host}/${this.config.user}/`)
+
+      const subtasks = playlist.map(item => ['post', item.id])
       return { subtasks }
-    } else if (mode == 'post') {
+    } else if (mode === 'post') {
       // use user-instagram and youtube-dl to get the detailed view of posts
-      let scrape = await this.scrapePost(shortcode)
+      const scrape = await this.scrapePost(shortcode)
       return { data: scrape ? [scrape] : [] }
     }
   }
 
-  async scrapePost(shortcode) {
-    let titleRegexp = new RegExp(this.config.wordsRegexp[0], this.config.wordsRegexp[1])
-    
-    let playlist = [await util.promisify(ytdl.getInfo)(`${this.host}/p/${shortcode}/`)].flat().flat()
-    let post = playlist[0]
+  async scrapePost (shortcode) {
+    const titleRegexp = new RegExp(this.config.wordsRegexp[0], this.config.wordsRegexp[1])
 
-    let titleMatch = post.description.match(titleRegexp)
+    const playlist = [await util.promisify(ytdl.getInfo)(`${this.host}/p/${shortcode}/`)].flat().flat()
+    const post = playlist[0]
+
+    const titleMatch = post.description.match(titleRegexp)
     if (titleMatch && this.checkRules(post.description)) {
       let title = titleMatch[this.config.wordsRegexp[2]].trim()
       // apply text effects
@@ -50,19 +48,19 @@ class InstafancierSpider extends base {
       }
 
       // construct dictionary definition data
-      let def = {
+      const def = {
         id: shortcode,
         link: post.webpage_url,
         nav: [
-          ["Instagram", "https://www.instagram.com/"],
+          ['Instagram', 'https://www.instagram.com/'],
           [`@${this.config.user}`, this.config.link],
-          [shortcode, post.webpage_url],
+          [shortcode, post.webpage_url]
         ],
         timestamp: post.timestamp * 1000,
         title,
         words: this.extractWords(title),
         tags: this.extractTags(post.description),
-        body: this.stripTags(post.description),
+        body: this.stripTags(post.description)
       }
 
       // iterate all the videos on this post
@@ -77,20 +75,20 @@ class InstafancierSpider extends base {
   }
 
   // fetch a video for a specific piece of content
-  fetch({ instagramLink, playlistIndex, ext }) {
+  fetch ({ instagramLink, playlistIndex, ext }) {
     return new Promise((resolve, reject) => {
-      let path = this.tempFile(`${this.hash(instagramLink)}-${playlistIndex}.${ext}`)
+      const path = this.tempFile(`${this.hash(instagramLink)}-${playlistIndex}.${ext}`)
       let args = ['--socket-timeout', '60']
       if (playlistIndex !== null) args = [...args, '--playlist-items', `${playlistIndex}`]
 
       // ask youtube-dl to grab the video file from Instagram
-      let download = ytdl(instagramLink, args)
+      const download = ytdl(instagramLink, args)
       // pipe the video file in to the temporary file
-      download.pipe(fs.createWriteStream( path ))
+      download.pipe(fs.createWriteStream(path))
       // hook up events to resolve the promise when it's done downloading or has an error
-      download.on('complete', ()=> resolve( path ))
-      download.on('end', ()=> resolve( path ))
-      download.on('error', (err)=> reject( err ))
+      download.on('complete', () => resolve(path))
+      download.on('end', () => resolve(path))
+      download.on('error', (err) => reject(err))
     })
   }
 }
