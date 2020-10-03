@@ -60,7 +60,7 @@ const defaultRun = async () => {
     // if anything changed about the search index, rebuild the datasets torrent
     nest.log('Datasets changed, rebuilding datasets.torrent')
 
-    var opts = {
+    const opts = {
       name: 'datasets',
       comment: `${signSearchConfig.openGraph.title} dataset`,
       createdBy: 'WebTorrent, sign-search: tools/spider.js',
@@ -68,7 +68,7 @@ const defaultRun = async () => {
     }
 
     nest.log('Creating torrent...')
-    const torrent = await createTorrent(args.datasetsPath, opts)
+    const torrent = await createTorrent(flags.datasetsPath, opts)
     await Promise.all([
       fs.writeFile('../datasets.torrent', torrent),
       fs.writeFile('../datasets.torrent.gz', await gzip(torrent, { level: 9 }))
