@@ -102,7 +102,7 @@
     "wordsRegexp": ["(“|\")?([a-z0-9/\\,'‘’ _!?-]+)(”|\")?", "i", 2],
     "rules": {
       "has": ["#thisisnot", "#auslan", "#toddslan"],
-      "hasnt": []
+      "hasnt": ["#signpoetry"]
     },
     "blocklist": ["BzS0rckhJUU", "BxR6w5iFHbm"]
   },
