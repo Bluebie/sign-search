@@ -19,4 +19,11 @@
   video {
     filter: sepia(0.4);
   }
+
+  /* firefox performance sucks for filtering <video> so disable it with hacks on gecko */
+  @-moz-document url-prefix() {
+    video {
+      filter: none !important;
+    }
+  }
 }
