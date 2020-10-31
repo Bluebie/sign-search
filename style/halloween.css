@@ -1,5 +1,6 @@
 :root {
   --hue: 15deg !important;
+  --alert-bg-hue: calc(var(--hue) + 220deg);
 }
 
 @media (prefers-color-scheme: dark) {
