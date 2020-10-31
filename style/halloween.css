@@ -1,3 +1,12 @@
 :root {
   --hue: 15deg !important;
 }
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background-image: url("assets/blue-moon.png"), url("https://media.giphy.com/media/xsHs2XeOMBXuU/giphy.gif");
+    background-position: 80% 10%, center center;
+    background-repeat: no-repeat, repeat;
+    background-size: 5cm 5cm, 8cm 8cm;
+  }
+}
