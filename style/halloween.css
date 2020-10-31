@@ -5,10 +5,11 @@
 
 @media (prefers-color-scheme: dark) {
   body {
+    background-color: black;
     background-image: url("assets/blue-moon.png"), url("assets/stars.gif");
     background-position: 90% 3cm, center top;
     background-repeat: no-repeat, repeat;
-    background-size: 4cm, 8cm;
+    background-size: 150px, 8cm;
   }
 
   body img#header {
