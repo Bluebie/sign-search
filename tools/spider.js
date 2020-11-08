@@ -10,7 +10,7 @@ const SpiderNest = require('../lib/search-spider/nest')
 const signSearchConfig = require('../package.json').signSearch
 
 args
-  .option('run', 'Run a specific named spider configuration immediately', '')
+  .option('run', 'Run a specific named spider configuration immediately or a comma seperated list', '')
   .option('implementations', 'Path to spider implementations', './spiders')
   .option('write-frequently', 'Spiders write their state to disk frequently in case of crashes')
   .option('vector-db-path', 'path to word vector database', '../datasets/cc-en-300-8bit')
@@ -46,8 +46,10 @@ const defaultRun = async () => {
   await nest.load()
 
   if (flags.run !== '') {
-    // custom test run one spider immediately
-    await nest.runOneSpider(flags.run)
+    // force a list of spiders to run immediately
+    for (let task of flags.run.split(',')) {
+      await nest.runOneSpider(task)
+    }
   } else {
     // run in series does one spider at a time as scheduled
     await nest.runInSeries()
