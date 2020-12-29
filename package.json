@@ -15,7 +15,7 @@
     "delay": "^4.3.0",
     "feed": "^4.1.0",
     "fs-extra": "^8.1.0",
-    "got": "^10.2.1",
+    "got": "^10.7.0",
     "handbrake-js": "^4.0.0",
     "instagram-private-api": "^1.43.1",
     "instamancer": "^3.3.1",
