@@ -141,7 +141,7 @@ class InstaPrivateSpider extends base {
 
     const titleRegexp = new RegExp(this.config.wordsRegexp[0], this.config.wordsRegexp[1])
     const titleMatch = info.caption.match(titleRegexp)
-    if (titleMatch && this.checkRules(info.caption)) {
+    if ((this.config.alwaysAllow && this.config.alwaysAllow.includes(info.id)) || (titleMatch && this.checkRules(info.caption))) {
       let title = titleMatch[this.config.wordsRegexp[2]].trim()
       // apply text effects
       if (this.config.modifiers && this.config.modifiers.downcase) title = title.toLowerCase()

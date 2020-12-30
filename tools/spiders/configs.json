@@ -121,6 +121,10 @@
       "has": ["#wantlearnauslan"],
       "hasnt": []
     },
+    "alwaysAllow": [
+      "CJQua7jscD-",
+      "CAzu8lADVmL"
+    ],
     "blocklist": ["BsDwEUcnh5i"],
     "modifiers": {
       "downcase": true
