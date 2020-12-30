@@ -12,7 +12,7 @@ class YoutubeSpider extends base {
   async index (task = false, ...args) {
     if (!task) {
       // index playlist content and generate tasks for each video in the playlist
-      const playlist = (await ytpl(this.config.link, { limit: 0 }))
+      const playlist = await ytpl(this.config.link, { limit: Infinity })
       const subtasks = playlist.items.map(item =>
         ['video', item.id]
       )
