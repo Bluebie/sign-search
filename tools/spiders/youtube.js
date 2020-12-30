@@ -44,8 +44,8 @@ class YoutubeSpider extends base {
       ],
       title,
       words: this.extractWords(title),
-      tags: this.extractTags(description.simpleText),
-      body: this.stripTags(description.simpleText),
+      tags: this.extractTags(description),
+      body: this.stripTags(description),
       timestamp: Date.parse(publishDate),
       videos: [
         { link: videoURL }
