@@ -47,7 +47,7 @@ const defaultRun = async () => {
 
   if (flags.run !== '') {
     // force a list of spiders to run immediately
-    for (let task of flags.run.split(',')) {
+    for (const task of flags.run.split(',')) {
       await nest.runOneSpider(task)
     }
   } else {
