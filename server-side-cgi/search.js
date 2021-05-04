@@ -1,4 +1,7 @@
 #!/usr/bin/env node
+// sometimes these things hang? idk why, but uh, kill yourself please? thx
+setTimeout(() => process.exit(), 10000) // best bugfix ever. someone give me an award
+
 const URL = require('url').URL
 const process = require('process')
 const arp = require('app-root-path')
