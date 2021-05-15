@@ -20,18 +20,18 @@
     
     "//6": "maps state image urls to tag sets, to translate that (very inaccessible) presentation in to meaningful machine data",
     "regions": {
-      "/static/img/maps/Auslan/AustraliaWide.png": ["everywhere", "southern", "northern", "wa", "nt", "sa", "qld", "nsw", "act", "vic", "tas"],
-      "/static/img/maps/Auslan/AustraliaWide-traditional.png": ["everywhere", "southern", "northern", "wa", "nt", "sa", "qld", "nsw", "act", "vic", "tas"],
-      "/static/img/maps/Auslan/SouthernDialect-traditional.png": ["southern", "wa", "nt", "sa", "vic", "tas"],
-      "/static/img/maps/Auslan/NorthernDialect-traditional.png": ["northern", "qld", "nsw", "act"],
-      "/static/img/maps/Auslan/WesternAustralia-traditional.png": ["wa"],
+      "/static/img/maps/Auslan/AustraliaWide.1c3fd2ba0f52.png": ["everywhere", "southern", "northern", "wa", "nt", "sa", "qld", "nsw", "act", "vic", "tas"],
+      "/static/img/maps/Auslan/AustraliaWide-traditional.1c3fd2ba0f52.png": ["everywhere", "southern", "northern", "wa", "nt", "sa", "qld", "nsw", "act", "vic", "tas"],
+      "/static/img/maps/Auslan/SouthernDialect-traditional.c7a8a8c8bedf.png": ["southern", "wa", "nt", "sa", "vic", "tas"],
+      "/static/img/maps/Auslan/NorthernDialect-traditional.98637d306ae4.png": ["northern", "qld", "nsw", "act"],
+      "/static/img/maps/Auslan/WesternAustralia-traditional.590628fa6dd1.png": ["wa"],
       "/static/img/maps/Auslan/NorthernTerritory-traditional.png": ["nt"],
-      "/static/img/maps/Auslan/SouthAustralia.png": ["sa"],
-      "/static/img/maps/Auslan/SouthAustralia-traditional.png": ["sa"],
-      "/static/img/maps/Auslan/Queensland-traditional.png": ["qld"],
-      "/static/img/maps/Auslan/NewSouthWales-traditional.png": ["nsw", "act"],
-      "/static/img/maps/Auslan/Victoria-traditional.png": ["vic"],
-      "/static/img/maps/Auslan/Tasmania-traditional.png": ["tas"]
+      "/static/img/maps/Auslan/SouthAustralia.0cf5772f75e8.png": ["sa"],
+      "/static/img/maps/Auslan/SouthAustralia-traditional.0cf5772f75e8.png": ["sa"],
+      "/static/img/maps/Auslan/Queensland-traditional.0f2aec98ea5e.png": ["qld"],
+      "/static/img/maps/Auslan/NewSouthWales-traditional.18c5764b0bfc.png": ["nsw", "act"],
+      "/static/img/maps/Auslan/Victoria-traditional.28516800afd7.png": ["vic"],
+      "/static/img/maps/Auslan/Tasmania-traditional.db05ad26a9d5.png": ["tas"]
     }
   },
 
