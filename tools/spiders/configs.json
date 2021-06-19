@@ -77,7 +77,7 @@
       "start": "2200ms"
     },
     "rules": {
-      "title": { "replace": [["English to Iconic Sign Dictionary", "i", ""], [" - ", "", ""], ["\\([a-z ]+\\)", "i", ""]] }
+      "title": { "replace": [["(English to )?Iconic Sign Dictionary", "i", ""], [" - ", "", ""], ["\\([a-z ]+\\)", "i", ""]] }
     }
   },
 
