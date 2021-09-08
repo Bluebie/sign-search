@@ -1,0 +1,49 @@
+<h1>Random Sign Generator</h1>
+<h2><button id=reroll disabled>🎲 Reroll</button></h2>
+<div class=result id=sign></div>
+<div style="height: 20em"></div>
+<script defer>
+  const qs = (...args) => document.querySelector(...args)
+  const qsa = (...args) => document.querySelectorAll(...args)
+
+  async function randomize() {
+    const index = window.ui.searchEngine.searchLibrary.index
+    const randomEntry = index[Math.round(Math.random() * (index.length - 1))]
+
+    if (randomEntry.tags.includes('description') || randomEntry.tags.includes('invented')) {
+      // we don't want description entries like signpedia, and new ideas like toddslan in here, so just reroll
+      return await randomize()
+    }
+
+    const resultTile = new window.ui.ResultTile({
+      result: randomEntry,
+      classList: ['expand'],
+      onChange () {
+        window.ui.morph(qs('.result'), resultTile.toHTML())
+      }
+    })
+
+    const prevHeight = window.getComputedStyle(qs('.result')).height
+    window.ui.morph(qs('.result'), resultTile.toHTML())
+    if (!randomEntry.isFetched()) {
+      qs('.result').style.height = prevHeight // preserve previous height to avoid scroll jumping issue in safari
+      await randomEntry.fetch()
+      window.ui.morph(qs('.result'), resultTile.toHTML())
+    }
+  }
+
+  async function run() {
+    await window.ui.awaitReady()
+
+    // hook up the reroll button
+    const rerollButton = document.getElementById('reroll')
+    rerollButton.disabled = false
+    rerollButton.addEventListener('click', () => {
+      randomize()
+    })
+
+    randomize()
+  }
+
+  document.getElementById('bundleScript').addEventListener('load', run)
+</script>

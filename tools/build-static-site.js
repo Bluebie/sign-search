@@ -57,6 +57,7 @@ async function build () {
     about: new StaticPageProvider('about'),
     technology: new StaticPageProvider('technology'),
     contribute: new StaticPageProvider('contribute'),
+    random: new StaticPageProvider('random'),
     'no-javascript': new StaticPageProvider('no-javascript')
   }
 

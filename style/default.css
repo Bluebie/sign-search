@@ -414,6 +414,26 @@ body.static-page main a {
   color: inherit;
 }
 
+button#reroll {
+  --button-hue: calc(var(--hue) - 45deg);
+  width: 100%;
+  display: block;
+  background-color: hsl(var(--button-hue), var(--module-bg-sat), var(--module-bg-lum));
+  color: hsl(var(--button-hue), var(--base-fg-sat), var(--base-fg-lum));
+  appearance: none;
+  padding: 1ex 1em;
+  border-radius: calc((1em + 2ex) / 2);
+  line-height: 1;
+  border: 0 none;
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+button#reroll:enabled:hover {
+  background-color: hsl(var(--button-hue), var(--submodule-bg-sat), var(--submodule-bg-lum));
+  cursor: pointer;
+}
+
 @media (prefers-color-scheme: light) {
   /*
   opt-in light-mode theme for accessibility sake
@@ -457,6 +477,7 @@ body.static-page main a {
 .result.expand .video-player {
   width: 100%;
   height: auto;
+  aspect-ratio: 16 / 9;
   margin: 0 0 0 0;
   position: relative;
 }

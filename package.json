@@ -82,16 +82,16 @@
     "resultsMaxPages": 8,
     "navLinks": [
       [
+        "Random",
+        "random.html"
+      ],
+      [
         "About",
         "about.html"
       ],
       [
         "Technology",
         "technology.html"
-      ],
-      [
-        "Add Video",
-        "contribute.html"
       ],
       [
         "News",
