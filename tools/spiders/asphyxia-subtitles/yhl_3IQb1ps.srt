@@ -1,73 +1,72 @@
 1
 00:00:00,000 --> 00:00:01,900
-Fuck
+Fuck #lexis.crude
 
 2
 00:00:01,900 --> 00:00:03,600
-Fuck you
+Fuck you #lexis.crude
 #nsw
 
 3
 00:00:03,600 --> 00:00:05,500
-Shit
+Shit #lexis.crude
 
 4
 00:00:05,500 --> 00:00:06,800
-Toilet
+Toilet #lexis.crude
 #nsw
 
 5
 00:00:06,800 --> 00:00:08,800
-Poo
+Poo #lexis.crude
 
 6
 00:00:08,800 --> 00:00:10,500
-Piss
+Piss #lexis.crude
 man
 
 7
 00:00:10,500 --> 00:00:12,300
-Wee
+Wee #lexis.crude
 woman
 
 8
 00:00:12,300 --> 00:00:13,800
-Vagina
+Vagina #lexis.sexuality
 #nsw
 
 9
 00:00:13,800 --> 00:00:15,800
-Penis
+Penis #lexis.sexuality
 #nsw
 
 10
 00:00:15,800 --> 00:00:20,600
-Erection
+Erection #lexis.sexuality #lexis.crude
 
 11
 00:00:20,600 --> 00:00:23,000
-Sex
+Sex #lexis.crude #lexis.sexuality
 #nsw
 
 12
 00:00:23,000 --> 00:00:24,900
-69
+69 #lexis.sexuality
 
 13
 00:00:24,900 --> 00:00:27,000
-Spoon position
+Spoon position #lexis.sexuality
 
 14
 00:00:27,000 --> 00:00:28,700
-Scissor position
+Scissor position #lexis.sexuality
 
 15
 00:00:28,700 --> 00:00:30,800
-Cunnilingus
+Cunnilingus #lexis.sexuality #lexis.crude
 woman
 
 16
 00:00:30,800 --> 00:01:30,800
-Blow job
+Blow job #lexis.sexuality #lexis.crude
 man
-
