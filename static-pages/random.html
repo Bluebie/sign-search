@@ -3,6 +3,12 @@
 <div class=result id=sign></div>
 <div style="height: 20em"></div>
 <script defer>
+  const blockedTags = [
+    'description', // block signpedia-like entries, not established signs
+    'invented', // block toddslan-like entries
+    'lexis.crude' // block rude signbank stuff, want relatively unshocking kid friendly results
+  ]
+
   const qs = (...args) => document.querySelector(...args)
   const qsa = (...args) => document.querySelectorAll(...args)
 
@@ -10,7 +16,7 @@
     const index = window.ui.searchEngine.searchLibrary.index
     const randomEntry = index[Math.round(Math.random() * (index.length - 1))]
 
-    if (randomEntry.tags.includes('description') || randomEntry.tags.includes('invented')) {
+    if (blockedTags.some(x => randomEntry.tags.includes(x))) {
       // we don't want description entries like signpedia, and new ideas like toddslan in here, so just reroll
       return await randomize()
     }
