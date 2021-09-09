@@ -32,41 +32,41 @@ woman
 
 8
 00:00:12,300 --> 00:00:13,800
-Vagina #lexis.sexuality
+Vagina #semantic.sexuality
 #nsw
 
 9
 00:00:13,800 --> 00:00:15,800
-Penis #lexis.sexuality
+Penis #semantic.sexuality
 #nsw
 
 10
 00:00:15,800 --> 00:00:20,600
-Erection #lexis.sexuality #lexis.crude
+Erection #semantic.sexuality #lexis.crude
 
 11
 00:00:20,600 --> 00:00:23,000
-Sex #lexis.crude #lexis.sexuality
+Sex #lexis.crude #semantic.sexuality
 #nsw
 
 12
 00:00:23,000 --> 00:00:24,900
-69 #lexis.sexuality
+69 #semantic.sexuality
 
 13
 00:00:24,900 --> 00:00:27,000
-Spoon position #lexis.sexuality
+Spoon position #semantic.sexuality
 
 14
 00:00:27,000 --> 00:00:28,700
-Scissor position #lexis.sexuality
+Scissor position #semantic.sexuality
 
 15
 00:00:28,700 --> 00:00:30,800
-Cunnilingus #lexis.sexuality #lexis.crude
+Cunnilingus #semantic.sexuality #lexis.crude
 woman
 
 16
 00:00:30,800 --> 00:01:30,800
-Blow job #lexis.sexuality #lexis.crude
+Blow job #semantic.sexuality #lexis.crude
 man
