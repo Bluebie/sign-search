@@ -58,9 +58,17 @@ class InstaPrivateSpider extends base {
       await delay(5000 + (10000 * Math.random()))
       if (process.env.IG_USERNAME && process.env.IG_PASSWORD) {
         this.log(`Logging in to Instagram as ${process.env.IG_USERNAME}...`)
-        await this.ig.simulate.preLoginFlow()
+        try {
+          await this.ig.simulate.preLoginFlow()
+        } catch (err) {
+          this.log('Instagram pre-login flow failed with: "' + err.message + '", ignoring')
+        }
         this.auth = await this.ig.account.login(process.env.IG_USERNAME, process.env.IG_PASSWORD)
-        await this.ig.simulate.postLoginFlow()
+        try {
+          await this.ig.simulate.postLoginFlow()
+        } catch (err) {
+          this.log('Instagram post-login flow failed with: "' + err.message + '", ignoring')
+        }
         this.log(`Logged in to Instagram as ${process.env.IG_USERNAME}`)
         await delay(3000 * Math.random())
         this.log('Reattempting request...')
