@@ -17,3 +17,4 @@ tools/scrapers/youtube/playlist-keys.json
 /datasets.torrent*
 /*.html*
 sitemap.xml*
+.DS_Store
