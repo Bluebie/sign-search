@@ -167,7 +167,7 @@
   "auslan-anywhere": {
     "displayName": "Auslan Anywhere",
     "spider": "search-data",
-    "path": "../../../pigeon-anywhere/search-data.json",
+    "path": "../../pigeon-anywhere/search-data.json",
     "interval": "1 second",
     "discoveryVerb": "shared"
   }
