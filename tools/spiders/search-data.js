@@ -3,10 +3,12 @@
 // Search Data does some minimal processing (hashtag detection and seperation) and provides a few
 // options for loading videos using tools like youtube-dl, ytdl-core, fetch, each accepting a 'url'
 // value and optionally an 'etag' value for cache expiry (url changes also cause expiry)
-
 const fs = require('fs-extra')
+const os = require('os')
+const path = require('path')
+const { spawn } = require('child_process')
+const events = require('events')
 const ytdl = require('ytdl-core') // ytdl javascript native youtube downloader
-const youtubedl = require('youtube-dl') // very flexible youtube-dl cli tool (uses python under the hood)
 const got = require('got') // for fetch method
 const base = require('../../lib/search-spider/plugin-base') // base class, provides standard functionality of a spider plugin
 const signSearchConfig = require('../../package').signSearch
@@ -20,7 +22,7 @@ class SearchDataSpider extends base {
       return {
         ...entry,
         title: this.stripTags(entry.title || entry.words.join(' ')),
-        words: Array.isArray(entry.words) ? entry.words : this.extractWords(this.words || this.title),
+        words: Array.isArray(entry.words) ? entry.words : this.extractWords(`${entry.words || entry.title}`),
         body: this.stripTags(entry.body || ''),
         id: entry.id || entry.link
       }
@@ -31,19 +33,30 @@ class SearchDataSpider extends base {
   // fetch a video for a specific piece of content, return the path. SpiderConductor should delete the file when it's done importing
   async fetch ({ method, url, etag = '', args = [], ext = 'mp4' }) {
     if (method === 'youtube-dl') {
-      const tempPath = this.tempFile(`youtube-dl-${this.hash([url, etag, args])}.${ext}`)
-      return new Promise((resolve, reject) => {
-        args = ['--socket-timeout', '60', ...args]
+      const pathTemplate = path.join(os.tmpdir(), `youtube-dl-%(extractor)s-%(id)s-${this.hash({ url, etag, args, ext })}.${ext || '%(ext)s'}`)
+      const download = spawn('youtube-dl', ['--socket-timeout', '60', '-o', pathTemplate, ...args, url], { stdio: ['inherit', 'pipe', 'inherit'] })
 
-        // ask youtube-dl to grab the video file from Instagram
-        const download = youtubedl(url, args)
-        // pipe the video file in to the temporary file
-        download.pipe(fs.createWriteStream(tempPath))
-        // hook up events to resolve the promise when it's done downloading or has an error
-        download.on('complete', () => resolve(tempPath))
-        download.on('end', () => resolve(tempPath))
-        download.on('error', (err) => reject(err))
-      })
+      await events.once(download, 'spawn')
+      this.log(`youtube-dl process spawned, downloading ${url}...`)
+      const output = []
+      for await (const chunk of download.stdout) {
+        output.push(chunk)
+        this.log(chunk.toString('utf-8').trim())
+      }
+
+      // extract destination path from stdout log
+      const stdoutLog = Buffer.concat(output).toString('utf-8')
+      const destinationMatch = stdoutLog.match(/^\[download\] Destination: ([^\n\r]+)$/m)
+      const mergingMatch = stdoutLog.match(/^\[ffmpeg\] Merging formats into "([^\n\r"]+)"$/m)
+
+      if (mergingMatch) {
+        return mergingMatch[1]
+      } else if (destinationMatch) {
+        return destinationMatch[1]
+      } else {
+        this.log(stdoutLog)
+        throw new Error('Couldn\'t figure out where the file was saved, oh no! Check the regexes in tools/spiders/search-data.js?')
+      }
     } else if (method === 'ytdl-core') {
       return new Promise((resolve, reject) => {
         const readStream = ytdl(url, {
