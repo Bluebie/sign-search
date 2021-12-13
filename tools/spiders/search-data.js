@@ -22,7 +22,7 @@ class SearchDataSpider extends base {
         title: this.stripTags(entry.title || entry.words.join(' ')),
         words: Array.isArray(entry.words) ? entry.words : this.extractWords(this.words || this.title),
         body: this.stripTags(entry.body || ''),
-        id: entry.id || entry.url
+        id: entry.id || entry.link
       }
     })
     return { data: processed }
