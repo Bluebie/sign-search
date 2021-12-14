@@ -6,6 +6,11 @@ const base = require('../../lib/search-spider/plugin-base') // base class, provi
 const parseDuration = require('parse-duration') // parse string durations, useful for parsing stuff in the config
 const subtitleParser = require('subtitles-parser-vtt') // parse or construct srt/vtt style subtitle files, for slicing multi-sign videos
 const signSearchConfig = require('../../package').signSearch
+const PM = {
+  xml: require('pigeonmark-xml'),
+  ...require('pigeonmark-select'),
+  ...require('pigeonmark-utils')
+}
 
 // A spider which indexes an youtube playlists and creates a search index from that content
 class YoutubeSpider extends base {
@@ -132,13 +137,13 @@ class YoutubeSpider extends base {
 
   // open youtube's xml captions format and return an internal standard subtitle timing array
   async openYoutubeSubs (captionURL) {
-    const xml = await this.openXML(captionURL)
-    xml.transcript.text.map(({ _: text, $: attr }, id) => {
+    const xml = PM.xml.decode(await this.openText(captionURL))
+    return PM.selectAll(xml, 'p').map((p, id) => {
       return {
         id,
-        text,
-        start: parseFloat(attr.start),
-        end: parseFloat(attr.start) + parseFloat(attr.dur)
+        text: PM.get.text(p),
+        start: parseFloat(PM.get.attribute(p, 'start')),
+        end: parseFloat(PM.get.attribute(p, 'start')) + parseFloat(PM.get.attribute(p, 'dur'))
       }
     })
   }
