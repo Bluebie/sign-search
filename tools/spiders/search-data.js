@@ -13,12 +13,17 @@ const got = require('got') // for fetch method
 const base = require('../../lib/search-spider/plugin-base') // base class, provides standard functionality of a spider plugin
 const signSearchConfig = require('../../package').signSearch
 const { pipeline } = require('stream/promises')
+const YAML = require('yaml')
 
 // A spider which indexes an youtube playlists and creates a search index from that content
 class SearchDataSpider extends base {
   async index (task = false, ...args) {
-    const unprocessed = JSON.parse(await fs.readFile(this.config.path))
-    const processed = unprocessed.map(entry => {
+    if (task !== false) return {}
+
+    const fileText = (await fs.readFile(this.config.path)).toString('utf-8')
+    const unprocessed = this.config.path.endsWith('.yaml') ? YAML.parse(fileText) : JSON.parse(fileText)
+    const asArray = Array.isArray(unprocessed) ? unprocessed : Object.entries(unprocessed).map(([k, v]) => ({ id: k, ...v }))
+    const processed = asArray.map(entry => {
       return {
         ...entry,
         title: this.stripTags(entry.title || entry.words.join(' ')),

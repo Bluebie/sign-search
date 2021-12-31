@@ -37,6 +37,7 @@
     "subtitles-parser-vtt": "0.0.5",
     "tweetnacl": "^1.0.3",
     "user-instagram": "^1.0.4",
+    "yaml": "^1.10.2",
     "youtube-dl": "^2.3.0",
     "yt-scraper": "^2.0.1",
     "ytdl-core": "^4.9.1",
