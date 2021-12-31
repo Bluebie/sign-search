@@ -1,0 +1,37 @@
+/* force dark mode */
+:root {
+  --hue: 220deg !important;
+  --base-bg-sat: 20% !important;
+  --base-bg-lum: 12% !important;
+  --base-bg: hsl(var(--hue), var(--base-bg-sat), var(--base-bg-lum)) !important;
+  --base-fg-sat: 50% !important;
+  --base-fg-lum: 80% !important;
+  --base-fg: hsl(var(--hue), var(--base-fg-sat), var(--base-fg-lum)) !important;
+  --filter-fg: saturate(100%) brightness(100%) !important;
+  --module-bg-sat: 18% !important;
+  --module-bg-lum: 27% !important;
+  --module-bg: hsl(var(--hue), var(--module-bg-sat), var(--module-bg-lum)) !important;
+  --alert-bg-hue: calc(var(--hue) - 40deg) !important;
+  --alert-bg: hsl(var(--alert-bg-hue), var(--module-bg-sat), var(--module-bg-lum)) !important;
+  --submodule-bg-sat: 21% !important;
+  --submodule-bg-lum: 24% !important;
+  --submodule-bg: hsl(var(--hue), var(--submodule-bg-sat), var(--submodule-bg-lum)) !important;
+  --outer-shadow-alpha: 20% !important;
+  --outer-highlight-alpha: 40% !important;
+}
+
+body {
+  background-image: url("assets/Xponentialdesign-giphy-fireworks.gif");
+  background-image: url("assets/Xponentialdesign-giphy-fireworks.mp4");
+  /* background-image: -webkit-image-set(
+    url("assets/Xponentialdesign-giphy-fireworks.mp4") 1x,
+    url("assets/Xponentialdesign-giphy-fireworks.gif") 1x
+  );
+  background-image: image-set(
+    url("assets/Xponentialdesign-giphy-fireworks.mp4") 1x type("video/mp4"),
+    url("assets/Xponentialdesign-giphy-fireworks.gif") 1x type("image/gif")
+  ); */
+  background-size: cover;
+  background-position: center center;
+  background-attachment: fixed;
+}
