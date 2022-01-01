@@ -1,38 +1,11 @@
 {
-  "signbank": {
+  "aus-signbank": {
     "displayName": "Auslan Signbank",
-    "spider": "signbank",
-
-    "//1": "Last I checked, a full sweep of Auslan Signbank requires 5414 http requests. 1.5 min interval makes a full update roughly weekly",
-    "interval": "2 mins",
-
-    "//2": "link is mainly used in the discovery rss feed when new items are found",
-    "link": "http://www.auslan.org.au/",
-
-    "//3": "url is used internally by the spider, it's the dictionary endpoint it navigates through, where ajax/tags/ should be mounted",
-    "url": "http://www.auslan.org.au/dictionary/",
-
-    "//4": "discoveryVerb is used in the discovery feed to describe what it means when new content is added here",
+    "spider": "search-data",
+    "path": "../../pigeon-signbank/signbank-data/search-data.yaml",
+    "interval": "1 second",
     "discoveryVerb": "documented",
-
-    "//5": "these tags are added to every listing from Auslan SignBank",
-    "tags": ["signbank", "established"],
-
-    "//6": "maps state image urls to tag sets, to translate that (very inaccessible) presentation in to meaningful machine data",
-    "regions": {
-      "/static/img/maps/Auslan/AustraliaWide.1c3fd2ba0f52.png": ["everywhere", "southern", "northern", "wa", "nt", "sa", "qld", "nsw", "act", "vic", "tas"],
-      "/static/img/maps/Auslan/AustraliaWide-traditional.1c3fd2ba0f52.png": ["everywhere", "southern", "northern", "wa", "nt", "sa", "qld", "nsw", "act", "vic", "tas"],
-      "/static/img/maps/Auslan/SouthernDialect-traditional.c7a8a8c8bedf.png": ["southern", "wa", "nt", "sa", "vic", "tas"],
-      "/static/img/maps/Auslan/NorthernDialect-traditional.98637d306ae4.png": ["northern", "qld", "nsw", "act"],
-      "/static/img/maps/Auslan/WesternAustralia-traditional.590628fa6dd1.png": ["wa"],
-      "/static/img/maps/Auslan/NorthernTerritory-traditional.png": ["nt"],
-      "/static/img/maps/Auslan/SouthAustralia.0cf5772f75e8.png": ["sa"],
-      "/static/img/maps/Auslan/SouthAustralia-traditional.0cf5772f75e8.png": ["sa"],
-      "/static/img/maps/Auslan/Queensland-traditional.0f2aec98ea5e.png": ["qld"],
-      "/static/img/maps/Auslan/NewSouthWales-traditional.18c5764b0bfc.png": ["nsw", "act"],
-      "/static/img/maps/Auslan/Victoria-traditional.28516800afd7.png": ["vic"],
-      "/static/img/maps/Auslan/Tasmania-traditional.db05ad26a9d5.png": ["tas"]
-    }
+    "tags": ["signbank", "established"]
   },
 
   "asphyxia": {
@@ -72,7 +45,7 @@
     "erase": true,
     "discoveryVerb": "explained",
     "interval": "30 mins",
-    "tags": ["signpedia", "description", "iconic", "nsw"],
+    "tags": ["signpedia", "described", "iconic", "nsw"],
     "clipping": {
       "start": "2200ms"
     },
