@@ -17,7 +17,7 @@
           entries: [entry]
         })
       } else {
-        grouped[0].entries.push(entry)
+        grouped[0].entries.unshift(entry)
       }
     }
     return grouped
@@ -35,7 +35,7 @@
 <main>
   <div class="h-feed">
     <a href={'/feeds/discovery.rss'} class=icon-feed title="RSS Feed"><Icon name=feed/></a>
-    {#each dateGrouped(feed).reverse() as { humane, computer, entries }}
+    {#each dateGrouped(feed) as { humane, computer, entries }}
       <h2><time datetime={computer}>{humane}</time></h2>
       {#each entries as entry}
         <div class="discovery-link h-entry">

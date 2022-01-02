@@ -1,16 +1,19 @@
 const fs = require('fs-extra')
-// const util = require('util')
-// const gzip = util.promisify(require('zlib').gzip)
-// const process = require('process')
+const util = require('util')
+const gzip = util.promisify(require('zlib').gzip)
+const cbor = require('borc')
 const beautify = require('js-beautify').html
 const pmHTML = require('pigeonmark-html')
 const pmUtils = require('pigeonmark-utils')
 const pmSelect = require('pigeonmark-select')
+const signSearchConfig = require('../package.json').signSearch
+const spidersConfig = require('./spiders/configs.json')
 
-require('svelte/register')
+require('svelte/register')({
+  // cssHash: ()
+})
 const IndexPage = require('../ui/index.svelte').default
 
-const signSearchConfig = require('../package.json').signSearch
 
 // wrap svelte output in to a html document
 function toHTML (svelteOutput) {
@@ -60,25 +63,44 @@ async function postProcess (html) {
   return pmHTML.encode(doc)
 }
 
+// atomically replace the html files with no downtime, including building a gzipped version
+async function writeHTML (filename, render) {
+  const page = await postProcess(toHTML(render))
+
+  const tempFilename = `${filename}.rewriting-${Math.round(Math.random() * 0xFFFFFF).toString(36)}.tmp`
+
+  // check if file contents changed, and bail if nothing changed
+  const oldContents = (await fs.readFile(filename)).toString('utf-8')
+  if (page === oldContents) return
+
+  await Promise.all([
+    fs.writeFile(tempFilename, page),
+    fs.writeFile(`${tempFilename}.gz`, await gzip(page))
+  ])
+
+  // remember, rename replaces existing files, atomically, with no downtime, on unixes and windows
+  await Promise.all([
+    fs.rename(tempFilename, filename),
+    fs.rename(`${tempFilename}.gz`, `${filename}.gz`)
+  ])
+}
+
 async function defaultRun () {
-  const idx = IndexPage.render({
+  const updatesLog = cbor.decodeAll(await fs.readFile('../datasets/update-log.cbor'))
+  await writeHTML('../index-2.html', IndexPage.render({
     query: 'Example',
-    feed: [
-      {
-        timestamp: Date.now(),
-        authorName: 'System',
-        authorLink: 'https://find.auslan.fyi/',
-        verb: 'tested',
-        link: 'https://dev.auslan.fyi/',
-        title: 'view building'
+    feed: updatesLog.filter(entry => entry.available).slice(-signSearchConfig.discoveryFeed.length).map(entry => {
+      const spider = spidersConfig[entry.provider] || {}
+      return {
+        timestamp: entry.timestamp,
+        authorName: spider.displayName || entry.provider,
+        authorLink: spider.link || entry.providerLink,
+        verb: entry.verb || spider.discoveryVerb,
+        link: entry.link,
+        title: entry.title || entry.words.join(', ')
       }
-    ]
-  })
-
-  const page = await postProcess(toHTML(idx))
-  // console.log(page)
-
-  await fs.writeFile('../index-2.html', page)
+    })
+  }))
 }
 
 defaultRun()
