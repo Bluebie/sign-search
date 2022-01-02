@@ -5,7 +5,6 @@ const fs = require('fs-extra')
 const base = require('../../lib/search-spider/plugin-base')
 const got = require('got') // for downloading videos
 const IgApiClient = require('instagram-private-api').IgApiClient
-const appRootPath = require('app-root-path')
 const process = require('process')
 const delay = require('delay')
 const nacl = require('tweetnacl')
@@ -22,7 +21,7 @@ class InstaPrivateSpider extends base {
   async initForIndex () {
     if (!this.state) this.state = {}
     if (!this.state.video_urls) this.state.video_urls = {}
-    const igstate = appRootPath.resolve('/tools/spiders/frozen-data/insta-state.secretbox.cbor')
+    const igstate = require.resolve('./frozen-data/insta-state.secretbox.cbor')
     const authHash = nacl.hash(Buffer.from(`${process.env.IG_USERNAME}:${process.env.IG_PASSWORD}`))
     const secretKey = authHash.slice(0, nacl.secretbox.keyLength)
 

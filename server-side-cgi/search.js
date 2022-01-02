@@ -4,17 +4,16 @@ setTimeout(() => process.exit(), 10000) // best bugfix ever. someone give me an 
 
 const URL = require('url').URL
 const process = require('process')
-const arp = require('app-root-path')
 const fs = require('fs-extra')
 const crypto = require('crypto')
 const util = require('util')
 
-const HTMLDocument = arp.require('lib/views/html-document')
-const ErrorPage = arp.require('lib/views/provider-error-page')
-const ResultsPage = arp.require('lib/views/provider-search-results')
-const SearchEngine = arp.require('lib/search-engine/engine')
+const HTMLDocument = require('../lib/views/html-document')
+const ErrorPage = require('../lib/views/provider-error-page')
+const ResultsPage = require('../lib/views/provider-search-results')
+const SearchEngine = require('../lib/search-engine/engine')
 
-const signSearchConfig = arp.require('package.json').signSearch
+const signSearchConfig = require('../package.json').signSearch
 
 // local node digest function
 async function digest (algo, data) {

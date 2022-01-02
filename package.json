@@ -5,7 +5,6 @@
   "description": "Search Sign Language Dictionaries intelligently with word2vec and traditional more brute force approaches",
   "main": "frontend.js",
   "dependencies": {
-    "app-root-path": "^3.0.0",
     "args": "^5.0.1",
     "borc": "^3.0.0",
     "byline": "^5.0.0",
@@ -45,25 +44,13 @@
     "ytpl": "^2.2.3"
   },
   "devDependencies": {
-    "browserify": "^17.0.0",
-    "common-shakeify": "^0.6.2",
-    "standard": "^16.0.4",
-    "uglifyify": "^5.0.2",
-    "unassertify": "^2.1.1",
-    "watchify": "^4.0.0"
-  },
-  "browserify": {
-    "transform": [
-      "nanohtml",
-      "unassertify",
-      "uglifyify"
-    ]
+    "standard": "^16.0.4"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "spider": "cd tools && node spider.js",
-    "watch": "rm lib/bundle.js.gz; ./node_modules/.bin/watchify lib/frontend.js -o lib/bundle.js -v -i fs-extra -i crypto -i process -d --full-paths",
-    "build": "                   ./node_modules/.bin/browserify lib/frontend.js -o lib/bundle.js -v -i fs-extra -i crypto -i process; gzip -9 -k -f lib/bundle.js; cd tools; node build-static-site.js; cd .."
+    "watch": "",
+    "build": ""
   },
   "signSearch": {
     "title": "Find Sign",

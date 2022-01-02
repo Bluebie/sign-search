@@ -1,16 +1,15 @@
 const fs = require('fs-extra')
-const appRootPath = require('app-root-path')
 const beautify = require('js-beautify').html
 const util = require('util')
 const zlib = require('zlib')
 const gzip = util.promisify(zlib.gzip)
 const { SitemapStream, streamToPromise } = require('sitemap')
 
-const DocumentTemplate = appRootPath.require('/lib/views/html-document')
-const FeedProvider = appRootPath.require('/lib/views/provider-feed')
-const StaticPageProvider = appRootPath.require('/lib/views/provider-static-page')
+const DocumentTemplate = require('../lib/views/html-document')
+const FeedProvider = require('../lib/views/provider-feed')
+const StaticPageProvider = require('../lib/views/provider-static-page')
 
-const defaultConfig = appRootPath.require('/package.json').signSearch
+const defaultConfig = require('../package.json').signSearch
 
 const beautifyOptions = {
   indent_size: 2,
@@ -43,9 +42,9 @@ async function build () {
   await feedProvider.load()
   const feeds = feedProvider.toFeeds()
   // write feeds
-  await fs.ensureDir(appRootPath.resolve('/feeds'))
+  await fs.ensureDir(require.resolve('../feeds'))
   const feedWriteTasks = Object.entries(feeds).map(([filename, contents]) =>
-    writeFileIfChanged(appRootPath.resolve(`/feeds/${filename}`), contents)
+    writeFileIfChanged(require.resolve(`../feeds/${filename}`), contents)
   )
 
   // await all feeds to write
@@ -64,7 +63,7 @@ async function build () {
   // write pages, and build a sitemap
   const sitemap = new SitemapStream({ hostname: defaultConfig.location })
   const staticPageTasks = Object.entries(pageProviders).map(async ([pageName, provider]) => {
-    const pagePath = appRootPath.resolve(`/${pageName}.html`)
+    const pagePath = require.resolve(`../${pageName}.html`)
     const pageString = await buildPage(provider)
     // add to sitemap
     sitemap.write(pageName === 'index' ? '/' : `/${pageName}.html`)
@@ -77,7 +76,7 @@ async function build () {
 
   // finalise the sitemap
   sitemap.end()
-  await writeFileIfChanged(appRootPath.resolve('/sitemap.xml'), await streamToPromise(sitemap))
+  await writeFileIfChanged(require.resolve('../sitemap.xml'), await streamToPromise(sitemap))
 
   console.log('Build complete')
 }
