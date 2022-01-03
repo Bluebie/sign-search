@@ -1,6 +1,6 @@
 <script>
   import Icon from './icon.svelte'
-  import { signSearch } from '../../package.json'
+  const { signSearch } = require('../../package.json')
 
   export let logo = '/style/assets/find-sign-logo.svg'
   export let showNavigation = true
