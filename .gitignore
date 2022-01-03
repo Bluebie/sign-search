@@ -19,7 +19,8 @@ tools/scrapers/youtube/playlist-keys.json
 /*-bundle.css
 /*-bundle.css.gz
 /*-bundle.js
-/*-bundle.js.map
 /*-bundle.js.gz
+/*-bundle.js.map
+/*-bundle.js.map.gz
 sitemap.xml*
 .DS_Store
