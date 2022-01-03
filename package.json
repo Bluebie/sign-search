@@ -18,6 +18,7 @@
     "handbrake-js": "^6.0.0",
     "instagram-private-api": "^1.45.2",
     "js-beautify": "^1.14.0",
+    "memfs": "^3.4.1",
     "nanohtml": "^1.9.1",
     "nanomorph": "^5.4.3",
     "object-hash": "^2.2.0",

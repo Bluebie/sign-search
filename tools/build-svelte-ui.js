@@ -1,6 +1,5 @@
 const fs = require('fs')
 const path = require('path')
-const util = require('util')
 const gzip = require('zlib').gzipSync
 const cbor = require('borc')
 const crypto = require('crypto')
@@ -11,8 +10,11 @@ const pmSelect = require('pigeonmark-select')
 const signSearchConfig = require('../package.json').signSearch
 const spidersConfig = require('./spiders/configs.json')
 const webpack = require('webpack')
+const memfs = require('memfs')
 
-require('svelte/register')({ })
+require('svelte/register')({
+  hydratable: true
+})
 
 function checksum (data) {
   const cypher = crypto.createHash('md5')
@@ -95,26 +97,27 @@ function selectiveWrite (filename, data) {
 
 // atomically replace the html files with no downtime, including building a gzipped version
 async function writeHTML (filename, sveltePath, props = {}) {
-  const Component = require(`../ui/${sveltePath}`).default
+  const svelteFullPath = `../ui/${sveltePath}`
+  const Component = require(svelteFullPath).default
   const rendered = Component.render(props, { hydratable: true })
 
   // build initialisation code
-  const jsInitPath = `../ui/.${sveltePath}-init.js`
   const jsOutputPath = `${filename}-bundle.js`
-  fs.writeFileSync(jsInitPath, [
-    `import Component from ${JSON.stringify(`./${sveltePath}`)}`,
-    `const props = ${JSON.stringify(props, null, 2)}`,
-    'const options = { target: document.body, props, hydrate: true }',
-    'const component = new Component(options)',
-    'window.app = component'
-  ].join('\n'))
-  const packStats = await util.promisify(webpack)({
+
+  const compiler = webpack({
     mode: 'production',
-    entry: jsInitPath,
-    output: { filename: jsOutputPath, path: path.dirname(require.resolve('../package.json')) },
+    entry: svelteFullPath,
+    experiments: { outputModule: true },
+    output: {
+      filename: jsOutputPath,
+      path: '/',
+      module: true,
+      library: { type: 'module' }
+    },
+
     resolve: {
-      // see below for an explanation
       alias: { svelte: path.dirname(require.resolve('svelte/package.json')) },
+      fallback: { assert: false }, // disable assert library
       extensions: ['.mjs', '.js', '.svelte'],
       mainFields: ['svelte', 'browser', 'module', 'main']
     },
@@ -126,7 +129,10 @@ async function writeHTML (filename, sveltePath, props = {}) {
             loader: 'svelte-loader',
             options: {
               // suppress inclusion of css inside js bundle
-              compilerOptions: { css: false }
+              compilerOptions: {
+                css: false,
+                hydratable: true
+              }
             }
           }
         },
@@ -137,22 +143,57 @@ async function writeHTML (filename, sveltePath, props = {}) {
     devtool: 'source-map'
   })
 
-  console.log(packStats.toString({ colors: true }))
-  const js = fs.readFileSync(jsOutputPath).toString('utf-8')
-  const jsSourceMap = fs.readFileSync(jsOutputPath + '.map').toString('utf-8')
+  const outputVolume = new memfs.Volume()
+  const outputFS = memfs.createFsFromVolume(outputVolume)
+  compiler.outputFileSystem = outputFS
+
+  // run the compiler, build the output
+  console.log('running...')
+  const { js, map } = await new Promise((resolve, reject) => {
+    compiler.run((err, stats) => {
+      if (err) return reject(err)
+      // console.log('run complete')
+      console.log(stats.toString({ colors: true }))
+      // console.log('closing...')
+      compiler.close((err, result) => {
+        if (err) return reject(err)
+        // console.log('closed')
+        // console.log('result', result)
+        // console.log('vol', outputVolume.toJSON())
+        const js = outputFS.readFileSync(`/${filename}-bundle.js`).toString('utf-8')
+        const map = outputFS.readFileSync(`/${filename}-bundle.js.map`).toString('utf-8')
+        resolve({ js, map })
+      })
+    })
+  })
+
+  // console.log(packStats.toString({ colors: true }))
+  // const js = outputFS.readFileSync('/' + jsOutputPath).toString('utf-8')
+  // const jsSourceMap = outputFS.readFileSync('/' + jsOutputPath + '.map').toString('utf-8')
+
+  // outputFS.unlinkSync(jsOutputPath)
+  // outputFS.unlinkSync(jsOutputPath + '.map')
 
   // apply all the concurrent stuff we can do
   const cssDecache = selectiveWrite(`${filename}-bundle.css`, beautify.css(rendered.css.code))
   const jsDecache = selectiveWrite(`${filename}-bundle.js`, js)
-  selectiveWrite(`${filename}-bundle.js.map`, jsSourceMap)
-  fs.unlinkSync(jsInitPath)
-  fs.unlinkSync(jsOutputPath)
-  fs.unlinkSync(jsOutputPath + '.map')
+  selectiveWrite(`${filename}-bundle.js.map`, map)
+  // fs.unlinkSync(jsInitPath)
+
+  const initializerJS = [
+    `import Component from ${JSON.stringify(`./${filename}-bundle.js?decache=${jsDecache}`)}`,
+    `const props = ${JSON.stringify(props, null, 2)}`,
+    'const options = { target: document.body, props, hydrate: true }',
+    'const component = new Component(options)',
+    'window.app = component'
+  ].map(x => `    ${x}`).join('\n')
 
   const page = postProcess(toHTML(rendered), {
     head: [
       ['link', { rel: 'stylesheet', href: `${filename}-bundle.css?decache=${cssDecache}` }],
-      ['script', { defer: '', src: `${filename}-bundle.js?decache=${jsDecache}` }]
+      // ['script', { defer: '', src: `${filename}-bundle.js?decache=${jsDecache}` }],
+      ['#comment', ' Rehydrate Svelte Components: '],
+      ['script', { type: 'module' }, `\n${initializerJS}\n  `]
     ]
   })
 
