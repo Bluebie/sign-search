@@ -1,7 +1,6 @@
 <script>
   import Icon from './icon.svelte'
-  import { format } from 'date-fns'
-  const spiderConfigs = require('../../tools/spiders/configs.json')
+  import { humane as humaneTime, iso as computerTime } from '../functions/date.js'
 
   export let feed = []
 
@@ -21,14 +20,6 @@
       }
     }
     return grouped
-  }
-
-  function humaneTime (timestamp) {
-    return format(new Date(timestamp), 'EEEE, do LLLL yyyy')
-  }
-
-  function computerTime (timestamp) {
-    return (new Date(timestamp)).toISOString()
   }
 </script>
 

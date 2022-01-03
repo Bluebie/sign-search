@@ -16,5 +16,10 @@ tools/scrapers/youtube/playlist-keys.json
 .dat
 /datasets.torrent*
 /*.html*
+/*-bundle.css
+/*-bundle.css.gz
+/*-bundle.js
+/*-bundle.js.map
+/*-bundle.js.gz
 sitemap.xml*
 .DS_Store

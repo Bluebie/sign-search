@@ -1,8 +1,9 @@
-const fs = require('fs-extra')
+const fs = require('fs')
 const path = require('path')
 const util = require('util')
-const gzip = util.promisify(require('zlib').gzip)
+const gzip = require('zlib').gzipSync
 const cbor = require('borc')
+const crypto = require('crypto')
 const beautify = require('js-beautify')
 const pmHTML = require('pigeonmark-html')
 const pmUtils = require('pigeonmark-utils')
@@ -12,8 +13,12 @@ const spidersConfig = require('./spiders/configs.json')
 const webpack = require('webpack')
 
 require('svelte/register')({ })
-const IndexPage = require('../ui/index.svelte').default
-const RandomPage = require('../ui/random.svelte').default
+
+function checksum (data) {
+  const cypher = crypto.createHash('md5')
+  cypher.update(data)
+  return cypher.digest().readUInt32BE(0).toString(36)
+}
 
 // wrap svelte output in to a html document
 function toHTML (svelteOutput) {
@@ -28,7 +33,7 @@ function toHTML (svelteOutput) {
 }
 
 // apply post processing to html output to clean it up a bit and add cache invalidation for static resources
-async function postProcess (html, appends = {}) {
+function postProcess (html, appends = {}) {
   const beautiful = beautify.html(html, { indent_size: 2 })
   const doc = pmHTML.decode(beautiful)
 
@@ -45,8 +50,8 @@ async function postProcess (html, appends = {}) {
       const url = new URL(pmUtils.get.attribute(element, attr), signSearchConfig.location)
       if (url.toString().startsWith(signSearchConfig.location)) {
         try {
-          const stats = await fs.stat('..' + url.pathname)
-          url.searchParams.set('decache', Math.round(stats.mtimeMs).toString(36))
+          const data = fs.readFileSync('..' + url.pathname)
+          url.searchParams.set('decache', checksum(data))
           let rebuilt = url.toString().slice(signSearchConfig.location.length)
           if (!rebuilt.startsWith('/')) rebuilt = `/${rebuilt}`
           pmUtils.set.attribute(element, attr, rebuilt)
@@ -69,28 +74,23 @@ async function postProcess (html, appends = {}) {
 }
 
 // write a file, if the contents changed, and return the file's mtime in base36 for decache
-async function selectiveWrite (filename, data) {
+function selectiveWrite (filename, data) {
   // check if file contents changed, and bail if nothing changed
   let oldContents
   try {
-    oldContents = (await fs.readFile(filename)).toString('utf-8')
+    oldContents = fs.readFileSync(filename).toString('utf-8')
   } catch (err) {}
 
-  if (data !== oldContents) {
+  if (data.toString('utf-8') !== oldContents) {
     const tempFilename = `${filename}.rewriting-${Math.round(Math.random() * 0xFFFFFF).toString(36)}.tmp`
-    await Promise.all([
-      fs.writeFile(`../${tempFilename}`, data),
-      fs.writeFile(`../${tempFilename}.gz`, await gzip(data))
-    ])
+    fs.writeFileSync(`../${tempFilename}`, data)
+    fs.writeFileSync(`../${tempFilename}.gz`, gzip(data))
 
-    await Promise.all([
-      fs.rename(`../${tempFilename}`, `../${filename}`),
-      fs.rename(`../${tempFilename}.gz`, `../${filename}.gz`)
-    ])
+    fs.renameSync(`../${tempFilename}`, `../${filename}`)
+    fs.renameSync(`../${tempFilename}.gz`, `../${filename}.gz`)
   }
 
-  const stats = await fs.stat(`../${filename}`)
-  return Math.round(stats.mtimeMs).toString(36)
+  return checksum(data)
 }
 
 // atomically replace the html files with no downtime, including building a gzipped version
@@ -101,7 +101,7 @@ async function writeHTML (filename, sveltePath, props = {}) {
   // build initialisation code
   const jsInitPath = `../ui/.${sveltePath}-init.js`
   const jsOutputPath = `${filename}-bundle.js`
-  await fs.writeFile(jsInitPath, [
+  fs.writeFileSync(jsInitPath, [
     `import Component from ${JSON.stringify(`./${sveltePath}`)}`,
     `const props = ${JSON.stringify(props, null, 2)}`,
     'const options = { target: document.body, props, hydrate: true }',
@@ -111,7 +111,7 @@ async function writeHTML (filename, sveltePath, props = {}) {
   const packStats = await util.promisify(webpack)({
     mode: 'production',
     entry: jsInitPath,
-    output: { filename: jsOutputPath, path: path.dirname(require.resolve('./build-svelte-ui.js')) },
+    output: { filename: jsOutputPath, path: path.dirname(require.resolve('../package.json')) },
     resolve: {
       // see below for an explanation
       alias: { svelte: path.dirname(require.resolve('svelte/package.json')) },
@@ -138,31 +138,29 @@ async function writeHTML (filename, sveltePath, props = {}) {
   })
 
   console.log(packStats.toString({ colors: true }))
-  const js = (await fs.readFile(jsOutputPath)).toString('utf-8')
-  const jsSourceMap = (await fs.readFile(jsOutputPath + '.map')).toString('utf-8')
+  const js = fs.readFileSync(jsOutputPath).toString('utf-8')
+  const jsSourceMap = fs.readFileSync(jsOutputPath + '.map').toString('utf-8')
 
   // apply all the concurrent stuff we can do
-  const [cssDecache, jsDecache] = await Promise.all([
-    selectiveWrite(`${filename}-bundle.css`, beautify.css(rendered.css.code)),
-    selectiveWrite(`${filename}-bundle.js`, js),
-    selectiveWrite(`${filename}-bundle.js.map`, jsSourceMap),
-    fs.remove(jsInitPath),
-    fs.remove(jsOutputPath),
-    fs.remove(jsOutputPath + '.map')
-  ])
+  const cssDecache = selectiveWrite(`${filename}-bundle.css`, beautify.css(rendered.css.code))
+  const jsDecache = selectiveWrite(`${filename}-bundle.js`, js)
+  selectiveWrite(`${filename}-bundle.js.map`, jsSourceMap)
+  fs.unlinkSync(jsInitPath)
+  fs.unlinkSync(jsOutputPath)
+  fs.unlinkSync(jsOutputPath + '.map')
 
-  const page = await postProcess(toHTML(rendered), {
+  const page = postProcess(toHTML(rendered), {
     head: [
       ['link', { rel: 'stylesheet', href: `${filename}-bundle.css?decache=${cssDecache}` }],
       ['script', { defer: '', src: `${filename}-bundle.js?decache=${jsDecache}` }]
     ]
   })
 
-  await selectiveWrite(`${filename}.html`, page)
+  selectiveWrite(`${filename}.html`, page)
 }
 
 async function defaultRun () {
-  const updatesLog = cbor.decodeAll(await fs.readFile('../datasets/update-log.cbor'))
+  const updatesLog = cbor.decodeAll(fs.readFileSync('../datasets/update-log.cbor'))
   await writeHTML('index', 'index.svelte', {
     query: 'Example',
     feed: updatesLog.filter(entry => entry.available).slice(-signSearchConfig.discoveryFeed.length).map(entry => {
