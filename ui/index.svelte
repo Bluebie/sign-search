@@ -17,6 +17,7 @@
   export let query = ''
   export let showNavigation = true
   export let feed = []
+  console.log('booted up')
 </script>
 
 <PageHeader {query} {showNavigation}></PageHeader>
