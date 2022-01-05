@@ -1,6 +1,6 @@
 <script>
   import Icon from './icon.svelte'
-  const { signSearch } = require('../../package.json')
+  // const { signSearch } = require('../../package.json')
 
   export let logo = '/style/assets/find-sign-logo.svg'
   export let showNavigation = true
@@ -19,9 +19,10 @@
 <!-- nav links to static pages on the site -->
 {#if showNavigation}
   <nav id=nav-links>
-    {#each signSearch.navLinks as [title, path]}
-      <a href={path}>{title}</a>
-    {/each}
+    <a href=random.html>Random</a>
+    <a href=about.html>About</a>
+    <a href=technology.html>Technology</a>
+    <a href="https://blog.auslan.fyi/">News</a>
   </nav>
 {/if}
 

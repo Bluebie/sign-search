@@ -24,3 +24,4 @@ tools/scrapers/youtube/playlist-keys.json
 /*-bundle.js.map.gz
 sitemap.xml*
 .DS_Store
+ui/build

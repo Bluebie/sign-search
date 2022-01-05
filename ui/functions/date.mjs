@@ -7,7 +7,7 @@ const weekdays = 'Sunday Monday Tuesday Wednesday Thursday Friday Saturday'.spli
  * @param {number|Date} timestamp
  * @returns {string}
  */
-exports.humane = function humane (timestamp) {
+export function humane (timestamp) {
   const date = new Date(timestamp)
   const dayOfWeek = weekdays[date.getDay()]
   const day = date.getDate()
@@ -22,6 +22,6 @@ exports.humane = function humane (timestamp) {
  * @param {number|Date} timestamp
  * @returns {string}
  */
-exports.iso = function iso (timestamp) {
+export function iso (timestamp) {
   return (new Date(timestamp)).toISOString()
 }

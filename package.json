@@ -5,9 +5,11 @@
   "description": "Search Sign Language Dictionaries intelligently with word2vec and traditional more brute force approaches",
   "main": "frontend.js",
   "dependencies": {
+    "@rollup/plugin-node-resolve": "^13.1.2",
     "args": "^5.0.1",
     "borc": "^3.0.0",
     "byline": "^5.0.0",
+    "cbor-codec": "^0.9.2",
     "cheerio": "^1.0.0-rc.10",
     "create-torrent": "^5.0.1",
     "date-fns": "^2.28.0",
@@ -32,6 +34,9 @@
     "progress": "^2.0.3",
     "proper-lockfile": "^4.1.2",
     "request": "^2.88.0",
+    "rollup": "^2.62.0",
+    "rollup-plugin-css-only": "^3.1.0",
+    "rollup-plugin-svelte": "^7.1.0",
     "sitemap": "^5.1.0",
     "strip-json-comments": "^3.0.1",
     "subtitles-parser-vtt": "0.0.5",
@@ -52,8 +57,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "spider": "cd tools && node spider.js",
-    "watch": "",
-    "build": ""
+    "watch": "rm -r ui/build; rollup -c rollup.config.mjs -w",
+    "build": "rm -r ui/build; rollup -c rollup.config.mjs; gzip -9k ui/build/*.mjs ui/build/*.css"
   },
   "signSearch": {
     "title": "Find Sign",

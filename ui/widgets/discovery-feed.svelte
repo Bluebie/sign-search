@@ -1,6 +1,6 @@
 <script>
   import Icon from './icon.svelte'
-  import { humane as humaneTime, iso as computerTime } from '../functions/date.js'
+  import { humane as humaneTime, iso as computerTime } from '../functions/date.mjs'
 
   export let feed = []
 

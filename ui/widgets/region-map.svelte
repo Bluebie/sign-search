@@ -1,7 +1,7 @@
 <!-- builds a map svg image of the country, representing which regions are specified for this sign -->
 <script>
-  const config = require('../../package.json').signSearch
-  export let url = 'style/assets/auslan-map.svg'
+  const regions = ['wa', 'nt', 'sa', 'qld', 'nsw', 'act', 'vic', 'tas']
+  const url = 'style/assets/auslan-map.svg'
   export let tags = []
   export let editable = false
 
@@ -17,8 +17,8 @@
   }
 </script>
 
-<svg class:editable>
-  {#each config.regions as region}
+<svg class:editable class={$$props.class}>
+  {#each regions as region}
     <use href={`${url}#${region}`} class:active={tags.includes(region)} on:click={click} data-region={region}></use>
   {/each}
 </svg>
