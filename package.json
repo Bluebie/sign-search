@@ -52,13 +52,15 @@
     "ytpl": "^2.2.3"
   },
   "devDependencies": {
+    "chai": "^4.3.4",
+    "mocha": "^9.1.3",
     "standard": "^16.0.4"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha ./tests/test-*.mjs",
     "spider": "cd tools && node spider.js",
     "watch": "rm -r ui/build; rollup -c rollup.config.mjs -w",
-    "build": "rm -r ui/build; rollup -c rollup.config.mjs; gzip -9k ui/build/*.mjs ui/build/*.css"
+    "build": "rm -r ui/build; rollup -c rollup.config.mjs; gzip -9k ui/build/*.mjs ui/build/*.css; cd tools; node build-svelte-ui.mjs; cd .. gzip -9k ./*.html"
   },
   "signSearch": {
     "title": "Find Sign",

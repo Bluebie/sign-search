@@ -1,0 +1,8 @@
+{
+  "include": [
+    "lib/**/*.js",
+    "library/**/*.mjs",
+    "ui/**/*.svelte",
+    "ui/functions/*.mjs"
+  ]
+}
