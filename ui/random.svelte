@@ -6,7 +6,7 @@
   import PageHeader from './widgets/page-header.svelte'
   import ResultTile from './widgets/result-tile.svelte'
   import { onMount } from 'svelte'
-  import { open, getResult } from '../library/search-index.mjs'
+  import { open, freshen, getResult } from '../library/search-index.mjs'
   // const SearchLibrary = require('../lib/search-library/library-web')
 
   // const library = {}new SearchLibrary({
@@ -28,6 +28,7 @@
   async function reroll () {
     // clear current result
     result = undefined
+    library = await freshen(library)
     const random = Object.create(library.index[Math.round(Math.random() * (library.index.length - 1))])
     const tagMatch = blockedTags.some(x => random.tags.includes(x))
     if (!tagMatch) {

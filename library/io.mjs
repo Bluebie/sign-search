@@ -1,4 +1,9 @@
-import { decode as decodeCBOR, iter_decode as iterateDecodeCBOR } from 'cbor-codec/esm/index.mjs'
+import { decode as decodeCBOR, iter_decode as iterateCBOR } from 'cbor-codec/esm/index.mjs'
+export { decodeCBOR, iterateCBOR }
+
+const fetch = window.fetch
+const Headers = window.Headers
+export { fetch, Headers }
 
 /**
  * Given a url/path, read the resource and decode it as CBOR
@@ -19,7 +24,7 @@ export async function readCBOR (url) {
 export async function readAllCBOR (url) {
   const response = await window.fetch(url)
   const arrayBuffer = await response.arrayBuffer()
-  return [...iterateDecodeCBOR(arrayBuffer)]
+  return [...iterateCBOR(arrayBuffer)]
 }
 
 /**

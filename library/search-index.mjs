@@ -2,7 +2,7 @@
 import { unpack } from './packed-vector.mjs'
 import { diversity as vectorDiversity } from './vector-utilities.mjs'
 import { chunk } from './times.mjs'
-import { readCBOR } from './io.mjs'
+import { readCBOR, fetch, Headers, decodeCBOR } from './io.mjs'
 
 /**
  * @typedef {object} Library
@@ -24,15 +24,33 @@ import { readCBOR } from './io.mjs'
 
 /**
  * open a path, getting a Library
- * @param {*} path
+ * @param {string} path
  * @async
  * @returns {Library}
  */
 export async function open (path) {
-  const { settings, symbols, index } = await readCBOR(`${path}/index.cbor`)
-  if (settings.version !== 4) throw new Error('Unsupported dataset format version')
+  return await freshen({ path })
+}
 
-  console.log({ settings, symbols, index })
+/**
+ * Given a library, check server for a more up to date version, and if available, load it
+ * @param {Library} library
+ * @async
+ * @returns {Library}
+ */
+export async function freshen (library) {
+  const headers = new Headers()
+  if (library.etag || library.lastModified) {
+    if (library.etag) headers.append('If-None-Match', library.etag)
+    if (library.lastModified) headers.append('If-Modified-Since', library.lastModified)
+  }
+
+  const response = await fetch(`${library.path}/index.cbor`, { headers, mode: 'same-origin' })
+  if (response.status === 304) return library
+  else if (response.status !== 200) console.warn('server response weird', response)
+
+  const { settings, symbols, index } = decodeCBOR(await response.arrayBuffer())
+  if (settings.version !== 4) throw new Error('Unsupported dataset format version')
 
   // decode symbols
   symbols.forEach((value, index) => {
@@ -43,7 +61,7 @@ export async function open (path) {
   })
 
   return {
-    path,
+    path: library.path,
     settings,
     tags: new Set(Object.keys(index).flatMap(x => x.split(',').map(id => symbols[id]))),
     index: Object.entries(index).flatMap(([tagSymbols, entries]) => {
@@ -55,7 +73,9 @@ export async function open (path) {
           return { words, tags, diversity, path }
         })
       })
-    })
+    }),
+    etag: response.headers.get('ETag'),
+    lastModified: response.headers.get('Last-Modified')
   }
 }
 
