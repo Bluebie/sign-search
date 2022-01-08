@@ -116,36 +116,13 @@
       "media gap body body";
   }
 
-  .result.expand {
+  /* .result.expand {
 
-  }
+  } */
 
   .result .video-player {
     grid-area: media;
-    display: block;
-    background-color: var(--submodule-bg);
-    border-radius: 6px;
     width: 250px;
-    height: 140px;
-    /* position: absolute; */
-    overflow: hidden;
-    /* margin-left: -250px; */
-    /* margin-top: 7px; */
-
-    /* very fancy soon to be out of style custom 'neumorphic' style box */
-    box-shadow:
-    /* inset highlight and shadow */
-    inset 0 -7rem 5em -2em hsla(var(--hue), calc(var(--module-bg-sat) - 5%), calc(var(--module-bg-lum) + 5%), var(--outer-highlight-alpha)),
-    inset 0 +7rem 5em -2em hsla(var(--hue), calc(var(--module-bg-sat) + 5%), calc(var(--module-bg-lum) - 3%), var(--outer-shadow-alpha)),
-    /* outside drop shadow */
-    0.3rem 0.3rem 0.4rem hsla(var(--hue), calc(var(--module-bg-sat) + 5%), calc(var(--module-bg-lum) - 10%), var(--outer-shadow-alpha)),
-    0.2rem 0.3rem 0.2rem hsla(var(--hue), calc(var(--module-bg-sat) + 5%), calc(var(--module-bg-lum) - 8%), var(--outer-shadow-alpha)),
-    0.1rem 0.1rem 0.1rem hsla(var(--hue), calc(var(--module-bg-sat) + 5%), calc(var(--module-bg-lum) - 6%), var(--outer-shadow-alpha)),
-    /* outside top highlight */
-    -0.3rem -0.3rem 0.4rem hsla(var(--hue), calc(var(--module-bg-sat) - 5%), calc(var(--module-bg-lum) + 6%), var(--outer-highlight-alpha)),
-    -0.2rem -0.2rem 0.2rem hsla(var(--hue), calc(var(--module-bg-sat) - 5%), calc(var(--module-bg-lum) + 4%), var(--outer-highlight-alpha)),
-    -0.1rem -0.1rem 0.1rem hsla(var(--hue), calc(var(--module-bg-sat) - 5%), calc(var(--module-bg-lum) + 2%), var(--outer-highlight-alpha))
-    ;
   }
 
   .result .keywords a {

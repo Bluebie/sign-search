@@ -35,7 +35,9 @@
 
 <style>
   .video-player {
-    display: block;
+    display: grid;
+    grid-template-columns: 32px auto 32px;
+    grid-template-rows: auto;
     background-color: var(--submodule-bg);
     border-radius: 6px;
     width: 100%;
@@ -44,32 +46,37 @@
 
     /* very fancy soon to be out of style custom 'neumorphic' style box */
     box-shadow:
-    /* inset highlight and shadow */
-    inset 0 -7rem 5em -2em hsla(var(--hue), calc(var(--module-bg-sat) - 5%), calc(var(--module-bg-lum) + 5%), var(--outer-highlight-alpha)),
-    inset 0 +7rem 5em -2em hsla(var(--hue), calc(var(--module-bg-sat) + 5%), calc(var(--module-bg-lum) - 3%), var(--outer-shadow-alpha)),
-    /* outside drop shadow */
-    0.3rem 0.3rem 0.4rem hsla(var(--hue), calc(var(--module-bg-sat) + 5%), calc(var(--module-bg-lum) - 10%), var(--outer-shadow-alpha)),
-    0.2rem 0.3rem 0.2rem hsla(var(--hue), calc(var(--module-bg-sat) + 5%), calc(var(--module-bg-lum) - 8%), var(--outer-shadow-alpha)),
-    0.1rem 0.1rem 0.1rem hsla(var(--hue), calc(var(--module-bg-sat) + 5%), calc(var(--module-bg-lum) - 6%), var(--outer-shadow-alpha)),
-    /* outside top highlight */
-    -0.3rem -0.3rem 0.4rem hsla(var(--hue), calc(var(--module-bg-sat) - 5%), calc(var(--module-bg-lum) + 6%), var(--outer-highlight-alpha)),
-    -0.2rem -0.2rem 0.2rem hsla(var(--hue), calc(var(--module-bg-sat) - 5%), calc(var(--module-bg-lum) + 4%), var(--outer-highlight-alpha)),
-    -0.1rem -0.1rem 0.1rem hsla(var(--hue), calc(var(--module-bg-sat) - 5%), calc(var(--module-bg-lum) + 2%), var(--outer-highlight-alpha))
+      /* inset highlight and shadow */
+      inset 0 -7rem 5em -2em hsla(var(--hue), calc(var(--module-bg-sat) - 5%), calc(var(--module-bg-lum) + 5%), var(--outer-highlight-alpha)),
+      inset 0 +7rem 5em -2em hsla(var(--hue), calc(var(--module-bg-sat) + 5%), calc(var(--module-bg-lum) - 3%), var(--outer-shadow-alpha)),
+      /* outside drop shadow */
+      0.3rem 0.3rem 0.4rem hsla(var(--hue), calc(var(--module-bg-sat) + 5%), calc(var(--module-bg-lum) - 10%), var(--outer-shadow-alpha)),
+      0.2rem 0.3rem 0.2rem hsla(var(--hue), calc(var(--module-bg-sat) + 5%), calc(var(--module-bg-lum) - 8%), var(--outer-shadow-alpha)),
+      0.1rem 0.1rem 0.1rem hsla(var(--hue), calc(var(--module-bg-sat) + 5%), calc(var(--module-bg-lum) - 6%), var(--outer-shadow-alpha)),
+      /* outside top highlight */
+      -0.3rem -0.3rem 0.4rem hsla(var(--hue), calc(var(--module-bg-sat) - 5%), calc(var(--module-bg-lum) + 6%), var(--outer-highlight-alpha)),
+      -0.2rem -0.2rem 0.2rem hsla(var(--hue), calc(var(--module-bg-sat) - 5%), calc(var(--module-bg-lum) + 4%), var(--outer-highlight-alpha)),
+      -0.1rem -0.1rem 0.1rem hsla(var(--hue), calc(var(--module-bg-sat) - 5%), calc(var(--module-bg-lum) + 2%), var(--outer-highlight-alpha))
     ;
   }
 
-  video {
-    width: 100%; height: 100%; border-radius: 6px;
+  .video-player > a {
+    grid-row: 1;
+    grid-column: 1 / 4;
+    overflow: hidden;
   }
 
-  picture {
-    width: auto; height: 100%; margin-left: auto; margin-right: auto; display: block;
+  video, picture {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 6px;
+    z-index: 5;
   }
 
   button.prev, button.next {
-    position: absolute;
-    top: 0; bottom: 0; margin: 0;
-    width: 32px;
+    grid-row: 1;
+    z-index: 10;
     border: 0 none;
     padding: 0;
     font-size: inherit;
@@ -80,6 +87,15 @@
     /* backdrop-filter: blur(2px); */
   }
 
-  button.prev { left: 0; border-top-left-radius: 6px; border-bottom-left-radius: 6px; }
-  button.next { right: 0; border-top-right-radius: 6px; border-bottom-right-radius: 6px; }
+  button.prev {
+    grid-column: 1;
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+  }
+
+  button.next {
+    grid-column: 3;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+  }
 </style>
