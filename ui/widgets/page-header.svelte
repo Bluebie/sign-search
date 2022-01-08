@@ -1,19 +1,29 @@
 <script>
   import Icon from './icon.svelte'
-  // const { signSearch } = require('../../package.json')
 
   export let logo = '/style/assets/find-sign-logo.svg'
   export let showNavigation = true
   export let query = ''
+  export let formAction = '/search'
+
+  // queryHandler is responsible for search box entrys
+  export let queryHandler = (query) => {
+    console.log('Unhandled search query:', query)
+  }
+
+  function onSearch (event) {
+    event.preventDefault()
+    queryHandler(query)
+  }
 </script>
 
 <!-- header logo -->
 <a href={'/#'}><img class=header alt="Home Button" src={logo}></a>
 
 <!-- search query input bar -->
-<form id=search-form role=search autocomplete=off action={'/search'} method=GET>
+<form id=search-form role=search autocomplete=off action={formAction} method=GET on:submit={onSearch}>
   <Icon name=search />
-  <input id=search-box autocomplete=off autocapitalize=none aria-label="Enter search query here." name=query value={query}>
+  <input id=search-box autocomplete=off autocapitalize=none aria-label="Enter search query here." name=query bind:value={query}>
 </form>
 
 <!-- nav links to static pages on the site -->

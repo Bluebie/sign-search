@@ -17,7 +17,7 @@
   }
 </script>
 
-<svg class:editable class={$$props.class}>
+<svg class:editable class={$$props.class} viewBox="0 0 32 32">
   {#each regions as region}
     <use href={`${url}#${region}`} class:active={tags.includes(region)} on:click={click} data-region={region}></use>
   {/each}

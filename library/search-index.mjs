@@ -1,14 +1,8 @@
 // tree shakable functions for consuming sign-search search indexes
 import { unpack } from './packed-vector.mjs'
-import { decode } from 'cbor-codec/esm/index.mjs'
 import { diversity as vectorDiversity } from './vector-utilities.mjs'
 import { chunk } from './times.mjs'
-
-async function readCBOR (url) {
-  const response = await window.fetch(url)
-  const buffer = await response.arrayBuffer()
-  return decode(buffer)
-}
+import { readCBOR } from './io.mjs'
 
 /**
  * @typedef {object} Library

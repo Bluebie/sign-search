@@ -3,6 +3,7 @@
 </svelte:head>
 
 <script>
+  import PageHeader from './widgets/page-header.svelte'
   import ResultTile from './widgets/result-tile.svelte'
   import { onMount } from 'svelte'
   import { open, getResult } from '../library/search-index.mjs'
@@ -41,7 +42,13 @@
     library = await open('datasets/search-index')
     reroll()
   })
+
+  async function search (query) {
+    window.location.href = `/#${encodeURIComponent(query)}/0`
+  }
 </script>
+
+<PageHeader queryHandler={search}/>
 
 <main>
   <h1>Random Sign Generator</h1>
@@ -65,5 +72,25 @@
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     background-color: var(--base-bg);
     color: var(--base-fg);
+  }
+
+  h2 button {
+    --button-hue: calc(var(--hue) - 45deg);
+    width: 100%;
+    display: block;
+    background-color: hsl(var(--button-hue), var(--module-bg-sat), var(--module-bg-lum));
+    color: hsl(var(--button-hue), var(--base-fg-sat), var(--base-fg-lum));
+    appearance: none;
+    padding: 1ex 1em;
+    border-radius: calc((1em + 2ex) / 2);
+    line-height: 1;
+    border: 0 none;
+    font-size: inherit;
+    font-weight: inherit;
+  }
+
+  h2 button:enabled:hover {
+    background-color: hsl(var(--button-hue), var(--submodule-bg-sat), var(--submodule-bg-lum));
+    cursor: pointer;
   }
 </style>

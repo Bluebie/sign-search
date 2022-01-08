@@ -4,11 +4,12 @@
   import Icon from './icon.svelte'
 
   export let result = undefined
+  export let expand = false
   const warnings = []
 </script>
 
 
-<div class=result class:placeholder={!result}>
+<div class={$$props.class} class:result={true} class:placeholder={!result} class:expand={expand}>
   {#if result}
     <Carousel medias={result.media} link={result.link}></Carousel>
 
@@ -32,9 +33,7 @@
 
     {#if result.tags && result.tags.length > 0}
       <div class="tags">
-        {#each result.tags as tag}
-          #{tag}
-        {/each}
+        {#each result.tags as tag}{`#${tag} `}{/each}
       </div>
     {/if}
 
@@ -54,13 +53,10 @@
     background-color: var(--module-bg);
     border-radius: 10px;
     margin-top: 1.1em;
-    display: block;
     color: inherit;
     text-decoration: none;
-    padding-left: 257px;
-    min-height: 156px;
     overflow: hidden;
-    animation: result-in var(--fade-duration);
+    padding: 1ex;
 
     /* very fancy soon to be out of style custom 'neumorphic' style box */
     box-shadow:
@@ -78,21 +74,63 @@
     ;
   }
 
-  @keyframes result-in {
-    from { opacity: 0; }
-    to   { opacity: 1; }
+  .keywords {
+    line-height: 1em;
+    margin: 0;
+    grid-area: title;
+    font-size: 1.3rem;
+    font-weight: normal;
+    text-transform: capitalize;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  .result > :global(.map) {
+    grid-area: map;
+    width: 2em;
+    height: 2em;
+  }
+
+  .link {
+    grid-area: breadcrumbs;
+  }
+
+  .tags {
+    grid-area: hashtags;
+  }
+
+  .body {
+    grid-area: body;
+  }
+
+  .result:not(.expand) {
+    display: grid;
+    grid-template-columns: 250px 1ex auto 32px;
+    grid-template-rows: 1.3em auto auto auto;
+    min-height: 156px;
+    grid-template-areas:
+      "media gap title map"
+      "media gap breadcrumbs map"
+      "media gap hashtags hashtags"
+      "media gap body body";
+  }
+
+  .result.expand {
+
   }
 
   .result .video-player {
+    grid-area: media;
     display: block;
     background-color: var(--submodule-bg);
     border-radius: 6px;
     width: 250px;
     height: 140px;
-    position: absolute;
+    /* position: absolute; */
     overflow: hidden;
-    margin-left: -250px;
-    margin-top: 7px;
+    /* margin-left: -250px; */
+    /* margin-top: 7px; */
 
     /* very fancy soon to be out of style custom 'neumorphic' style box */
     box-shadow:
@@ -110,36 +148,12 @@
     ;
   }
 
-  .result > *:not(:first-child) {
-    display: block;
-    padding-left: 0.7rem;
-    margin-bottom: 0.1rem;
-    padding-right: 0.5rem;
-  }
-
-  .result .keywords {
-    margin-top: 0.3rem;
-    margin-bottom: 0rem;
-    font-size: 1.3rem;
-    font-weight: normal;
-    text-transform: capitalize;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-  }
   .result .keywords a {
     text-decoration: none;
     color: inherit;
   }
-  .result > :global(.map) {
-    float: right;
-    width: 41px;
-    height: 32px;
-    margin-top: 0.5rem;
-  }
 
-  .result .link,
-  .result .tags {
+  .result .link, .result .tags {
     text-overflow: ellipsis;
     font-size: 80%;
     white-space: nowrap;

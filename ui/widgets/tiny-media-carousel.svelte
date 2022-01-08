@@ -38,12 +38,9 @@
     display: block;
     background-color: var(--submodule-bg);
     border-radius: 6px;
-    width: 250px;
-    height: 140px;
-    position: absolute;
+    width: 100%;
+    aspect-ratio: 16 / 9;
     overflow: hidden;
-    margin-left: -250px;
-    margin-top: 7px;
 
     /* very fancy soon to be out of style custom 'neumorphic' style box */
     box-shadow:
