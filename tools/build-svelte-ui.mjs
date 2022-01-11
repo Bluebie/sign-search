@@ -11,9 +11,14 @@ import pmSelect from 'pigeonmark-select'
 
 // const require = module.createRequire(import.meta.url)
 // require('svelte/register')
+import * as fetchAPI from 'node-fetch'
 
 const signSearchConfig = JSON.parse(fs.readFileSync('../package.json')).signSearch
 const spidersConfig = JSON.parse(fs.readFileSync('./spiders/configs.json'))
+globalThis.fetch = fetchAPI.default
+globalThis.Request = fetchAPI.Request
+globalThis.Response = fetchAPI.Response
+globalThis.Headers = fetchAPI.Headers
 
 function checksum (data) {
   const cypher = crypto.createHash('md5')
