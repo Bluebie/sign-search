@@ -1,13 +1,12 @@
 <script>
-  const Icon = require('./icon.svelte')
-  let length = 1
-  let selected = 0
-  let toURL = (pagenum) => `?page=${pagenum}`
-  let toLabel = (pagenum) => `${pagenum + 1}`
-  let toAriaLabel = (pagenum) => `Go to page ${pagenum + 1}`
+  import Icon from './icon.svelte'
+  export let length = 1
+  export let selected = 0
+  export let toURL = (pagenum) => `?page=${pagenum}`
+  export let toAriaLabel = (pagenum) => `Go to page ${pagenum + 1}`
 </script>
 
-<nav id="pagination">
+<nav>
   {#each { length } as _, page}
     <a href={toURL(page)} aria-label={toAriaLabel(page)} aria-current={(page === selected) && 'page'}>
       <slot page>
@@ -44,7 +43,7 @@
       inset +0.2rem +0.25rem +0.6rem +0.20rem hsla(var(--hue), calc(var(--module-bg-sat) + 3%), calc(var(--module-bg-lum) - 5%), 100%);
   }
 
-  nav a svg {
+  nav a :global(svg) {
     width: 2.6rem;
     height: 2.6rem;
     vertical-align: -0.2em;

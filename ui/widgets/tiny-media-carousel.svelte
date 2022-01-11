@@ -10,7 +10,7 @@
 
 <!-- svelte-ignore a11y-media-has-caption -->
 <!-- these videos have no audio to caption -->
-<div class="video-player">
+<div class={$$props.class}>
   <a href={link} referrerpolicy=origin rel=external>
     {#key media}
       {#if type === 'video'}
@@ -34,7 +34,7 @@
 </div>
 
 <style>
-  .video-player {
+  div {
     display: grid;
     grid-template-columns: 32px auto 32px;
     grid-template-rows: auto;
@@ -60,7 +60,7 @@
     ;
   }
 
-  .video-player > a {
+  div > a {
     grid-row: 1;
     grid-column: 1 / 4;
     overflow: hidden;
@@ -74,7 +74,7 @@
     z-index: 5;
   }
 
-  button.prev, button.next {
+  button, button {
     grid-row: 1;
     z-index: 10;
     border: 0 none;

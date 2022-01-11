@@ -56,7 +56,7 @@
 
   <h2><button disabled={!library} on:click={reroll}>🎲 Reroll</button></h2>
 
-  <ResultTile bind:result={result}/>
+  <ResultTile bind:result={result} expand/>
 
   <div style="height: 20em"></div>
 </main>
@@ -67,7 +67,7 @@
   }
 
   :global(body) {
-    width: 900px;
+    max-width: 900px;
     margin-left: auto;
     margin-right: auto;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;

@@ -5,19 +5,25 @@
 
   export let result = undefined
   export let expand = false
-  const warnings = []
+
+  $: warnings = result ? [...getWarnings(result.tags)] : []
+
+  function * getWarnings (tags) {
+    if (tags.includes('invented'))
+      yield { text: 'Informal, colloqual sign. Professionals should not use.' }
+  }
 </script>
 
 
 <div class={$$props.class} class:result={true} class:placeholder={!result} class:expand={expand}>
   {#if result}
-    <Carousel medias={result.media} link={result.link}></Carousel>
+    <Carousel medias={result.media} link={result.link} class="carousel"></Carousel>
 
     {#if ['wa','nt','sa','qld','nsw','act','vic','tas'].some(x => result.tags.includes(x))}
       <RegionMap tags={result.tags} class=map></RegionMap>
     {/if}
 
-    <h2 class=keywords>
+    <h2 class=words>
       <a href={result.link} referrerpolicy=origin rel=external>{result.title || result.keywords.join(', ')}</a>
     </h2>
 
@@ -37,12 +43,16 @@
       </div>
     {/if}
 
-    {#each warnings as warning}
-      <div class="alert {warning.type}">
-        <Icon name={warning.icon || 'alert'}/>
-        {warning.text}
+    {#if warnings.length > 0}
+      <div class=alerts>
+        {#each warnings as warning}
+          <div class="alert {warning.type}">
+            <Icon name={warning.icon || 'alert'}/>
+            {warning.text}
+          </div>
+        {/each}
       </div>
-    {/each}
+    {/if}
 
     <div class="body">{result.body}</div>
   {/if}
@@ -74,7 +84,7 @@
     ;
   }
 
-  .keywords {
+  .words {
     line-height: 1em;
     margin: 0;
     grid-area: title;
@@ -84,6 +94,11 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
+  }
+
+  .words a {
+    text-decoration: none;
+    color: inherit;
   }
 
   .result > :global(.map) {
@@ -100,6 +115,10 @@
     grid-area: hashtags;
   }
 
+  .alerts {
+    grid-area: alerts;
+  }
+
   .body {
     grid-area: body;
   }
@@ -107,27 +126,32 @@
   .result:not(.expand) {
     display: grid;
     grid-template-columns: 250px 1ex auto 32px;
-    grid-template-rows: 1.3em auto auto auto;
+    grid-template-rows: 1.3em min-content min-content min-content min-content fit-content(4em);
     min-height: 156px;
     grid-template-areas:
       "media gap title map"
       "media gap breadcrumbs map"
       "media gap hashtags hashtags"
+      "media gap alerts alerts"
       "media gap body body";
   }
 
-  /* .result.expand {
-
-  } */
-
-  .result .video-player {
-    grid-area: media;
-    width: 250px;
+  .result.expand {
+    display: grid;
+    grid-template-columns: auto 32px;
+    grid-template-rows: auto 1ex auto auto auto auto;
+    grid-template-areas:
+      "media media"
+      "gap gap"
+      "title map"
+      "breadcrumbs map"
+      "hashtags hashtags"
+      "alerts alerts"
+      "body body";
   }
 
-  .result .keywords a {
-    text-decoration: none;
-    color: inherit;
+  .result :global(.carousel) {
+    grid-area: media;
   }
 
   .result .link, .result .tags {
