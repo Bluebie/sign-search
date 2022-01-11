@@ -7,11 +7,7 @@
   import ResultTile from './widgets/result-tile.svelte'
   import { onMount } from 'svelte'
   import { open, freshen, getResult } from '../library/search-index.mjs'
-  // const SearchLibrary = require('../lib/search-library/library-web')
-
-  // const library = {}new SearchLibrary({
-  //   path: 'datasets/search-index'
-  // })
+  import { fade } from 'svelte/transition'
 
   const blockedTags = [
     'signpedia', // block signpedia-like entries, not established signs
@@ -56,7 +52,13 @@
 
   <h2><button disabled={!library} on:click={reroll}>🎲 Reroll</button></h2>
 
-  <ResultTile bind:result={result} expand/>
+  {#if result}
+    <div class="result-box" transition:fade={{ duration: 100 }}>
+      <ResultTile bind:result={result} expand/>
+    </div>
+  {:else}
+    <div class=spacer></div>
+  {/if}
 
   <div style="height: 20em"></div>
 </main>
@@ -93,5 +95,9 @@
   h2 button:enabled:hover {
     background-color: hsl(var(--button-hue), var(--submodule-bg-sat), var(--submodule-bg-lum));
     cursor: pointer;
+  }
+
+  .spacer {
+    height: 200vh;
   }
 </style>
