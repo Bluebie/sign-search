@@ -1,20 +1,13 @@
-import fs from 'fs-extra'
+import { readdir, readFile, writeFile, rename } from 'fs/promises'
 import { gzipSync as gzip } from 'zlib'
-import cbor from 'borc'
 import crypto from 'crypto'
-// import module from 'module'
-
 import beautify from 'js-beautify'
 import pmHTML from 'pigeonmark-html'
 import pmUtils from 'pigeonmark-utils'
 import pmSelect from 'pigeonmark-select'
 
-// const require = module.createRequire(import.meta.url)
-// require('svelte/register')
 import * as fetchAPI from 'node-fetch'
 
-const signSearchConfig = JSON.parse(fs.readFileSync('../package.json')).signSearch
-const spidersConfig = JSON.parse(fs.readFileSync('./spiders/configs.json'))
 globalThis.fetch = fetchAPI.default
 globalThis.Request = fetchAPI.Request
 globalThis.Response = fetchAPI.Response
@@ -39,7 +32,7 @@ function toHTML (svelteOutput) {
 }
 
 // apply post processing to html output to clean it up a bit and add cache invalidation for static resources
-function postProcess (html, appends = {}) {
+async function postProcess (html, appends = {}) {
   const beautiful = beautify.html(html, { indent_size: 2 })
   const doc = pmHTML.decode(beautiful)
 
@@ -61,12 +54,12 @@ function postProcess (html, appends = {}) {
   // add cache invalidation query strings to links to static resources
   for (const [selector, attr] of Object.entries(urlTargets)) {
     for (const element of pmSelect.selectAll(doc, selector)) {
-      const url = new URL(pmUtils.get.attribute(element, attr), signSearchConfig.location)
-      if (url.toString().startsWith(signSearchConfig.location)) {
+      const url = new URL(pmUtils.get.attribute(element, attr), 'https://example.org')
+      if (url.toString().startsWith('https://example.org')) {
         try {
-          const data = fs.readFileSync('..' + url.pathname)
+          const data = await readFile('..' + url.pathname)
           url.searchParams.set('decache', checksum(data))
-          let rebuilt = url.toString().slice(signSearchConfig.location.length)
+          let rebuilt = url.toString().slice('https://example.org'.length)
           if (!rebuilt.startsWith('/')) rebuilt = `/${rebuilt}`
           pmUtils.set.attribute(element, attr, rebuilt)
         } catch (err) {
@@ -80,73 +73,83 @@ function postProcess (html, appends = {}) {
 }
 
 // write a file, if the contents changed, and return the file's mtime in base36 for decache
-function selectiveWrite (filename, data) {
+async function selectiveWrite (filename, data) {
   // check if file contents changed, and bail if nothing changed
   let oldContents
   try {
-    oldContents = fs.readFileSync(filename).toString('utf-8')
+    oldContents = (await readFile(filename)).toString('utf-8')
   } catch (err) {}
 
   if (data.toString('utf-8') !== oldContents) {
     const tempFilename = `${filename}.rewriting-${Math.round(Math.random() * 0xFFFFFF).toString(36)}.tmp`
-    fs.writeFileSync(`../${tempFilename}`, data)
-    fs.writeFileSync(`../${tempFilename}.gz`, gzip(data))
+    await Promise.all([
+      writeFile(`../${tempFilename}`, data),
+      writeFile(`../${tempFilename}.gz`, gzip(data))
+    ])
 
-    fs.renameSync(`../${tempFilename}`, `../${filename}`)
-    fs.renameSync(`../${tempFilename}.gz`, `../${filename}.gz`)
+    await Promise.all([
+      rename(`../${tempFilename}`, `../${filename}`),
+      rename(`../${tempFilename}.gz`, `../${filename}.gz`)
+    ])
   }
 
   return checksum(data)
 }
 
-// atomically replace the html files with no downtime, including building a gzipped version
-async function writeHTML (filename, props = {}) {
-  await fs.ensureDir('../ui/build')
+// build static rendered html
+async function writeHTML (filename, config = false) {
+  const props = config ? await config.getProps() : {}
+  const isLive = config ? config.isLive : true
+
+  console.log(filename, props)
 
   const { default: Component } = await import(`../ui/build/ssr/${filename}.mjs`)
   const rendered = Component.render(props, { hydratable: true })
 
-  const jsDecache = checksum(fs.readFileSync(`../ui/build/${filename}.mjs`))
+  const head = [
+    ['link', { rel: 'stylesheet', href: 'ui/theme.css' }],
+    ['link', { rel: 'stylesheet', href: `ui/build/${filename}.css` }]
+  ]
 
-  const initializerJS = [
-    `import Component from ${JSON.stringify(`./ui/build/${filename}.mjs?${jsDecache}`)}`,
-    `const props = ${JSON.stringify(props)}`,
-    'const options = { target: document.body, props, hydrate: true }',
-    'const component = new Component(options)',
-    'window.app = component'
-  ].map(x => `    ${x}`).join('\n')
+  if (isLive) {
+    const initializerJS = [
+      `import Component from ${JSON.stringify(`./ui/build/${filename}.mjs?${checksum(await readFile(`../ui/build/${filename}.mjs`))}`)}`,
+      `const props = ${JSON.stringify(props)}`,
+      'const options = { target: document.body, props, hydrate: true }',
+      'const component = new Component(options)',
+      'window.app = component'
+    ].map(x => `    ${x}`).join('\n')
 
-  const page = postProcess(toHTML(rendered), {
-    head: [
-      ['link', { rel: 'stylesheet', href: 'ui/theme.css' }],
-      ['link', { rel: 'stylesheet', href: `ui/build/${filename}.css` }],
+    head.push(
       ['#comment', ' Rehydrate Svelte Components: '],
       ['script', { type: 'module' }, `\n${initializerJS}\n  `]
-    ]
-  })
+    )
+  }
 
-  selectiveWrite(`${filename}.html`, page)
+  const page = await postProcess(toHTML(rendered), { head })
+
+  await selectiveWrite(`${filename}.html`, page)
 }
 
 async function defaultRun () {
-  const updatesLog = cbor.decodeAll(fs.readFileSync('../datasets/update-log.cbor'))
-  await writeHTML('index', {
-    feed: updatesLog.filter(entry => entry.available).slice(-signSearchConfig.discoveryFeed.length).map(entry => {
-      const spider = spidersConfig[entry.provider] || {}
-      return {
-        timestamp: entry.timestamp,
-        authorName: spider.displayName || entry.provider,
-        authorLink: spider.link || entry.providerLink,
-        verb: entry.verb || spider.discoveryVerb,
-        link: entry.link,
-        title: entry.title || entry.words.join(', ')
-      }
-    })
-  })
+  for (const file of await readdir('../ui')) {
+    if (!file.endsWith('.svelte')) continue
 
-  await writeHTML('random', {
-    // props
-  })
+    console.log(`building ${file}`)
+    let module
+    try {
+      module = await import(`../ui/ssr-config/${file.replace('.svelte', '.mjs')}`)
+    } catch (error) {
+      // ignore file missing errors, it's fine
+      if (error.code !== 'ERR_MODULE_NOT_FOUND') {
+        throw error
+      }
+    }
+
+    await writeHTML(file.replace(/\.svelte$/, ''), module)
+  }
+
+  console.log('finished')
 }
 
 defaultRun()
