@@ -1,4 +1,5 @@
 import { distanceSquared } from './vector-utilities.mjs'
+import './array-at-polyfill.mjs'
 
 /**
  * Vector Library normalization: any words that aren't entirely uppercase (like an acronym) get downcased
