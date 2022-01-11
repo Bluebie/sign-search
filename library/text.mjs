@@ -40,12 +40,12 @@ export async function compileQueryAST (ast, lookupVectorFn = () => {}) {
   if (ast === undefined) {
     return () => 0
   } else if (ast.type === 'and') {
-    const left = await compileQueryAST(ast.left)
-    const right = await compileQueryAST(ast.right)
+    const left = await compileQueryAST(ast.left, lookupVectorFn)
+    const right = await compileQueryAST(ast.right, lookupVectorFn)
     return (entry) => left(entry) + right(entry)
   } else if (ast.type === 'or') {
-    const left = await compileQueryAST(ast.left)
-    const right = await compileQueryAST(ast.right)
+    const left = await compileQueryAST(ast.left, lookupVectorFn)
+    const right = await compileQueryAST(ast.right, lookupVectorFn)
     return (entry) => Math.min(left(entry), right(entry))
   } else if (ast.type === 'tag') {
     const string = ast.string

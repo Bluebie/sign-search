@@ -22,9 +22,9 @@ export default function rank (library, filterFn) {
   const rankedLibrary = Object.create(library)
   rankedLibrary.index = library.index.flatMap(entry => {
     const rank = filterFn(entry)
-    if (typeof rank === 'number') {
+    if (typeof rank === 'number' && rank < Infinity) {
       const rankedEntry = Object.create(entry)
-      rankedEntry.rank = rank
+      rankedEntry.rank = rank + (rankedEntry.diversity * 0.05)
       return [rankedEntry]
     } else {
       return []
