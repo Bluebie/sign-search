@@ -43,18 +43,19 @@
       </div>
     {/if}
 
-    {#if warnings.length > 0}
-      <div class=alerts>
-        {#each warnings as warning}
-          <div class="alert {warning.type}">
-            <Icon name={warning.icon || 'alert'}/>
-            {warning.text}
-          </div>
-        {/each}
-      </div>
-    {/if}
-
-    <div class="body">{result.body}</div>
+    <div class="body">
+      {#if warnings.length > 0}
+        <div class=alerts>
+          {#each warnings as warning}
+            <div class="alert {warning.type}">
+              <Icon name={warning.icon || 'alert'}/>
+              {warning.text}
+            </div>
+          {/each}
+        </div>
+      {/if}
+      {result.body || ''}
+    </div>
   {/if}
 </div>
 
@@ -126,13 +127,12 @@
   .result:not(.expand) {
     display: grid;
     grid-template-columns: 250px 1ex auto 32px;
-    grid-template-rows: 1.3em min-content min-content min-content min-content fit-content(4em);
-    min-height: 156px;
+    grid-template-rows: 1.3em 1em 1em auto;
+    min-height: 158px;
     grid-template-areas:
       "media gap title map"
       "media gap breadcrumbs map"
       "media gap hashtags hashtags"
-      "media gap alerts alerts"
       "media gap body body";
   }
 

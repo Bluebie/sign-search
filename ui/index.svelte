@@ -14,16 +14,19 @@
   import PageHeader from './widgets/page-header.svelte'
   import DiscoveryFeed from './widgets/discovery-feed.svelte'
   import ResultTile from './widgets/result-tile.svelte'
+  import Notice from './widgets/notice.svelte'
   import { fade } from 'svelte/transition'
   import { onMount, tick } from 'svelte'
   import * as vec from '../library/precomputed-vectors.mjs'
   import * as search from '../library/search-index.mjs'
   import { compileQuery, normalizeWord } from '../library/text.mjs'
-  import rank from '../library/search-rank.mjs';
+  import rank from '../library/search-rank.mjs'
   import Paginator from './widgets/paginator.svelte'
+  import delay from './functions/delay.mjs'
 
   const resultsPerPage = 10
   const maxPages = 9
+  const resultDelay = 100
 
   export let query
   export let feed
@@ -33,8 +36,9 @@
   let results
   let currentPage = 0
 
-  $: displayResults = Array.isArray(results) && results.slice(currentPage * resultsPerPage, resultsPerPage).map(entry => {
-    return search.getResult(searchLibrary, entry)
+  $: displayResults = Array.isArray(results) && results.slice(currentPage * resultsPerPage, (currentPage + 1) * resultsPerPage).map(async (entry, idx) => {
+    await delay(resultDelay * idx)
+    return await search.getResult(searchLibrary, entry)
   })
 
   onMount(async () => {
@@ -63,12 +67,17 @@
 
 {#if displayResults}
   <ol class=results>
-    {#each displayResults as promise, index}
+    {#if displayResults.length === 0}
+      <li><Notice>No results found. Try rephrasing search phrase, or check spelling.</Notice></li>
+    {/if}
+    {#each displayResults as promise}
       <li class=result transition:fade>
         {#await promise}
           <ResultTile/>
         {:then result}
           <ResultTile {result}/>
+        {:catch err}
+          <Notice>Error: {err.message}</Notice>
         {/await}
       </li>
     {/each}
@@ -77,7 +86,7 @@
   <Paginator
     bind:selected={currentPage}
     length={Math.min(maxPages, results.length / resultsPerPage)}
-    toURL={(id) => `#${encodeURIComponent(query)}/${id}`}
+    toURL={(pageNum) => `search?query=${encodeURIComponent(query)}&page=${pageNum}`}
   />
 {:else if feed}
   <DiscoveryFeed {feed}/>
@@ -96,5 +105,6 @@
 
   .results {
     list-style-type: none;
+    padding: 0;
   }
 </style>

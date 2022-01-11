@@ -4,11 +4,16 @@
   export let selected = 0
   export let toURL = (pagenum) => `?page=${pagenum}`
   export let toAriaLabel = (pagenum) => `Go to page ${pagenum + 1}`
+
+  function select (pageNum, event) {
+    selected = pageNum
+    event.preventDefault()
+  }
 </script>
 
 <nav>
   {#each { length } as _, page}
-    <a href={toURL(page)} aria-label={toAriaLabel(page)} aria-current={(page === selected) && 'page'}>
+    <a href={toURL(page)} aria-label={toAriaLabel(page)} aria-current={(page === selected) && 'page'} on:click={(event) => select(page, event)}>
       <slot page>
         <Icon name={page + 1}/>
       </slot>

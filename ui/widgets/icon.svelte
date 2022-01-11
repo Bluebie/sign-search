@@ -3,7 +3,7 @@
 </script>
 
 <svg class={`icon-${name}`} aria-hidden="true">
-  <use href={`style/assets/icomoon/symbol-defs.svg#icon-${name}`}></use>
+  <use href={`ui/assets/icomoon/symbol-defs.svg#icon-${name}`}></use>
 </svg>
 
 <style>
