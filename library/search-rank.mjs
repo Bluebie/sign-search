@@ -29,6 +29,8 @@ export default function rank (library, filterFn) {
     } else {
       return []
     }
+  }).sort((x, y) => {
+    return x.rank - y.rank
   })
   return rankedLibrary
 }

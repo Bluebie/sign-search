@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 /* eslint-disable no-unused-expressions */
 import { expect } from 'chai'
-import { tokenize, parseQuery } from '../library/text.mjs'
+import { tokenize, parseQuery, compileQuery } from '../library/text.mjs'
 
 describe('/library/text tokenize()', () => {
   it('handles simple space seperated phrases', () => {
@@ -149,5 +149,44 @@ describe('/library/text parseQuery()', () => {
     const [a, b, c, d] = [...'abcd'].map(word)
     expect(parseQuery('((a b) c) d')).to.deep.equal(and(and(and(a, b), c), d))
     expect(parseQuery('a (b (c d))')).to.deep.equal(and(a, and(b, and(c, d))))
+  })
+})
+
+describe('/library/text compileQuery()', () => {
+  it('tag inclusion', async () => {
+    const rankFn = await compileQuery('#abc')
+    expect(rankFn).to.be.a('function')
+    expect(rankFn({ tags: [] })).to.equal(Infinity)
+    expect(rankFn({ tags: ['abc', 'def'] })).to.equal(0)
+    expect(rankFn({ tags: ['def'] })).to.equal(Infinity)
+  })
+
+  it('tag exclusion', async () => {
+    const rankFn = await compileQuery('-#abc')
+    expect(rankFn).to.be.a('function')
+    expect(rankFn({ tags: [] })).to.equal(0)
+    expect(rankFn({ tags: ['abc', 'def'] })).to.equal(Infinity)
+    expect(rankFn({ tags: ['def'] })).to.equal(0)
+  })
+
+  it('tag inclusion and exclusion', async () => {
+    const rankFn = await compileQuery('#abc -#def')
+    expect(rankFn).to.be.a('function')
+    expect(rankFn({ tags: [] })).to.equal(Infinity)
+    expect(rankFn({ tags: ['abc', 'def'] })).to.equal(Infinity)
+    expect(rankFn({ tags: ['def'] })).to.equal(Infinity)
+    expect(rankFn({ tags: ['abc'] })).to.equal(0)
+    expect(rankFn({ tags: ['abc', 'xyz'] })).to.equal(0)
+  })
+
+  it('tag OR pair', async () => {
+    const rankFn = await compileQuery('#abc OR #def')
+    expect(rankFn).to.be.a('function')
+    expect(rankFn({ tags: [] })).to.equal(Infinity)
+    expect(rankFn({ tags: ['abc', 'def'] })).to.equal(0)
+    expect(rankFn({ tags: ['def'] })).to.equal(0)
+    expect(rankFn({ tags: ['abc'] })).to.equal(0)
+    expect(rankFn({ tags: ['abc', 'xyz'] })).to.equal(0)
+    expect(rankFn({ tags: ['jjj', 'xyz'] })).to.equal(Infinity)
   })
 })

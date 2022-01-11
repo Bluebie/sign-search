@@ -15,11 +15,13 @@
   import DiscoveryFeed from './widgets/discovery-feed.svelte'
   import ResultTile from './widgets/result-tile.svelte'
   import { fade } from 'svelte/transition'
+  import { onMount, tick } from 'svelte'
+  import * as vec from '../library/precomputed-vectors.mjs'
+  import * as search from '../library/search-index.mjs'
+  import { compileQuery, normalizeWord } from '../library/text.mjs'
+  import rank from '../library/search-rank.mjs';
   import Paginator from './widgets/paginator.svelte'
 
-  export let query = ''
-  export let showNavigation = true
-  export let feed = []
   const resultsPerPage = 10
   const maxPages = 9
 
@@ -34,6 +36,27 @@
   $: displayResults = Array.isArray(results) && results.slice(currentPage * resultsPerPage, resultsPerPage).map(entry => {
     return search.getResult(searchLibrary, entry)
   })
+
+  onMount(async () => {
+    [vectorLibrary, searchLibrary] = await Promise.all([
+      vec.open('datasets/cc-en-300-8bit'),
+      search.open('datasets/search-index')
+    ])
+  })
+
+  async function runQuery (query) {
+    if (query === '' || !query) {
+      results = undefined
+      return
+    }
+
+    // wait for data to load
+    while (!searchLibrary || !vectorLibrary) await tick()
+    // compile query in to ranking function
+    const rankFn = await compileQuery(query, (word) => vec.lookup(vectorLibrary, normalizeWord(word)))
+    results = rank(searchLibrary, rankFn).index
+    currentPage = 0
+  }
 </script>
 
 <PageHeader bind:query showNavigation={!results} queryHandler={runQuery} />

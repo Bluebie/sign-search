@@ -27,7 +27,7 @@ export function normalizeWord (word) {
  */
 export async function compileQuery (query, lookupVectorFn = () => {}) {
   const ast = parseQuery(query)
-  return compileQueryAST(ast, lookupVectorFn)
+  return await compileQueryAST(ast, lookupVectorFn)
 }
 
 /**
