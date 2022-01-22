@@ -17,7 +17,7 @@
 
 <div class={$$props.class} class:result={true} class:placeholder={!result} class:expand={expand}>
   {#if result}
-    <Carousel medias={result.media} link={result.link} class="carousel"></Carousel>
+    <Carousel medias={result.media} link={result.link} class=carousel></Carousel>
 
     {#if ['wa','nt','sa','qld','nsw','act','vic','tas'].some(x => result.tags.includes(x))}
       <RegionMap tags={result.tags} class=map></RegionMap>
@@ -38,12 +38,12 @@
     </cite>
 
     {#if result.tags && result.tags.length > 0}
-      <div class="tags">
+      <div class=tags>
         {#each result.tags as tag}{`#${tag} `}{/each}
       </div>
     {/if}
 
-    <div class="body">
+    <div class=body>
       {#if warnings.length > 0}
         <div class=alerts>
           {#each warnings as warning}
@@ -94,7 +94,6 @@
     text-transform: capitalize;
     text-overflow: ellipsis;
     white-space: nowrap;
-    overflow: hidden;
   }
 
   .words a {
@@ -106,6 +105,7 @@
     grid-area: map;
     width: 2em;
     height: 2em;
+    stroke-width: 5px;
   }
 
   .link {
@@ -154,28 +154,28 @@
     grid-area: media;
   }
 
-  .result .link, .result .tags {
+  .link, .tags {
     text-overflow: ellipsis;
     font-size: 80%;
     white-space: nowrap;
     overflow: hidden;
   }
 
-  .result .link a {
+  .link a {
     text-decoration: underline;
     font-style: normal;
     color: inherit;
   }
 
   /* add forward slashes to nav breadcrumb type links */
-  .result .link a:not(:first-child):before {
+  .link a:not(:first-child):before {
     content: "/";
     padding-left: 0.7ex;
     padding-right: 0.7ex;
     display: inline-block; /* removes underline */
   }
 
-  .result .body {
+  .body {
     --line-height: 1.4em;
     --visible-lines: 4.65;
     text-overflow: ellipsis;
@@ -184,9 +184,6 @@
     line-height: var(--line-height);
     font-size: 0.95em;
     max-height: calc(var(--line-height) * var(--visible-lines) - 1rem);
-  }
-  .result .alert + .body {
-    --visible-lines: 5;
   }
 
   /* alert notices on search results */

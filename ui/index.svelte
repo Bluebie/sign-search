@@ -34,9 +34,9 @@
   let vectorLibrary
 
   let results
-  let currentPage = 0
+  let page = 0
 
-  $: displayResults = Array.isArray(results) && results.slice(currentPage * resultsPerPage, (currentPage + 1) * resultsPerPage).map(async (entry, idx) => {
+  $: displayResults = Array.isArray(results) && results.slice(page * resultsPerPage, (page + 1) * resultsPerPage).map(async (entry, idx) => {
     await delay(resultDelay * idx)
     return await search.getResult(searchLibrary, entry)
   })
@@ -46,11 +46,18 @@
       vec.open('datasets/cc-en-300-8bit'),
       search.open('datasets/search-index')
     ])
+
+    if (window.location.hash.length > 1) {
+      onHashChange()
+    }
   })
 
-  async function runQuery (query) {
+  async function runQuery (newQuery) {
+    query = newQuery
+    results = undefined
+    page = 0
+    window.location.hash = `#${new URLSearchParams({ query, page })}`
     if (query === '' || !query) {
-      results = undefined
       return
     }
 
@@ -59,11 +66,29 @@
     // compile query in to ranking function
     const rankFn = await compileQuery(query, (word) => vec.lookup(vectorLibrary, normalizeWord(word)))
     results = rank(searchLibrary, rankFn).index
-    currentPage = 0
+  }
+
+  async function onHashChange () {
+    const params = new URLSearchParams((window.location.hash || '').replace(/^#/, ''))
+    if (params.has('query')) {
+      queryInput = params.get('query')
+      await runQuery(queryInput)
+    }
+
+    if (params.has('page')) {
+      page = parseInt(params.get('page'))
+    }
+  }
+
+  async function onStateChange () {
+    await tick()
+    window.location.hash = `#${new URLSearchParams({ query, page })}`
   }
 </script>
 
-<PageHeader bind:query showNavigation={!results} queryHandler={runQuery} />
+<svelte:window on:hashchange={onHashChange}/>
+
+<PageHeader bind:query showNavigation={!results} queryHandler={onStateChange} />
 
 {#if displayResults}
   <ol class=results>
@@ -84,9 +109,10 @@
   </ol>
 
   <Paginator
-    bind:selected={currentPage}
+    bind:selected={page}
     length={Math.min(maxPages, results.length / resultsPerPage)}
-    toURL={(pageNum) => `search?query=${encodeURIComponent(query)}&page=${pageNum}`}
+    toURL={(page) => `search?${new URLSearchParams({ query, page })}`}
+    on:change={onStateChange}
   />
 {:else if feed}
   <DiscoveryFeed {feed}/>

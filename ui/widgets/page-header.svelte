@@ -8,8 +8,9 @@
   export let formAction = '/search'
 
   // queryHandler is responsible for search box entrys
+  // defaults to just jumping to search page with query encoded in to URL
   export let queryHandler = (query) => {
-    console.log('Unhandled search query:', query)
+    window.location.href = `/#${new URLSearchParams({ query, page: 0 })}`
   }
 
   export let logoClick = (event) => {

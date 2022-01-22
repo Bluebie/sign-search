@@ -1,13 +1,17 @@
 <script>
+  import { createEventDispatcher } from 'svelte'
   import Icon from './icon.svelte'
   export let length = 1
   export let selected = 0
   export let toURL = (pagenum) => `?page=${pagenum}`
   export let toAriaLabel = (pagenum) => `Go to page ${pagenum + 1}`
 
+  const dispatch = createEventDispatcher()
+
   function select (pageNum, event) {
     selected = pageNum
     event.preventDefault()
+    dispatch('change', pageNum)
   }
 </script>
 

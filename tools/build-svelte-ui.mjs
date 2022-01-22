@@ -6,8 +6,8 @@ import pmHTML from 'pigeonmark-html'
 import pmUtils from 'pigeonmark-utils'
 import pmSelect from 'pigeonmark-select'
 
+// polyfill for SSR
 import * as fetchAPI from 'node-fetch'
-
 globalThis.fetch = fetchAPI.default
 globalThis.Request = fetchAPI.Request
 globalThis.Response = fetchAPI.Response
@@ -100,8 +100,6 @@ async function selectiveWrite (filename, data) {
 async function writeHTML (filename, config = false) {
   const props = config ? await config.getProps() : {}
   const isLive = config ? config.isLive : true
-
-  console.log(filename, props)
 
   const { default: Component } = await import(`../ui/build/ssr/${filename}.mjs`)
   const rendered = Component.render(props, { hydratable: true })

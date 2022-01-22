@@ -39,13 +39,9 @@
     library = await open('datasets/search-index')
     reroll()
   })
-
-  async function search (query) {
-    window.location.href = `/#${encodeURIComponent(query)}/0`
-  }
 </script>
 
-<PageHeader queryHandler={search}/>
+<PageHeader/>
 
 <main>
   <h1>Random Sign Generator</h1>
