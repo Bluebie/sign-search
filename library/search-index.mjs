@@ -2,7 +2,7 @@
 import { unpack } from './packed-vector.mjs'
 import { diversity as vectorDiversity } from './vector-utilities.mjs'
 import { chunk } from './times.mjs'
-import { readCBOR, fetch, Headers, decodeCBOR } from './io.mjs'
+import { fetch, Headers, decodeCBOR } from './io.mjs'
 
 /**
  * @typedef {object} Library
@@ -25,11 +25,45 @@ import { readCBOR, fetch, Headers, decodeCBOR } from './io.mjs'
 /**
  * open a path, getting a Library
  * @param {string} path
+ * @param {function} [fetch] - optionally provide a fetch implementation, for local fs etc
  * @async
  * @returns {Library}
  */
-export async function open (path) {
-  return await freshen({ path })
+export async function open (path, libraryFetch) {
+  return await freshen({ path, fetch: libraryFetch || fetch })
+}
+
+/**
+ * Parse an index file
+ * @param {ArrayBuffer} data
+ * @retuns {Library}
+ */
+export function parseIndex (data) {
+  const { settings, symbols, index } = decodeCBOR(data)
+  if (settings.version !== 4) throw new Error('Unsupported dataset format version')
+
+  // decode symbols
+  symbols.forEach((value, index) => {
+    if (typeof value !== 'string') {
+      // byte arrays need to be decoded in to float array word vectors
+      symbols[index] = unpack(value, settings.vectorBits, settings.vectorSize)
+    }
+  })
+
+  return {
+    settings,
+    tags: new Set(Object.keys(index).flatMap(x => x.split(',').map(id => symbols[id]))),
+    index: Object.entries(index).flatMap(([tagSymbols, entries]) => {
+      const tags = tagSymbols.split(',').map(id => symbols[id])
+      return Object.entries(entries).flatMap(([wordSymbols, paths]) => {
+        const words = wordSymbols.split(',').map(id => symbols[id])
+        const diversity = Math.max(...vectorDiversity(...words.filter(x => typeof x !== 'string')))
+        return chunk(paths, 2).map(path => {
+          return { words, tags, diversity, path }
+        })
+      })
+    })
+  }
 }
 
 /**
@@ -45,35 +79,13 @@ export async function freshen (library) {
     if (library.lastModified) headers.append('If-Modified-Since', library.lastModified)
   }
 
-  const response = await fetch(`${library.path}/index.cbor`, { headers, mode: 'same-origin' })
+  const response = await library.fetch(`${library.path}/index.cbor`, { headers, mode: 'same-origin' })
   if (response.status === 304) return library
   else if (response.status !== 200) console.warn('server response weird', response)
 
-  const { settings, symbols, index } = decodeCBOR(await response.arrayBuffer())
-  if (settings.version !== 4) throw new Error('Unsupported dataset format version')
-
-  // decode symbols
-  symbols.forEach((value, index) => {
-    if (typeof value !== 'string') {
-      // byte arrays need to be decoded in to float array word vectors
-      symbols[index] = unpack(value, settings.vectorBits, settings.vectorSize)
-    }
-  })
-
   return {
-    path: library.path,
-    settings,
-    tags: new Set(Object.keys(index).flatMap(x => x.split(',').map(id => symbols[id]))),
-    index: Object.entries(index).flatMap(([tagSymbols, entries]) => {
-      const tags = tagSymbols.split(',').map(id => symbols[id])
-      return Object.entries(entries).flatMap(([wordSymbols, paths]) => {
-        const words = wordSymbols.split(',').map(id => symbols[id])
-        const diversity = Math.max(...vectorDiversity(...words.filter(x => typeof x !== 'string')))
-        return chunk(paths, 2).map(path => {
-          return { words, tags, diversity, path }
-        })
-      })
-    }),
+    ...library,
+    ...parseIndex(await response.arrayBuffer()),
     etag: response.headers.get('ETag'),
     lastModified: response.headers.get('Last-Modified')
   }
@@ -90,7 +102,8 @@ export async function getResult (library, entry) {
   // calculate url, load shard file, decode it
   const [shardNumber, item] = entry.path
   const shardURL = `${library.path}/definitions/${library.settings.buildID}/${shardNumber}.cbor`
-  const shard = await readCBOR(shardURL)
+  const response = await library.fetch(shardURL)
+  const shard = decodeCBOR(await response.arrayBuffer())
   return {
     library,
     ...shard[item],
