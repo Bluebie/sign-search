@@ -37,7 +37,8 @@ const defaultRun = async () => {
     searchLibraryParams: {
       vectorBits: flags.libraryVectorBits,
       mediaFormats: [
-        new HandbrakeEncoder()
+        new HandbrakeEncoder({ maxWidth: 1024, maxHeight: 576, encoder: 'VP9', format: 'av_webm', twopass: true, quality: 29.0 }),
+        new HandbrakeEncoder({ maxWidth: 512, maxHeight: 288, encoder: 'x264', format: 'av_mp4', quality: 22.0 })
       ]
     }
   })
