@@ -12,11 +12,12 @@
 
 <script>
   import PageHeader from './widgets/page-header.svelte'
+  import MainBlock from './widgets/main-block.svelte'
 </script>
 
 <PageHeader/>
 
-<main>
+<MainBlock wide=true>
   <h1>Spider</h1>
   <p>
     A “Spider” is a computer program. The Spider goes to different websites, explores, finds new things, and
@@ -57,44 +58,15 @@
   </p>
   <p>
     Find Sign indexes copyright data, so the dataset is not open source, but it is intended to be open access for
-    non-commercial use. For now, BitTorrent and Hypercore access has been disabled due to performance issues and
-    barely any usage. Slow progress is being made refactoring the site to use simple yaml files to store all the
-    interesting data. A service is planned to also offer JSON, XML, and CBOR translations of these YAML files.
-    When this is finished, the data will be available over a simple http interface. In the mean time, send me
-    (@Bluebie on Github or Twitter) a message if you want access, maybe I can sort something out in the mean time.
+    non-commercial culturally appropriate use. For now, BitTorrent and Hypercore access has been disabled due to
+    performance issues and barely any usage. Slow progress is being made refactoring the site to use simple yaml
+    files to store all the interesting data. A service is planned to also offer JSON, XML, and CBOR translations
+    of these YAML files. When this is finished, the data will be available over a simple http interface. For now,
+    if you want access send me (@Bluebie on Github or Twitter) a message. Maybe we can sort something temporary out.
   </p>
   <p>
     If you want to apply this searching technology to another sign language, you'll need to capture the data for your
     search index, by building some kind of spider program. The easiest way to make this work is to output either YAML
-    or JSON in the
+    or JSON in the <a href="https://github.com/Bluebie/sign-search/blob/master/docs/search-data.md">search-data format</a>.
   </p>
-  <p>
-    If you're motivated enough, you could look at the source code for Find Sign and use it's javascript libraries to
-    load the search index cbor file, and then use that to load every definition shard file, and then use the definitions
-    to load every video. You're certainly welcome to do this, you don't need to ask permission. But if you're going to
-    depend on updates from Find Sign, please do contact me, so I can coordinate with you before making breaking changes
-    to the search index file formats.
-  </p>
-</main>
-
-<style>
-  :global(*) {
-    box-sizing: border-box; /* i just like it better ok? microsoft was right */
-  }
-
-  :global(body) {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    background-color: var(--base-bg);
-    color: var(--base-fg);
-  }
-
-  main {
-    max-width: 900px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  a {
-    color: inherit;
-  }
-</style>
+</MainBlock>

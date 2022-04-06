@@ -72,6 +72,7 @@
     height: 100%;
     border-radius: 6px;
     z-index: 5;
+    aspect-ratio: 16 / 9;
   }
 
   button, button {

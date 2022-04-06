@@ -2,7 +2,7 @@
 import { unpack } from './packed-vector.mjs'
 import { diversity as vectorDiversity } from './vector-utilities.mjs'
 import { chunk } from './times.mjs'
-import { fetch, Headers, decodeCBOR } from './io.mjs'
+import { decodeCBOR } from './io.mjs'
 
 /**
  * @typedef {object} Library
@@ -30,7 +30,7 @@ import { fetch, Headers, decodeCBOR } from './io.mjs'
  * @returns {Library}
  */
 export async function open (path, libraryFetch) {
-  return await freshen({ path, fetch: libraryFetch || fetch })
+  return await freshen({ path, fetch: libraryFetch || ((...args) => globalThis.fetch(...args)) })
 }
 
 /**
@@ -73,7 +73,7 @@ export function parseIndex (data) {
  * @returns {Library}
  */
 export async function freshen (library) {
-  const headers = new Headers()
+  const headers = new globalThis.Headers()
   if (library.etag || library.lastModified) {
     if (library.etag) headers.append('If-None-Match', library.etag)
     if (library.lastModified) headers.append('If-Modified-Since', library.lastModified)

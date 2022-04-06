@@ -32,6 +32,20 @@
   }
 }
 
+* {
+  box-sizing: border-box; /* i just like it better ok? microsoft was right */
+}
+
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  background-color: var(--base-bg);
+  color: var(--base-fg);
+}
+
+a {
+  color: inherit;
+}
+
 @media (prefers-color-scheme: light) {
   /*
   opt-in light-mode theme for accessibility sake

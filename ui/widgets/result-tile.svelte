@@ -94,6 +94,7 @@
     text-transform: capitalize;
     text-overflow: ellipsis;
     white-space: nowrap;
+    overflow: hidden;
   }
 
   .words a {
@@ -186,9 +187,33 @@
     max-height: calc(var(--line-height) * var(--visible-lines) - 1rem);
   }
 
+  .result.expand .body {
+    max-height: unset;
+  }
+
   /* alert notices on search results */
   .result.invented { background-color: var(--alert-bg); }
   .result .alert :first-child {
     vertical-align: -0.2ex;
+  }
+
+  @media (max-width: 600px) {
+    div.result:not(.expand) {
+      display: grid;
+      grid-template-columns: auto 32px;
+      grid-template-rows: auto 1ex auto auto auto auto;
+      grid-template-areas:
+        "media media"
+        "gap gap"
+        "title map"
+        "breadcrumbs map"
+        "hashtags hashtags"
+        "alerts alerts"
+        "body body";
+    }
+
+    div.result:not(.expand) .body {
+      max-height: unset;
+    }
   }
 </style>

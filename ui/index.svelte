@@ -26,15 +26,14 @@
 
   const resultsPerPage = 10
   const maxPages = 9
-  const resultDelay = 100
+  const resultDelay = 25
 
-  export let query
+  export let query = ''
   export let feed
+  export let page = 0
   let searchLibrary
   let vectorLibrary
-
   let results
-  let page = 0
 
   $: displayResults = Array.isArray(results) && results.slice(page * resultsPerPage, (page + 1) * resultsPerPage).map(async (entry, idx) => {
     await delay(resultDelay * idx)
@@ -69,20 +68,24 @@
   }
 
   async function onHashChange () {
-    const params = new URLSearchParams((window.location.hash || '').replace(/^#/, ''))
-    if (params.has('query')) {
-      queryInput = params.get('query')
-      await runQuery(queryInput)
+    console.log('hash change', window.location.hash)
+    const params = new URLSearchParams((window.location.hash || '').slice(1))
+    if (params.has('query') && query !== params.get('query')) {
+      await runQuery(params.get('query'))
     }
 
-    if (params.has('page')) {
+    if (params.has('page') && page !== parseInt(params.get('page'))) {
       page = parseInt(params.get('page'))
     }
   }
 
   async function onStateChange () {
     await tick()
-    window.location.hash = `#${new URLSearchParams({ query, page })}`
+    if (query === '') {
+      window.location.hash = ''
+    } else {
+      window.location.hash = `#${new URLSearchParams({ query, page })}`
+    }
   }
 </script>
 
@@ -131,6 +134,9 @@
 
   .results {
     list-style-type: none;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
     padding: 0;
   }
 </style>
