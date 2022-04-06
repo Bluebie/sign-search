@@ -78,13 +78,23 @@ class SearchDataSpider extends base {
         readStream.on('error', (err) => reject(err))
       })
     } else if (method === 'fetch') {
-      const urlObject = new URL(url)
+      const urlObject = new URL(url, `file://${path.resolve(this.config.path)}`)
       const urlExt = urlObject.pathname.split('.').slice(-1)
       const tempPath = this.tempFile(`fetch-${this.hash(url)}.${ext || urlExt}`)
-      await pipeline(
-        got.stream(url),
-        fs.createWriteStream(tempPath)
-      )
+      if (urlObject.protocol.toLowerCase() === 'file:') {
+        // try to hardlink file, if that fails, copy it
+        try {
+          await fs.link(urlObject, tempPath)
+        } catch (err) {
+          console.info(`hardlinking ${urlObject} failed, copying...`)
+          await fs.copyFile(urlObject, tempPath)
+        }
+      } else if (['http:', 'https:'].includes(urlObject.protocol.toLowerCase())) {
+        await pipeline(
+          got.stream(url),
+          fs.createWriteStream(tempPath)
+        )
+      }
       return tempPath
     }
   }
