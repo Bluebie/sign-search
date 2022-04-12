@@ -49,7 +49,7 @@
     "yaml": "^2.0.0-10",
     "youtube-dl": "^2.3.0",
     "yt-scraper": "^2.1.0",
-    "ytdl-core": "^4.9.2",
+    "ytdl-core": "^4.11.0",
     "ytpl": "^2.2.3"
   },
   "devDependencies": {
