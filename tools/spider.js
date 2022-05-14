@@ -1,13 +1,13 @@
-const fs = require('fs-extra')
+// const fs = require('fs-extra')
 const util = require('util')
-const gzip = util.promisify(require('zlib').gzip)
-const createTorrent = util.promisify(require('create-torrent'))
+// const gzip = util.promisify(require('zlib').gzip)
+// const createTorrent = util.promisify(require('create-torrent'))
 const HandbrakeEncoder = require('../lib/search-library/encoder-handbrake')
 const args = require('args')
 const process = require('process')
 
 const SpiderNest = require('../lib/search-spider/nest')
-const signSearchConfig = require('../package.json').signSearch
+// const signSearchConfig = require('../package.json').signSearch
 
 args
   .option('run', 'Run a specific named spider configuration immediately or a comma seperated list', '')
@@ -57,28 +57,28 @@ const defaultRun = async () => {
   }
 
   // rebuild the search libraries / common search library
-  const didRebuild = await nest.buildDatasets()
+  /* const didRebuild = */ await nest.buildDatasets()
 
-  if (didRebuild) {
-    // if anything changed about the search index, rebuild the datasets torrent
-    nest.log('Datasets changed, rebuilding datasets.torrent')
+  // if (didRebuild) {
+  //   // if anything changed about the search index, rebuild the datasets torrent
+  //   nest.log('Datasets changed, rebuilding datasets.torrent')
 
-    const opts = {
-      name: 'datasets',
-      comment: `${signSearchConfig.openGraph.title} dataset`,
-      createdBy: 'WebTorrent, sign-search: tools/spider.js',
-      urlList: [`${signSearchConfig.location}/`]
-    }
+  //   const opts = {
+  //     name: 'datasets',
+  //     comment: `${signSearchConfig.openGraph.title} dataset`,
+  //     createdBy: 'WebTorrent, sign-search: tools/spider.js',
+  //     urlList: [`${signSearchConfig.location}/`]
+  //   }
 
-    nest.log('Creating torrent...')
-    const torrent = await createTorrent(flags.datasetsPath, opts)
-    await Promise.all([
-      fs.writeFile('../datasets.torrent', torrent),
-      fs.writeFile('../datasets.torrent.gz', await gzip(torrent, { level: 9 }))
-    ])
+  //   nest.log('Creating torrent...')
+  //   const torrent = await createTorrent(flags.datasetsPath, opts)
+  //   await Promise.all([
+  //     fs.writeFile('../datasets.torrent', torrent),
+  //     fs.writeFile('../datasets.torrent.gz', await gzip(torrent, { level: 9 }))
+  //   ])
 
-    nest.log('datasets.torrent updated')
-  }
+  //   nest.log('datasets.torrent updated')
+  // }
 
   nest.log(' ============= All spider tasks complete! ============= ')
 
