@@ -84,7 +84,8 @@ const defaultRun = async () => {
           }
         }
 
-        const media = await Promise.all((entry.media || entry.videos).map(async videoInfo => {
+        const media = []
+        for (const videoInfo of (entry.media || entry.videos)) {
           const cacheables = JSON.parse(JSON.stringify(videoInfo))
           const clipping = cacheables.clipping
           delete cacheables.clipping
@@ -97,25 +98,25 @@ const defaultRun = async () => {
           const existingMedia = await fs.readdir(mediaFolder)
           const existingMatch = existingMedia.find(x => x.startsWith(`${filename}.`))
           if (existingMatch) {
-            return {
+            media.push({
               type: 'fetch',
               url: `${configName}-media/${existingMatch}`,
               clipping,
               cache: JSON.stringify(cacheables)
-            }
+            })
           } else {
             console.log(`downloading media ${configName}`, cacheables)
             const tempFile = await spider.spider.fetch(videoInfo)
             const ext = tempFile.split('.').slice(-1)[0]
             await fs.move(tempFile, `${mediaFolder}/${filename}.${ext}`)
-            return {
+            media.push({
               type: 'fetch',
               url: `${configName}-media/${filename}.${ext}`,
               clipping,
               cache: JSON.stringify(cacheables)
-            }
+            })
           }
-        }))
+        }
 
         const definition = {
           title: entry.title || entry.words.join(', '),
