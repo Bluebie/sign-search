@@ -2,7 +2,7 @@
   "aus-signbank": {
     "displayName": "Auslan Signbank",
     "spider": "search-data",
-    "path": "../../pigeon-signbank/signbank-data/search-data.yaml",
+    "path": "https://data.auslan.fyi/collections/search/raw/search-data/auslan-signbank.yaml",
     "interval": "1 second",
     "discoveryVerb": "documented",
     "tags": ["signbank", "established"]
@@ -13,7 +13,7 @@
     "spider": "youtube",
     "link": "https://www.youtube.com/watch?v=ZA0L3BZogQc&list=PL2EMz0UaYFdTOOqToccQkHOiTgTMhbTKb",
     "discoveryVerb": "demonstrated",
-    "interval": "30 mins",
+    "interval": "24 hours",
     "tags": ["asphyxia", "vic"],
     "localSubtitles": "spiders/asphyxia-subtitles",
     "rules": {
@@ -28,7 +28,7 @@
     "link": "https://www.youtube.com/playlist?list=PL7B7aOPg0nscWFz5013_SXane_K3HheCe",
     "erase": true,
     "discoveryVerb": "added",
-    "interval": "30 mins",
+    "interval": "6 hours",
     "tags": ["community"],
     "localSubtitles": "spiders/youtube-subtitles",
     "fetchSubtitles": "en",
@@ -44,7 +44,7 @@
     "link": "https://www.youtube.com/playlist?list=PL23jooyW_IDy1kCG9xZHRKhpCKo7YXa6d",
     "erase": true,
     "discoveryVerb": "explained",
-    "interval": "30 mins",
+    "interval": "24 hours",
     "tags": ["signpedia", "described", "iconic", "nsw"],
     "clipping": {
       "start": "2200ms"
@@ -54,14 +54,12 @@
     }
   },
 
-  "stage-left": {
+  "theatre-101": {
     "displayName": "Auslan Stage Left",
-    "spider": "auslan-stage-left",
-    "interval": "6 hours",
-    "link": "http://www.auslanstageleft.com.au/media/101-auslan-theatre-signs/",
-    "siteLink": "http://www.auslanstageleft.com.au/",
-    "discoveryVerb": "demonstrated",
-    "tags": ["auslan-stage-left", "description", "semantic.arts"]
+    "spider": "search-data",
+    "interval": "1 second",
+    "discoveryVerb": "shared",
+    "path": "https://data.auslan.fyi/collections/search/raw/search-data/theatre-101.json"
   },
 
   "toddslan": {
@@ -141,7 +139,7 @@
   "auslan-anywhere": {
     "displayName": "Auslan Anywhere",
     "spider": "search-data",
-    "path": "../../pigeon-anywhere/search-data.json",
+    "path": "https://data.auslan.fyi/collections/search/raw/search-data/auslan-anywhere.json",
     "interval": "1 second",
     "discoveryVerb": "shared"
   }

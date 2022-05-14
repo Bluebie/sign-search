@@ -14,14 +14,22 @@ const base = require('../../lib/search-spider/plugin-base') // base class, provi
 const signSearchConfig = require('../../package').signSearch
 const { pipeline } = require('stream/promises')
 const YAML = require('yaml')
+const url = require('node:url')
 
 // A spider which indexes an youtube playlists and creates a search index from that content
 class SearchDataSpider extends base {
   async index (task = false, ...args) {
     if (task !== false) return {}
 
-    const fileText = (await fs.readFile(this.config.path)).toString('utf-8')
-    const unprocessed = this.config.path.endsWith('.yaml') ? YAML.parse(fileText) : JSON.parse(fileText)
+    const dataPath = new URL(this.config.path, url.pathToFileURL(__filename))
+
+    let unprocessed
+    if (dataPath.protocol === 'file:') {
+      unprocessed = YAML.parse((await fs.readFile(dataPath)).toString('utf-8'))
+    } else if (dataPath.protocol.startsWith('http')) {
+      unprocessed = YAML.parse(await got(dataPath).text())
+    }
+
     const asArray = Array.isArray(unprocessed) ? unprocessed : Object.entries(unprocessed).map(([k, v]) => ({ id: k, ...v }))
     const processed = asArray.map(entry => {
       return {
@@ -78,7 +86,8 @@ class SearchDataSpider extends base {
         readStream.on('error', (err) => reject(err))
       })
     } else if (method === 'fetch') {
-      const urlObject = new URL(url, `file://${path.resolve(this.config.path)}`)
+      const searchDataURL = new URL(this.config.path, url.pathToFileURL(__filename))
+      const urlObject = new URL(url, searchDataURL)
       const urlExt = urlObject.pathname.split('.').slice(-1)
       const tempPath = this.tempFile(`fetch-${this.hash(url)}.${ext || urlExt}`)
       if (urlObject.protocol.toLowerCase() === 'file:') {

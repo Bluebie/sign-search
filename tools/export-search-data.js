@@ -46,15 +46,15 @@ const defaultRun = async () => {
   // load data and lock file
   await nest.load()
 
-  if (flags.run !== '') {
-    // force a list of spiders to run immediately
-    for (const task of flags.run.split(',')) {
-      await nest.runOneSpider(task)
-    }
-  } else {
-    // run in series does one spider at a time as scheduled
-    await nest.runInSeries()
-  }
+  // if (flags.run !== '') {
+  //   // force a list of spiders to run immediately
+  //   for (const task of flags.run.split(',')) {
+  //     await nest.runOneSpider(task)
+  //   }
+  // } else {
+  //   // run in series does one spider at a time as scheduled
+  //   await nest.runInSeries()
+  // }
 
   // list of which spiders to export content from
   const toExport = flags.export.split(',').map(x => x.trim())
@@ -106,7 +106,7 @@ const defaultRun = async () => {
             const ext = tempFile.split('.').slice(-1)[0]
             await fs.move(tempFile, `${mediaFolder}/${filename}.${ext}`)
             media.push({
-              type: 'fetch',
+              method: 'fetch',
               url: `${configName}-media/${filename}.${ext}`,
               clipping,
               cache: JSON.stringify(cacheables)
@@ -121,7 +121,7 @@ const defaultRun = async () => {
           link: entry.link,
           nav: entry.nav,
           body: entry.body,
-          media: media.map(url => ({ type: 'fetch', url })),
+          media,
           timestamp: entry.timestamp || 0,
           provider: {
             id: configName,
