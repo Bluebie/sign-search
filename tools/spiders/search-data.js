@@ -93,14 +93,14 @@ class SearchDataSpider extends base {
       if (urlObject.protocol.toLowerCase() === 'file:') {
         // try to hardlink file, if that fails, copy it
         try {
-          await fs.link(urlObject, tempPath)
+          await fs.link(urlObject.pathname, tempPath)
         } catch (err) {
           console.info(`hardlinking ${urlObject} failed, copying...`)
-          await fs.copyFile(urlObject, tempPath)
+          await fs.copyFile(urlObject.pathname, tempPath)
         }
       } else if (['http:', 'https:'].includes(urlObject.protocol.toLowerCase())) {
         await pipeline(
-          got.stream(url),
+          got.stream(urlObject),
           fs.createWriteStream(tempPath)
         )
       }
