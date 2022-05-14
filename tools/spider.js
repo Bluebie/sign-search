@@ -1,5 +1,5 @@
 // const fs = require('fs-extra')
-const util = require('util')
+// const util = require('util')
 // const gzip = util.promisify(require('zlib').gzip)
 // const createTorrent = util.promisify(require('create-torrent'))
 const HandbrakeEncoder = require('../lib/search-library/encoder-handbrake')
