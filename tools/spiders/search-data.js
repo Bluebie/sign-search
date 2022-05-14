@@ -14,14 +14,14 @@ const base = require('../../lib/search-spider/plugin-base') // base class, provi
 const signSearchConfig = require('../../package').signSearch
 const { pipeline } = require('stream/promises')
 const YAML = require('yaml')
-const url = require('node:url')
+const nodeURL = require('node:url')
 
 // A spider which indexes an youtube playlists and creates a search index from that content
 class SearchDataSpider extends base {
   async index (task = false, ...args) {
     if (task !== false) return {}
 
-    const dataPath = new URL(this.config.path, url.pathToFileURL(__filename))
+    const dataPath = new URL(this.config.path, nodeURL.pathToFileURL(__filename))
 
     let unprocessed
     if (dataPath.protocol === 'file:') {
@@ -86,7 +86,7 @@ class SearchDataSpider extends base {
         readStream.on('error', (err) => reject(err))
       })
     } else if (method === 'fetch') {
-      const searchDataURL = new URL(this.config.path, url.pathToFileURL(__filename))
+      const searchDataURL = new URL(this.config.path, nodeURL.pathToFileURL(__filename))
       const urlObject = new URL(url, searchDataURL)
       const urlExt = urlObject.pathname.split('.').slice(-1)
       const tempPath = this.tempFile(`fetch-${this.hash(url)}.${ext || urlExt}`)
