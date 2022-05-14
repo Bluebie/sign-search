@@ -79,7 +79,7 @@ const defaultRun = async () => {
         if (nest.settings.overridesPath) {
           const overridePath = `${nest.settings.overridesPath}/${configName}:${entryID}.json`
           if (await fs.pathExists(overridePath)) {
-            this.log(`Implementing override data from ${overridePath}`)
+            console.log(`Implementing override data from ${overridePath}`)
             overrideObject = JSON.parse(await fs.readFile(overridePath))
           }
         }
