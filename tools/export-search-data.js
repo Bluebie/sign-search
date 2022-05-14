@@ -89,11 +89,7 @@ const defaultRun = async () => {
           const cacheables = JSON.parse(JSON.stringify(videoInfo))
           const clipping = cacheables.clipping
           delete cacheables.clipping
-          const filename = Object.entries(cacheables).map(([key, value]) => {
-            if (typeof value === 'string') return `${key}=${value}`
-            if (Array.isArray(value)) return `${key}=${value.join(',')}`
-            return `${key}=${JSON.stringify(value)}`
-          }).join('-')
+          const filename = encodeURIComponent(JSON.stringify(cacheables))
 
           const existingMedia = await fs.readdir(mediaFolder)
           const existingMatch = existingMedia.find(x => x.startsWith(`${filename}.`))
