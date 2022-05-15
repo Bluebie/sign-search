@@ -95,7 +95,7 @@ const defaultRun = async () => {
           const existingMatch = existingMedia.find(x => x.startsWith(`${filename}.`))
           if (existingMatch) {
             media.push({
-              type: 'fetch',
+              method: 'fetch',
               url: `${configName}-media/${existingMatch}`,
               clipping,
               cache: JSON.stringify(cacheables)
