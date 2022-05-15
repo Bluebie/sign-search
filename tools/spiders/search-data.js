@@ -35,7 +35,7 @@ class SearchDataSpider extends base {
       return {
         ...entry,
         title: this.stripTags(entry.title || entry.words.join(' ')),
-        words: Array.isArray(entry.words) ? entry.words : this.extractWords(`${entry.words || entry.title}`),
+        words: Array.isArray(entry.words) ? entry.words : this.extractWords(`${entry.title}`),
         body: this.stripTags(entry.body || ''),
         id: entry.id || entry.link
       }

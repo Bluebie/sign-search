@@ -116,7 +116,7 @@ const defaultRun = async () => {
 
         const definition = {
           title: entry.title || entry.words.join(', '),
-          words: entry.keywords || entry.words,
+          words: entry.words || entry.keywords,
           tags: [...(spider.config.tags || []), ...(entry.tags || [])].filter((v, i, a) => a.indexOf(v) === i).map(x => `${x}`.toLowerCase()),
           link: entry.link,
           nav: entry.nav,
@@ -129,8 +129,13 @@ const defaultRun = async () => {
             verb: entry.discoveryVerb || spider.config.discoveryVerb || 'documented',
             link: spider.config.link
           },
-          author: entry.author,
-          ...overrideObject
+          author: entry.author
+        }
+
+        for (const key in overrideObject) {
+          if (' title words tags link nav body media timestamp provider author '.includes(` ${key} `)) {
+            definition[key] = overrideObject[key]
+          }
         }
 
         searchDataEntries[entryID] = definition
