@@ -98,7 +98,7 @@ const defaultRun = async () => {
               method: 'fetch',
               url: `${configName}-media/${existingMatch}`,
               clipping,
-              cache: JSON.stringify(cacheables)
+              version: JSON.stringify(cacheables)
             })
           } else {
             console.log(`downloading media ${configName}`, cacheables)
@@ -109,7 +109,7 @@ const defaultRun = async () => {
               method: 'fetch',
               url: `${configName}-media/${filename}.${ext}`,
               clipping,
-              cache: JSON.stringify(cacheables)
+              version: JSON.stringify(cacheables)
             })
           }
         }
