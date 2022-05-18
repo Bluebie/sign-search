@@ -2,7 +2,7 @@
   "aus-signbank": {
     "displayName": "Auslan Signbank",
     "spider": "search-data",
-    "path": "https://data.auslan.fyi/collections/search/raw/search-data/auslan-signbank.yaml",
+    "path": "https://data.auslan.fyi/collections/search/raw/search-data/auslan-signbank.json",
     "interval": "1 second",
     "discoveryVerb": "documented",
     "tags": ["signbank", "established"]
