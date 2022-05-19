@@ -96,7 +96,7 @@ const defaultRun = async () => {
           if (existingMatch) {
             media.push({
               method: 'fetch',
-              url: `${configName}-media/${existingMatch}`,
+              url: `${configName}-media/${encodeURIComponent(existingMatch)}`,
               clipping,
               version: JSON.stringify(cacheables)
             })
@@ -107,7 +107,7 @@ const defaultRun = async () => {
             await fs.move(tempFile, `${mediaFolder}/${filename}.${ext}`)
             media.push({
               method: 'fetch',
-              url: `${configName}-media/${filename}.${ext}`,
+              url: `${configName}-media/${encodeURIComponent(filename)}.${ext}`,
               clipping,
               version: JSON.stringify(cacheables)
             })
