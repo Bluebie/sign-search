@@ -42,7 +42,7 @@
     "sitemap": "^5.1.0",
     "strip-json-comments": "^3.0.1",
     "subtitles-parser-vtt": "0.0.5",
-    "svelte": "^3.44.3",
+    "svelte": "^3.49.0",
     "svelte-loader": "^3.1.2",
     "tweetnacl": "^1.0.3",
     "url-regex-safe": "^2.1.0",
